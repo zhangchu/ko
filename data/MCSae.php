@@ -32,11 +32,6 @@ class Ko_Data_MCSae extends Ko_Data_MemCache implements IKo_Data_MCAgent
 		}
 		return self::$s_aInstances[$sName];
 	}
-	
-	public function sWhichServer($sKey)
-	{
-		assert(0);
-	}
 }
 
 ?>

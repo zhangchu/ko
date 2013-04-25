@@ -139,32 +139,12 @@ class Ko_Dao_MCacheEx extends Ko_Dao_ModuleCache implements IKo_Data_MCache
 		$sKey = $this->_sModuleName($sKey);
 		return $this->_oMCache->iDecrement($sKey, $iValue);
 	}
-
-	/**
-	 * @return string
-	 */
-	public function sWhichServer($sKey)
-	{
-		$sKey = $this->_sModuleName($sKey);
-		return $this->_oMCache->sWhichServer($sKey);
-	}
-	
-	/**
-	 * @return array
-	 */
-	public function aAllServers()
-	{
-		return $this->_oMCache->aAllServers();
-	}
 }
 
 /*
 $obj = new Ko_Dao_MCacheEx('ABC');
 $key = 'test_ko_mcache';
 $keys = array('test_ko_mcache');
-
-$ret = $obj->sWhichServer($key);
-var_dump($ret);
 
 $ret = $obj->bDelete($key);
 var_dump($ret);

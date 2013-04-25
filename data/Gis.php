@@ -15,11 +15,15 @@
 interface IKo_Data_Gis
 {
 	public static function OInstance();
-	public function iGetRegion($fLat, $fLng);
+	public function aGetRegion($fLat, $fLng, $iHow);
 }
 
 class Ko_Data_Gis extends Ko_Data_KProxy implements IKo_Data_Gis
 {
+	const REGION = 0x1;
+	const MDD = 0x2;
+	const BOTH = 0x3;
+
 	private static $s_OInstance;
 
 	protected function __construct ()
@@ -37,14 +41,14 @@ class Ko_Data_Gis extends Ko_Data_KProxy implements IKo_Data_Gis
 		return self::$s_OInstance;
 	}
 
-	public function iGetRegion($fLat, $fLng)
+	public function aGetRegion($fLat, $fLng, $iHow = self::REGION)
 	{
 		$aPara = array(
 			'lat' => floatval($fLat),
 			'lng' => floatval($fLng),
+			'how' => intval($iHow),
 			);
-		$ret = $this->_oProxy->invoke('getRegion', $aPara);
-		return $ret['regionid'];
+		return $this->_oProxy->invoke('getRegion', $aPara);
 	}
 }
 

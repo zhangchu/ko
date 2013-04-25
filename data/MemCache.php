@@ -216,35 +216,12 @@ class Ko_Data_MemCache implements IKo_Data_MCache, IKo_Data_MCAgent
 		}
 		return false;
 	}
-
-	public function sWhichServer($sKey)
-	{
-		KO_DEBUG >= 2 && Ko_Tool_Debug::VAddTmpLog('data/MemCache', 'whichServer:'.$sKey);
-		if ($this->_oMemcache)
-		{
-			return KO_MC_HOST;
-		}
-		return false;
-	}
-	
-	public function aAllServers()
-	{
-		KO_DEBUG >= 2 && Ko_Tool_Debug::VAddTmpLog('data/MemCache', 'allServers');
-		if ($this->_oMemcache)
-		{
-			return array('all' => array(KO_MC_HOST), 'bad' => array());
-		}
-		return false;
-	}
 }
 
 
 /*
 $obj = Ko_Data_MemCache::OInstance();
 $key = 'test_ko_memcache';
-
-$ret = $obj->sWhichServer($key);
-var_dump($ret);
 
 $ret = $obj->bDelete($key);
 var_dump($ret);

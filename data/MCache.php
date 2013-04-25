@@ -26,8 +26,6 @@ interface IKo_Data_MCache
 	public function iIncrement($sKey, $iValue = 1);
 	public function iIncrementEx($sKey, $iValue = 1, $iExpire = 0);
 	public function iDecrement($sKey, $iValue = 1);
-	public function sWhichServer($sKey);
-	public function aAllServers();
 }
 
 /**
@@ -343,6 +341,21 @@ class Ko_Data_MCache extends Ko_Data_KProxy implements IKo_Data_MCache, IKo_Data
 		{
 			$aPara = array();
 			$ret = $this->_oProxy->invoke('allServers', $aPara);
+			return $ret;
+		}
+		catch(Exception $ex)
+		{
+			return false;
+		}
+	}
+	
+	public function aStatAllServers()
+	{
+		KO_DEBUG >= 2 && Ko_Tool_Debug::VAddTmpLog('data/MCache', 'statAllServers');
+		try
+		{
+			$aPara = array();
+			$ret = $this->_oProxy->invoke('statAllServers', $aPara);
 			return $ret;
 		}
 		catch(Exception $ex)
