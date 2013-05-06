@@ -421,10 +421,6 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	private function _aGetThreadDetails($aList)
 	{
 		$threadDao = $this->_aConf['thread'].'Dao';
-		if (strlen($this->$threadDao->sGetSplitField()))
-		{
-			return $this->$threadDao->aGetDetails($aList);
-		}
 		return $this->$threadDao->aGetListByKeys($aList);
 	}
 	
@@ -457,10 +453,6 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	private function _aGetMessageDetails($aList)
 	{
 		$messageDao = $this->_aConf['message'].'Dao';
-		if (strlen($this->$messageDao->sGetSplitField()))
-		{
-			return $this->$messageDao->aGetDetails($aList);
-		}
 		return $this->$messageDao->aGetListByKeys($aList);
 	}
 	

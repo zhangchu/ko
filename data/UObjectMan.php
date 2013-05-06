@@ -53,7 +53,7 @@ class Ko_Data_UObjectMan extends Ko_Data_KProxy implements IKo_Data_UObjectMan, 
 		$aPara = array(
 			'kind' => $this->_sKind,
 			'idname' => $this->_sKeyField,
-			'fields' => $aFields,
+			'fields' => is_array($aFields) ? $aFields : array(),
 			'oids' => $aIds,
 			);
 		$uores = $this->_oProxy->invoke('getComplexObjects', $aPara);
@@ -81,6 +81,21 @@ class Ko_Data_UObjectMan extends Ko_Data_KProxy implements IKo_Data_UObjectMan, 
 	public function oCreateLOID($iUid, $iId)
 	{
 		return array(intval($iUid), intval($iId));
+	}
+	
+	public function vUpgradeKind()
+	{
+		KO_DEBUG >= 2 && Ko_Tool_Debug::VAddTmpLog('data/UObjectMan', 'upgradeKind:'.$this->_sKind);
+		try
+		{
+			$aPara = array(
+				'kind' => $this->_sKind,
+				);
+			$this->_oProxy->invoke('upgradeKind', $aPara);
+		}
+		catch (Exception $ex)
+		{
+		}
 	}
 
 	////////////////////////////////// 私有函数 //////////////////////////////////
