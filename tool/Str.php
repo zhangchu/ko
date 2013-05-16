@@ -476,23 +476,19 @@ class Ko_Tool_Str implements IKo_Tool_Str
 		$iCut = $iCount;
 		for ($i=0; $i<$iCount; $i++)
 		{
-			if (strlen($aStr[$i]) <= 1)
-			{
-				$j = 1;
-			}
-			else
-			{
-				$j = 2;
-			}
-			if ($iLen + $j + $iExtLen > $iShowLength)
+			$iLen += (strlen($aStr[$i]) <= 1) ? 1 : 2;
+			if ($iLen + $iExtLen > $iShowLength)
 			{
 				$iCut = min($iCut, $i);
 			}
-			$iLen += $j;
 			if ($iLen > $iShowLength)
 			{
 				break;
 			}
+		}
+		if ($iLen <= $iShowLength)
+		{
+			return $sIn;
 		}
 		$aStr = array_slice($aStr, 0, $iCut);
 		return implode('', $aStr).$sExt;

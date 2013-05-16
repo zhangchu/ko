@@ -163,7 +163,7 @@ class Ko_Dao_DB implements IKo_Dao_DB, IKo_Dao_DBHelp, IKo_Dao_Mysql
 		}
 		return $this->_sSplitField;
 	}
-	
+
 	/**
 	 * @return string
 	 */
@@ -197,7 +197,7 @@ class Ko_Dao_DB implements IKo_Dao_DB, IKo_Dao_DBHelp, IKo_Dao_Mysql
 			return $this->_bIsMongoDB;
 		}
 	}
-	
+
 	public function vSetAttribute($sName, $vValue)
 	{
 		$sName = strtolower($sName);
@@ -337,7 +337,7 @@ class Ko_Dao_DB implements IKo_Dao_DB, IKo_Dao_DBHelp, IKo_Dao_Mysql
 		//获取 id 列表
 		$keyField = strlen($sKeyField) ? $sKeyField : $this->_aKeyField[0];
 		$aKey = Ko_Tool_Utils::AObjs2ids($aKey, $keyField);
-		
+
 		//排重，得到键列表
 		list($idkeymap, $keyidmap) = $this->_aGetListByKeys_KeyIdMap($vHintId, $aKey, 0 == strlen($this->_sSplitField));
 		$allkeys = array_keys($keyidmap);
@@ -415,7 +415,7 @@ class Ko_Dao_DB implements IKo_Dao_DB, IKo_Dao_DBHelp, IKo_Dao_Mysql
 	{
 		return $this->_oGetDirectMysql()->iTableCount();
 	}
-	
+
 	/**
 	 * @return Ko_Data_Mysql
 	 */
@@ -423,7 +423,7 @@ class Ko_Dao_DB implements IKo_Dao_DB, IKo_Dao_DBHelp, IKo_Dao_Mysql
 	{
 		return $this->_oGetDirectMysql()->oConnectDB($no);
 	}
-	
+
 	/**
 	 * @return string
 	 */
@@ -431,12 +431,12 @@ class Ko_Dao_DB implements IKo_Dao_DB, IKo_Dao_DBHelp, IKo_Dao_Mysql
 	{
 		return $this->_oGetDirectMysql()->sGetRealTableName($no);
 	}
-	
+
 	public function vDoFetchSelect($sSql, $fnCallback)
 	{
 		$this->_oGetDirectMysql()->vDoFetchSelect($sSql, $fnCallback);
 	}
-	
+
 	//////////////////////////// 私有函数 ////////////////////////////
 
 	private function _aGet($vHintId, $aKey, $bOnlyFromInProcCache)
@@ -607,7 +607,7 @@ class Ko_Dao_DB implements IKo_Dao_DB, IKo_Dao_DBHelp, IKo_Dao_Mysql
 		}
 		return implode(':', $keys);
 	}
-	
+
 	private function _vBuildOption($oOption, $vHintId, $aKey)
 	{
 		if (strlen($this->_sSplitField))
@@ -695,7 +695,7 @@ class Ko_Dao_DB implements IKo_Dao_DB, IKo_Dao_DBHelp, IKo_Dao_Mysql
 		}
 		return $this->_oUObject;
 	}
-	
+
 	private function _oGetDirectMysql()
 	{
 		if (is_null($this->_oDirectMysql))
@@ -756,7 +756,7 @@ class Ko_Dao_DB implements IKo_Dao_DB, IKo_Dao_DBHelp, IKo_Dao_Mysql
 		}
 		return $vKey;
 	}
-	
+
 	private function _vNormalizeOption($oOption)
 	{
 		if ($this->_bIsMongoDB)
@@ -772,7 +772,7 @@ class Ko_Dao_DB implements IKo_Dao_DB, IKo_Dao_DBHelp, IKo_Dao_Mysql
 		}
 		return $oOption;
 	}
-	
+
 	private function _oWriteOption2ReadOption($oOption)
 	{
 		if ($this->_bIsMongoDB)
@@ -796,7 +796,7 @@ class Ko_Dao_DB implements IKo_Dao_DB, IKo_Dao_DBHelp, IKo_Dao_Mysql
 		}
 		return $oOption;
 	}
-	
+
 	private function _oCreateOption()
 	{
 		if ($this->_bIsMongoDB)
