@@ -51,7 +51,7 @@ class Ko_Data_Mongo implements IKo_Data_Mongo
 			$options['password'] = $sPasswd;
 		}
 		$this->_sDbName = $sDbName;
-		$this->_hLink = new Mongo($sHost, $options);
+		$this->_hLink = new MongoClient($sHost, $options);
 	}
 	
 	/**

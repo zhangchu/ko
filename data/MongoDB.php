@@ -117,7 +117,7 @@ class Ko_Data_MongoDB implements IKo_Data_SqlAgent
 		if (is_array($oOption))
 		{
 			$col = $this->_oGetEngine()->oSelectCollection($sKind);
-			$col->setSlaveOkay(!$bMaster);
+			$col->setReadPreference($bMaster ? MongoClient::RP_PRIMARY : MongoClient::RP_SECONDARY_PREFERRED);
 			$cursor = $col->find($oOption);
 		}
 		else
@@ -128,7 +128,7 @@ class Ko_Data_MongoDB implements IKo_Data_SqlAgent
 				return $this->_oGetEngine()->oSelectDB()->command($aCommand);
 			}
 			$col = $this->_oGetEngine()->oSelectCollection($sKind);
-			$col->setSlaveOkay(!$bMaster);
+			$col->setReadPreference($bMaster ? MongoClient::RP_PRIMARY : MongoClient::RP_SECONDARY_PREFERRED);
 			$cursor = $col->find($oOption->aWhere(), $oOption->aFields());
 			$aOrderBy = $oOption->aOrderBy();
 			if (!empty($aOrderBy))
