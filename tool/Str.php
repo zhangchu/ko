@@ -126,15 +126,18 @@ class Ko_Tool_Str implements IKo_Tool_Str
 
 	public static function VConvert2UTF8(&$aIn)
 	{
-		foreach ($aIn as $k => $v)
+		if (is_array($aIn))
 		{
-			if (is_array($v))
+			foreach ($aIn as $k => $v)
 			{
-				self::VConvert2UTF8($aIn[$k]);
-			}
-			else if (is_string($v))
-			{
-				$aIn[$k] = self::SConvert2UTF8($v);
+				if (is_array($v))
+				{
+					self::VConvert2UTF8($aIn[$k]);
+				}
+				else if (is_string($v))
+				{
+					$aIn[$k] = self::SConvert2UTF8($v);
+				}
 			}
 		}
 	}
@@ -154,15 +157,18 @@ class Ko_Tool_Str implements IKo_Tool_Str
 
 	public static function VConvert2GB18030(&$aIn)
 	{
-		foreach ($aIn as $k => $v)
+		if (is_array($aIn))
 		{
-			if (is_array($v))
+			foreach ($aIn as $k => $v)
 			{
-				self::VConvert2GB18030($aIn[$k]);
-			}
-			else if (is_string($v))
-			{
-				$aIn[$k] = self::SConvert2GB18030($v);
+				if (is_array($v))
+				{
+					self::VConvert2GB18030($aIn[$k]);
+				}
+				else if (is_string($v))
+				{
+					$aIn[$k] = self::SConvert2GB18030($v);
+				}
 			}
 		}
 	}
@@ -182,15 +188,18 @@ class Ko_Tool_Str implements IKo_Tool_Str
 
 	public static function VFilterErrorCode(&$aIn, $sCharset = '')
 	{
-		foreach ($aIn as $k => $v)
+		if (is_array($aIn))
 		{
-			if (is_array($v))
+			foreach ($aIn as $k => $v)
 			{
-				self::VFilterErrorCode($aIn[$k], $sCharset);
-			}
-			else if (is_string($v))
-			{
-				$aIn[$k] = self::SFilterErrorCode($v, $sCharset);
+				if (is_array($v))
+				{
+					self::VFilterErrorCode($aIn[$k], $sCharset);
+				}
+				else if (is_string($v))
+				{
+					$aIn[$k] = self::SFilterErrorCode($v, $sCharset);
+				}
 			}
 		}
 	}
