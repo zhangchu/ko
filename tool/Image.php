@@ -53,7 +53,7 @@ interface IKo_Tool_Image
 	 *
 	 * @return boolean|string
 	 */
-	public static function VComposite($sSrc, $sDst, $sComposite, $iX, $iY, $iFlag = 0);
+	public static function VComposite($sSrc, $sDst, $sComposite, $iX, $iY, $iXYflag = 0, $iFlag = 0);
 }
 
 class Ko_Tool_Image implements IKo_Tool_Image
@@ -61,6 +61,10 @@ class Ko_Tool_Image implements IKo_Tool_Image
 	const FLAG_SRC_BLOB = 0x1;
 	const FLAG_DST_BLOB = 0x2;
 	const FLAG_COMPOSITE_BLOB = 0x4;
+	const XYFLAG_X_CENTER = 0x1;
+	const XYFLAG_X_RIGHT = 0x2;
+	const XYFLAG_Y_CENTER = 0x4;
+	const XYFLAG_Y_BOTTOM = 0x8;
 	
 	public static function VValidImageType($sFile)
 	{
@@ -92,9 +96,9 @@ class Ko_Tool_Image implements IKo_Tool_Image
 		return call_user_func(array('Ko_Tool_Image_'.KO_IMAGE, 'VFlipV'), $sSrc, $sDst, $iFlag);
 	}
 	
-	public static function VComposite($sSrc, $sDst, $sComposite, $iX, $iY, $iFlag = 0)
+	public static function VComposite($sSrc, $sDst, $sComposite, $iX, $iY, $iXYflag = 0, $iFlag = 0)
 	{
-		return call_user_func(array('Ko_Tool_Image_'.KO_IMAGE, 'VComposite'), $sSrc, $sDst, $sComposite, $iX, $iY, $iFlag);
+		return call_user_func(array('Ko_Tool_Image_'.KO_IMAGE, 'VComposite'), $sSrc, $sDst, $sComposite, $iX, $iY, $iXYflag, $iFlag);
 	}
 }
 

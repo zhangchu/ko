@@ -173,16 +173,36 @@ class Ko_Tool_Image_Imagick implements IKo_Tool_Image
 		}
 	}
 	
-	public static function VComposite($sSrc, $sDst, $sComposite, $iX, $iY, $iFlag = 0)
+	public static function VComposite($sSrc, $sDst, $sComposite, $iX, $iY, $iXYflag = 0, $iFlag = 0)
 	{
 		try
 		{
 			$imgsrc = self::_VCreateImage($sSrc, $iFlag);
 			$imgcomposite = self::_VCreateImageObject($sComposite, $iFlag & Ko_Tool_Image::FLAG_COMPOSITE_BLOB);
+			$composite_w = $imgcomposite->getImageWidth();
+			$composite_h = $imgcomposite->getImageHeight();
 			foreach($imgsrc as $frame)
 			{
 				$page = $frame->getImagePage();
-				$frame->compositeImage($imgcomposite, Imagick::COMPOSITE_DEFAULT, $iX - $page['x'], $iY - $page['y']);
+				$x = $iX;
+				$y = $iY;
+				if ($iXYflag & Ko_Tool_Image::XYFLAG_X_CENTER)
+				{
+					$x += ($page['width'] - $composite_w) / 2;
+				}
+				else if ($iXYflag & Ko_Tool_Image::XYFLAG_X_RIGHT)
+				{
+					$x = $page['width'] - $composite_w - $x;
+				}
+				if ($iXYflag & Ko_Tool_Image::XYFLAG_Y_CENTER)
+				{
+					$y += ($page['height'] - $composite_h) / 2;
+				}
+				else if ($iXYflag & Ko_Tool_Image::XYFLAG_Y_BOTTOM)
+				{
+					$y = $page['height'] - $composite_h - $y;
+				}
+				$frame->compositeImage($imgcomposite, Imagick::COMPOSITE_DEFAULT, $x - $page['x'], $y - $page['y']);
 			}
 			$ret = self::_VSaveImage($imgsrc, $sDst, true, $iFlag);
 			$imgsrc->destroy();

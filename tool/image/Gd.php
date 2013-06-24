@@ -167,13 +167,15 @@ class Ko_Tool_Image_Gd implements IKo_Tool_Image
 		return $ret;
 	}
 	
-	public static function VComposite($sSrc, $sDst, $sComposite, $iX, $iY, $iFlag = 0)
+	public static function VComposite($sSrc, $sDst, $sComposite, $iX, $iY, $iXYflag = 0, $iFlag = 0)
 	{
 		$imgsrc = self::_VCreateImage($sSrc, $iFlag);
 		if (false === $imgsrc)
 		{
 			return false;
 		}
+		$w = imagesx($imgsrc);
+		$h = imagesy($imgsrc);
 		$imgcomposite = self::_VCreateImageObject($sComposite, $iFlag & Ko_Tool_Image::FLAG_COMPOSITE_BLOB);
 		if (false === $imgcomposite)
 		{
@@ -181,6 +183,23 @@ class Ko_Tool_Image_Gd implements IKo_Tool_Image
 		}
 		$composite_w = imagesx($imgcomposite);
 		$composite_h = imagesy($imgcomposite);
+
+		if ($iXYflag & Ko_Tool_Image::XYFLAG_X_CENTER)
+		{
+			$iX += ($w - $composite_w) / 2;
+		}
+		else if ($iXYflag & Ko_Tool_Image::XYFLAG_X_RIGHT)
+		{
+			$iX = $w - $composite_w - $iX;
+		}
+		if ($iXYflag & Ko_Tool_Image::XYFLAG_Y_CENTER)
+		{
+			$iY += ($h - $composite_h) / 2;
+		}
+		else if ($iXYflag & Ko_Tool_Image::XYFLAG_Y_BOTTOM)
+		{
+			$iY = $h - $composite_h - $iY;
+		}
 		
 		$dstimg = imagecreatetruecolor($composite_w, $composite_h);
 		imagecopy($dstimg, $imgsrc, 0, 0, $iX, $iY, $composite_w, $composite_h);
