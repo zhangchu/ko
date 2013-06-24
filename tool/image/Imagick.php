@@ -173,6 +173,27 @@ class Ko_Tool_Image_Imagick implements IKo_Tool_Image
 		}
 	}
 	
+	public static function VComposite($sSrc, $sDst, $sComposite, $iX, $iY, $iFlag = 0)
+	{
+		try
+		{
+			$imgsrc = self::_VCreateImage($sSrc, $iFlag);
+			$imgcomposite = self::_VCreateImageObject($sComposite, $iFlag & Ko_Tool_Image::FLAG_COMPOSITE_BLOB);
+			foreach($imgsrc as $frame)
+			{
+				$page = $frame->getImagePage();
+				$frame->compositeImage($imgcomposite, Imagick::COMPOSITE_DEFAULT, $iX - $page['x'], $iY - $page['y']);
+			}
+			$ret = self::_VSaveImage($imgsrc, $sDst, true, $iFlag);
+			$imgsrc->destroy();
+			return $ret;
+		}
+		catch (Exception $e)
+		{
+			return false;
+		}
+	}
+	
 	private static function _VAlignImage($oImg)
 	{
 		$oImg->resetIterator();
@@ -186,7 +207,12 @@ class Ko_Tool_Image_Imagick implements IKo_Tool_Image
 	
 	private static function _VCreateImage($sSrc, $iFlag)
 	{
-		if ($iFlag & Ko_Tool_Image::FLAG_SRC_BLOB)
+		return self::_VCreateImageObject($sSrc, $iFlag & Ko_Tool_Image::FLAG_SRC_BLOB);
+	}
+	
+	private static function _VCreateImageObject($sSrc, $bSrcIsBlob)
+	{
+		if ($bSrcIsBlob)
 		{
 			$img = new Imagick();
 			$img->readImageBlob($sSrc);

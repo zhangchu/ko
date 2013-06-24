@@ -48,14 +48,19 @@ interface IKo_Tool_Image
 	 * @return boolean|string
 	 */
 	public static function VFlipV($sSrc, $sDst, $iFlag = 0);
-	//public static function VAnnotate(...);
-	//public static function VComposite(...);
+	/**
+	 * 组合图片，如：加水印
+	 *
+	 * @return boolean|string
+	 */
+	public static function VComposite($sSrc, $sDst, $sComposite, $iX, $iY, $iFlag = 0);
 }
 
 class Ko_Tool_Image implements IKo_Tool_Image
 {
 	const FLAG_SRC_BLOB = 0x1;
 	const FLAG_DST_BLOB = 0x2;
+	const FLAG_COMPOSITE_BLOB = 0x4;
 	
 	public static function VValidImageType($sFile)
 	{
@@ -85,6 +90,11 @@ class Ko_Tool_Image implements IKo_Tool_Image
 	public static function VFlipV($sSrc, $sDst, $iFlag = 0)
 	{
 		return call_user_func(array('Ko_Tool_Image_'.KO_IMAGE, 'VFlipV'), $sSrc, $sDst, $iFlag);
+	}
+	
+	public static function VComposite($sSrc, $sDst, $sComposite, $iX, $iY, $iFlag = 0)
+	{
+		return call_user_func(array('Ko_Tool_Image_'.KO_IMAGE, 'VComposite'), $sSrc, $sDst, $sComposite, $iX, $iY, $iFlag);
 	}
 }
 

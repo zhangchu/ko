@@ -167,9 +167,41 @@ class Ko_Tool_Image_Gd implements IKo_Tool_Image
 		return $ret;
 	}
 	
+	public static function VComposite($sSrc, $sDst, $sComposite, $iX, $iY, $iFlag = 0)
+	{
+		$imgsrc = self::_VCreateImage($sSrc, $iFlag);
+		if (false === $imgsrc)
+		{
+			return false;
+		}
+		$imgcomposite = self::_VCreateImageObject($sComposite, $iFlag & Ko_Tool_Image::FLAG_COMPOSITE_BLOB);
+		if (false === $imgcomposite)
+		{
+			return false;
+		}
+		$composite_w = imagesx($imgcomposite);
+		$composite_h = imagesy($imgcomposite);
+		
+		$dstimg = imagecreatetruecolor($composite_w, $composite_h);
+		imagecopy($dstimg, $imgsrc, 0, 0, $iX, $iY, $composite_w, $composite_h);
+		imagecopy($dstimg, $imgcomposite, 0, 0, 0, 0, $composite_w, $composite_h);
+		imagecopy($imgsrc, $dstimg, $iX, $iY, 0, 0, $composite_w, $composite_h);
+		imagedestroy($dstimg);
+			
+		$ret = self::_VSaveImage($imgsrc, $sDst, true, $iFlag);
+		imagedestroy($imgcomposite);
+		imagedestroy($imgsrc);
+		return $ret;
+	}
+	
 	private static function _VCreateImage($sSrc, $iFlag)
 	{
-		if ($iFlag & Ko_Tool_Image::FLAG_SRC_BLOB)
+		return self::_VCreateImageObject($sSrc, $iFlag & Ko_Tool_Image::FLAG_SRC_BLOB);
+	}
+	
+	private static function _VCreateImageObject($sSrc, $bSrcIsBlob)
+	{
+		if ($bSrcIsBlob)
 		{
 			return imagecreatefromstring($sSrc);
 		}
