@@ -230,7 +230,10 @@ class Ko_Tool_Image_Gd implements IKo_Tool_Image
 	private static function _VSaveImage($oImg, $sDst, $bLossless, $iFlag)
 	{
 		$ext = strtolower(pathinfo($sDst, PATHINFO_EXTENSION));
-		assert(isset(self::$s_aExtFunc[$ext]));
+		if (!isset(self::$s_aExtFunc[$ext]))
+		{
+			$ext = 'jpg';
+		}
 		$imagefunc = self::$s_aExtFunc[$ext][0];
 		if ($iFlag & Ko_Tool_Image::FLAG_DST_BLOB)
 		{

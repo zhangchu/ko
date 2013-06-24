@@ -244,7 +244,10 @@ class Ko_Tool_Image_Imagick implements IKo_Tool_Image
 	private static function _VSaveImage($oImg, $sDst, $bLossless, $iFlag)
 	{
 		$ext = strtolower(pathinfo($sDst, PATHINFO_EXTENSION));
-		assert(isset(self::$s_aExtFunc[$ext]));
+		if (!isset(self::$s_aExtFunc[$ext]))
+		{
+			$ext = 'jpg';
+		}
 		$oImg->setImageFormat($ext);
 		$oImg->resetIterator();
 		if (!$bLossless)
