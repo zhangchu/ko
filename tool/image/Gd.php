@@ -30,7 +30,7 @@ class Ko_Tool_Image_Gd implements IKo_Tool_Image
 		return false;
 	}
 
-	public static function VCrop($sSrc, $sDst, $iWidth, $iHeight, $iFlag = 0)
+	public static function VCrop($sSrc, $sDst, $iWidth, $iHeight, $iFlag = 0, $iSrcX = 0, $iSrcY = 0, $iSrcW = 0, $iSrcH = 0)
 	{
 		$imgsrc = self::_VCreateImage($sSrc, $iFlag);
 		if (false === $imgsrc)
@@ -39,20 +39,31 @@ class Ko_Tool_Image_Gd implements IKo_Tool_Image
 		}
 		$w = imagesx($imgsrc);
 		$h = imagesy($imgsrc);
+		if ($iSrcX || $iSrcY || $iSrcW || $iSrcH)
+		{
+			$w = min($iSrcW ? $iSrcW : $w, $w - $iSrcX);
+			$h = min($iSrcH ? $iSrcH : $h, $h - $iSrcY);
+			if ($w <= 0 || $h <= 0 || $iSrcX < 0 || $iSrcY < 0)
+			{
+				$iSrcX = $iSrcY = 0;
+				$w = imagesx($imgsrc);
+				$h = imagesy($imgsrc);
+			}
+		}
 
 		if ($w / $h > $iWidth / $iHeight)
 		{	//原图片比例宽了，左右需要裁切
-			$src_y = 0;
+			$src_y = $iSrcY;
 			$src_h = $h;
 			$src_w = $src_h * $iWidth / $iHeight;
-			$src_x = ($w - $src_w) / 2;
+			$src_x = $iSrcX + ($w - $src_w) / 2;
 		}
 		else
 		{	//源图片比例高了，上下需要裁切
-			$src_x = 0;
+			$src_x = $iSrcX;
 			$src_w = $w;
 			$src_h = $src_w * $iHeight / $iWidth;
-			$src_y = ($h - $src_h) / 2;
+			$src_y = $iSrcY + ($h - $src_h) / 2;
 		}
 
 		$imgdst = imagecreatetruecolor($iWidth, $iHeight);

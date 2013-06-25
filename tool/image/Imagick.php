@@ -30,14 +30,30 @@ class Ko_Tool_Image_Imagick implements IKo_Tool_Image
 		return false;
 	}
 	
-	public static function VCrop($sSrc, $sDst, $iWidth, $iHeight, $iFlag = 0)
+	public static function VCrop($sSrc, $sDst, $iWidth, $iHeight, $iFlag = 0, $iSrcX = 0, $iSrcY = 0, $iSrcW = 0, $iSrcH = 0)
 	{
 		try
 		{
 			$imgsrc = self::_VCreateImage($sSrc, $iFlag);
 			self::_VAlignImage($imgsrc);
+			if ($iSrcX || $iSrcY || $iSrcW || $iSrcH)
+			{
+				$w = $imgsrc->getImageWidth();
+				$h = $imgsrc->getImageHeight();
+				$w = min($iSrcW ? $iSrcW : $w, $w - $iSrcX);
+				$h = min($iSrcH ? $iSrcH : $h, $h - $iSrcY);
+				if ($w <= 0 || $h <= 0 || $iSrcX < 0 || $iSrcY < 0)
+				{
+					$iSrcX = $iSrcY = $iSrcW = $iSrcH = 0;
+				}
+			}
 			foreach($imgsrc as $frame)
 			{
+				if ($iSrcX || $iSrcY || $iSrcW || $iSrcH)
+				{
+					$frame->cropImage($w, $h, $iSrcX, $iSrcY);
+					$frame->setImagePage($w, $h, 0, 0);
+				}
 				$frame->cropThumbnailImage($iWidth, $iHeight);
 			}
 			$ret = self::_VSaveImage($imgsrc, $sDst, false, $iFlag);

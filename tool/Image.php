@@ -23,7 +23,7 @@ interface IKo_Tool_Image
 	 *
 	 * @return boolean|string
 	 */
-	public static function VCrop($sSrc, $sDst, $iWidth, $iHeight, $iFlag = 0);
+	public static function VCrop($sSrc, $sDst, $iWidth, $iHeight, $iFlag = 0, $iSrcX = 0, $iSrcY = 0, $iSrcW = 0, $iSrcH = 0);
 	/**
 	 * 将源图片进行等比例的缩小，生成图片宽度不超过 iWidth 并且高度不超过 iHeight，iWidth 和 iHeight 同时有值(>0)时，需要同时满足
 	 *
@@ -71,9 +71,9 @@ class Ko_Tool_Image implements IKo_Tool_Image
 		return call_user_func(array('Ko_Tool_Image_'.KO_IMAGE, 'VValidImageType'), $sFile);
 	}
 	
-	public static function VCrop($sSrc, $sDst, $iWidth, $iHeight, $iFlag = 0)
+	public static function VCrop($sSrc, $sDst, $iWidth, $iHeight, $iFlag = 0, $iSrcX = 0, $iSrcY = 0, $iSrcW = 0, $iSrcH = 0)
 	{
-		return call_user_func(array('Ko_Tool_Image_'.KO_IMAGE, 'VCrop'), $sSrc, $sDst, $iWidth, $iHeight, $iFlag);
+		return call_user_func(array('Ko_Tool_Image_'.KO_IMAGE, 'VCrop'), $sSrc, $sDst, $iWidth, $iHeight, $iFlag, $iSrcX, $iSrcY, $iSrcW, $iSrcH);
 	}
 	
 	public static function VResize($sSrc, $sDst, $iWidth = 0, $iHeight = 0, $iFlag = 0)
