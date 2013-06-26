@@ -30,28 +30,28 @@ class Ko_Tool_Image_Imagick implements IKo_Tool_Image
 		return false;
 	}
 	
-	public static function VCrop($sSrc, $sDst, $iWidth, $iHeight, $iFlag = 0, $iSrcX = 0, $iSrcY = 0, $iSrcW = 0, $iSrcH = 0)
+	public static function VCrop($sSrc, $sDst, $iWidth, $iHeight, $iFlag = 0, $aOption = array())
 	{
 		try
 		{
 			$imgsrc = self::_VCreateImage($sSrc, $iFlag);
 			self::_VAlignImage($imgsrc);
-			if ($iSrcX || $iSrcY || $iSrcW || $iSrcH)
+			if ($aOption['srcx'] || $aOption['srcy'] || $aOption['srcw'] || $aOption['srch'])
 			{
 				$w = $imgsrc->getImageWidth();
 				$h = $imgsrc->getImageHeight();
-				$w = min($iSrcW ? $iSrcW : $w, $w - $iSrcX);
-				$h = min($iSrcH ? $iSrcH : $h, $h - $iSrcY);
-				if ($w <= 0 || $h <= 0 || $iSrcX < 0 || $iSrcY < 0)
+				$w = min($aOption['srcw'] ? $aOption['srcw'] : $w, $w - $aOption['srcx']);
+				$h = min($aOption['srch'] ? $aOption['srch'] : $h, $h - $aOption['srcy']);
+				if ($w <= 0 || $h <= 0 || $aOption['srcx'] < 0 || $aOption['srcy'] < 0)
 				{
-					$iSrcX = $iSrcY = $iSrcW = $iSrcH = 0;
+					$aOption['srcx'] = $aOption['srcy'] = $aOption['srcw'] = $aOption['srch'] = 0;
 				}
 			}
 			foreach($imgsrc as $frame)
 			{
-				if ($iSrcX || $iSrcY || $iSrcW || $iSrcH)
+				if ($aOption['srcx'] || $aOption['srcy'] || $aOption['srcw'] || $aOption['srch'])
 				{
-					$frame->cropImage($w, $h, $iSrcX, $iSrcY);
+					$frame->cropImage($w, $h, $aOption['srcx'], $aOption['srcy']);
 					$frame->setImagePage($w, $h, 0, 0);
 				}
 				$frame->cropThumbnailImage($iWidth, $iHeight);
@@ -66,11 +66,15 @@ class Ko_Tool_Image_Imagick implements IKo_Tool_Image
 		}
 	}
 	
-	public static function VResize($sSrc, $sDst, $iWidth = 0, $iHeight = 0, $iFlag = 0)
+	public static function VResize($sSrc, $sDst, $iWidth = 0, $iHeight = 0, $iFlag = 0, $aOption = array())
 	{
 		try
 		{
 			$imgsrc = self::_VCreateImage($sSrc, $iFlag);
+			if (!empty($aOption['sharpen']))
+			{
+				$imgsrc->sharpenImage($aOption['sharpen']['radius'], $aOption['sharpen']['sigma']);
+			}
 			foreach($imgsrc as $frame)
 			{
 				$page = $frame->getImagePage();
@@ -91,7 +95,11 @@ class Ko_Tool_Image_Imagick implements IKo_Tool_Image
 				$frame->scaleImage($frame->getImageWidth() * $rw, $frame->getImageHeight() * $rh);
 				$frame->setImagePage($dst_w, $dst_h, $page['x'] * $rw, $page['y'] * $rh);
 			}
-			$ret = self::_VSaveImage($imgsrc, $sDst, false, $iFlag);
+			if ($aOption['strip'])
+			{
+				$imgsrc->stripImage();
+			}
+			$ret = self::_VSaveImage($imgsrc, $sDst, false, $iFlag, intval($aOption['quality']));
 			$imgsrc->destroy();
 			return $ret;
 		}
@@ -189,7 +197,7 @@ class Ko_Tool_Image_Imagick implements IKo_Tool_Image
 		}
 	}
 	
-	public static function VComposite($sSrc, $sDst, $sComposite, $iX, $iY, $iXYflag = 0, $iFlag = 0)
+	public static function VComposite($sSrc, $sDst, $sComposite, $iX, $iY, $iFlag = 0, $aOption = array())
 	{
 		try
 		{
@@ -202,19 +210,19 @@ class Ko_Tool_Image_Imagick implements IKo_Tool_Image
 				$page = $frame->getImagePage();
 				$x = $iX;
 				$y = $iY;
-				if ($iXYflag & Ko_Tool_Image::XYFLAG_X_CENTER)
+				if ($aOption['xyflag'] & Ko_Tool_Image::XYFLAG_X_CENTER)
 				{
 					$x += ($page['width'] - $composite_w) / 2;
 				}
-				else if ($iXYflag & Ko_Tool_Image::XYFLAG_X_RIGHT)
+				else if ($aOption['xyflag'] & Ko_Tool_Image::XYFLAG_X_RIGHT)
 				{
 					$x = $page['width'] - $composite_w - $x;
 				}
-				if ($iXYflag & Ko_Tool_Image::XYFLAG_Y_CENTER)
+				if ($aOption['xyflag'] & Ko_Tool_Image::XYFLAG_Y_CENTER)
 				{
 					$y += ($page['height'] - $composite_h) / 2;
 				}
-				else if ($iXYflag & Ko_Tool_Image::XYFLAG_Y_BOTTOM)
+				else if ($aOption['xyflag'] & Ko_Tool_Image::XYFLAG_Y_BOTTOM)
 				{
 					$y = $page['height'] - $composite_h - $y;
 				}
@@ -257,7 +265,7 @@ class Ko_Tool_Image_Imagick implements IKo_Tool_Image
 		return new Imagick($sSrc);
 	}
 	
-	private static function _VSaveImage($oImg, $sDst, $bLossless, $iFlag)
+	private static function _VSaveImage($oImg, $sDst, $bLossless, $iFlag, $iQuality = 0)
 	{
 		$ext = strtolower(pathinfo($sDst, PATHINFO_EXTENSION));
 		if (!isset(self::$s_aExtFunc[$ext]))
@@ -268,7 +276,7 @@ class Ko_Tool_Image_Imagick implements IKo_Tool_Image
 		$oImg->resetIterator();
 		if (!$bLossless)
 		{
-			$oImg->setImageCompressionQuality(self::$s_aExtFunc[$ext][0]);
+			$oImg->setImageCompressionQuality($iQuality ? $iQuality : self::$s_aExtFunc[$ext][0]);
 		}
 		if ($iFlag & Ko_Tool_Image::FLAG_DST_BLOB)
 		{

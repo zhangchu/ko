@@ -30,7 +30,7 @@ class Ko_Tool_Image_Gd implements IKo_Tool_Image
 		return false;
 	}
 
-	public static function VCrop($sSrc, $sDst, $iWidth, $iHeight, $iFlag = 0, $iSrcX = 0, $iSrcY = 0, $iSrcW = 0, $iSrcH = 0)
+	public static function VCrop($sSrc, $sDst, $iWidth, $iHeight, $iFlag = 0, $aOption = array())
 	{
 		$imgsrc = self::_VCreateImage($sSrc, $iFlag);
 		if (false === $imgsrc)
@@ -39,13 +39,13 @@ class Ko_Tool_Image_Gd implements IKo_Tool_Image
 		}
 		$w = imagesx($imgsrc);
 		$h = imagesy($imgsrc);
-		if ($iSrcX || $iSrcY || $iSrcW || $iSrcH)
+		if ($aOption['srcx'] || $aOption['srcy'] || $aOption['srcw'] || $aOption['srch'])
 		{
-			$w = min($iSrcW ? $iSrcW : $w, $w - $iSrcX);
-			$h = min($iSrcH ? $iSrcH : $h, $h - $iSrcY);
-			if ($w <= 0 || $h <= 0 || $iSrcX < 0 || $iSrcY < 0)
+			$w = min($aOption['srcw'] ? $aOption['srcw'] : $w, $w - $aOption['srcx']);
+			$h = min($aOption['srch'] ? $aOption['srch'] : $h, $h - $aOption['srcy']);
+			if ($w <= 0 || $h <= 0 || $aOption['srcx'] < 0 || $aOption['srcy'] < 0)
 			{
-				$iSrcX = $iSrcY = 0;
+				$aOption['srcx'] = $aOption['srcy'] = 0;
 				$w = imagesx($imgsrc);
 				$h = imagesy($imgsrc);
 			}
@@ -53,17 +53,17 @@ class Ko_Tool_Image_Gd implements IKo_Tool_Image
 
 		if ($w / $h > $iWidth / $iHeight)
 		{	//原图片比例宽了，左右需要裁切
-			$src_y = $iSrcY;
+			$src_y = $aOption['srcy'];
 			$src_h = $h;
 			$src_w = $src_h * $iWidth / $iHeight;
-			$src_x = $iSrcX + ($w - $src_w) / 2;
+			$src_x = $aOption['srcx'] + ($w - $src_w) / 2;
 		}
 		else
 		{	//源图片比例高了，上下需要裁切
-			$src_x = $iSrcX;
+			$src_x = $aOption['srcx'];
 			$src_w = $w;
 			$src_h = $src_w * $iHeight / $iWidth;
-			$src_y = $iSrcY + ($h - $src_h) / 2;
+			$src_y = $aOption['srcy'] + ($h - $src_h) / 2;
 		}
 
 		$imgdst = imagecreatetruecolor($iWidth, $iHeight);
@@ -77,7 +77,7 @@ class Ko_Tool_Image_Gd implements IKo_Tool_Image
 		return $ret;
 	}
 	
-	public static function VResize($sSrc, $sDst, $iWidth = 0, $iHeight = 0, $iFlag = 0)
+	public static function VResize($sSrc, $sDst, $iWidth = 0, $iHeight = 0, $iFlag = 0, $aOption = array())
 	{
 		$imgsrc = self::_VCreateImage($sSrc, $iFlag);
 		if (false === $imgsrc)
@@ -178,7 +178,7 @@ class Ko_Tool_Image_Gd implements IKo_Tool_Image
 		return $ret;
 	}
 	
-	public static function VComposite($sSrc, $sDst, $sComposite, $iX, $iY, $iXYflag = 0, $iFlag = 0)
+	public static function VComposite($sSrc, $sDst, $sComposite, $iX, $iY, $iFlag = 0, $aOption = array())
 	{
 		$imgsrc = self::_VCreateImage($sSrc, $iFlag);
 		if (false === $imgsrc)
@@ -195,19 +195,19 @@ class Ko_Tool_Image_Gd implements IKo_Tool_Image
 		$composite_w = imagesx($imgcomposite);
 		$composite_h = imagesy($imgcomposite);
 
-		if ($iXYflag & Ko_Tool_Image::XYFLAG_X_CENTER)
+		if ($aOption['xyflag'] & Ko_Tool_Image::XYFLAG_X_CENTER)
 		{
 			$iX += ($w - $composite_w) / 2;
 		}
-		else if ($iXYflag & Ko_Tool_Image::XYFLAG_X_RIGHT)
+		else if ($aOption['xyflag'] & Ko_Tool_Image::XYFLAG_X_RIGHT)
 		{
 			$iX = $w - $composite_w - $iX;
 		}
-		if ($iXYflag & Ko_Tool_Image::XYFLAG_Y_CENTER)
+		if ($aOption['xyflag'] & Ko_Tool_Image::XYFLAG_Y_CENTER)
 		{
 			$iY += ($h - $composite_h) / 2;
 		}
-		else if ($iXYflag & Ko_Tool_Image::XYFLAG_Y_BOTTOM)
+		else if ($aOption['xyflag'] & Ko_Tool_Image::XYFLAG_Y_BOTTOM)
 		{
 			$iY = $h - $composite_h - $iY;
 		}

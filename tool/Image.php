@@ -21,15 +21,17 @@ interface IKo_Tool_Image
 	/**
 	 * 保证生成的图片宽度为 iWidth，高度为 iHeight
 	 *
+	 * @param array $aOption srcx srcy srcw srch 在原图的指定部分基础上进行裁剪
 	 * @return boolean|string
 	 */
-	public static function VCrop($sSrc, $sDst, $iWidth, $iHeight, $iFlag = 0, $iSrcX = 0, $iSrcY = 0, $iSrcW = 0, $iSrcH = 0);
+	public static function VCrop($sSrc, $sDst, $iWidth, $iHeight, $iFlag = 0, $aOption = array());
 	/**
 	 * 将源图片进行等比例的缩小，生成图片宽度不超过 iWidth 并且高度不超过 iHeight，iWidth 和 iHeight 同时有值(>0)时，需要同时满足
 	 *
+	 * @param array $aOption sharpen.radius sharpen.sigma quality strip
 	 * @return boolean|string
 	 */
-	public static function VResize($sSrc, $sDst, $iWidth = 0, $iHeight = 0, $iFlag = 0);
+	public static function VResize($sSrc, $sDst, $iWidth = 0, $iHeight = 0, $iFlag = 0, $aOption = array());
 	/**
 	 * 旋转图片，fAngle 通常为 90 的整数倍，顺时针方向旋转
 	 *
@@ -51,9 +53,10 @@ interface IKo_Tool_Image
 	/**
 	 * 组合图片，如：加水印
 	 *
+	 * @param array $aOption xyflag 水印的相对位置
 	 * @return boolean|string
 	 */
-	public static function VComposite($sSrc, $sDst, $sComposite, $iX, $iY, $iXYflag = 0, $iFlag = 0);
+	public static function VComposite($sSrc, $sDst, $sComposite, $iX, $iY, $iFlag = 0, $aOption = array());
 }
 
 class Ko_Tool_Image implements IKo_Tool_Image
@@ -71,14 +74,14 @@ class Ko_Tool_Image implements IKo_Tool_Image
 		return call_user_func(array('Ko_Tool_Image_'.KO_IMAGE, 'VValidImageType'), $sFile);
 	}
 	
-	public static function VCrop($sSrc, $sDst, $iWidth, $iHeight, $iFlag = 0, $iSrcX = 0, $iSrcY = 0, $iSrcW = 0, $iSrcH = 0)
+	public static function VCrop($sSrc, $sDst, $iWidth, $iHeight, $iFlag = 0, $aOption = array())
 	{
-		return call_user_func(array('Ko_Tool_Image_'.KO_IMAGE, 'VCrop'), $sSrc, $sDst, $iWidth, $iHeight, $iFlag, $iSrcX, $iSrcY, $iSrcW, $iSrcH);
+		return call_user_func(array('Ko_Tool_Image_'.KO_IMAGE, 'VCrop'), $sSrc, $sDst, $iWidth, $iHeight, $iFlag, $aOption);
 	}
 	
-	public static function VResize($sSrc, $sDst, $iWidth = 0, $iHeight = 0, $iFlag = 0)
+	public static function VResize($sSrc, $sDst, $iWidth = 0, $iHeight = 0, $iFlag = 0, $aOption = array())
 	{
-		return call_user_func(array('Ko_Tool_Image_'.KO_IMAGE, 'VResize'), $sSrc, $sDst, $iWidth, $iHeight, $iFlag);
+		return call_user_func(array('Ko_Tool_Image_'.KO_IMAGE, 'VResize'), $sSrc, $sDst, $iWidth, $iHeight, $iFlag, $aOption);
 	}
 
 	public static function VRotate($sSrc, $sDst, $fAngle, $iBgColor = 0xffffff, $iFlag = 0)
@@ -96,9 +99,9 @@ class Ko_Tool_Image implements IKo_Tool_Image
 		return call_user_func(array('Ko_Tool_Image_'.KO_IMAGE, 'VFlipV'), $sSrc, $sDst, $iFlag);
 	}
 	
-	public static function VComposite($sSrc, $sDst, $sComposite, $iX, $iY, $iXYflag = 0, $iFlag = 0)
+	public static function VComposite($sSrc, $sDst, $sComposite, $iX, $iY, $iFlag = 0, $aOption = array())
 	{
-		return call_user_func(array('Ko_Tool_Image_'.KO_IMAGE, 'VComposite'), $sSrc, $sDst, $sComposite, $iX, $iY, $iXYflag, $iFlag);
+		return call_user_func(array('Ko_Tool_Image_'.KO_IMAGE, 'VComposite'), $sSrc, $sDst, $sComposite, $iX, $iY, $iFlag, $aOption);
 	}
 }
 
