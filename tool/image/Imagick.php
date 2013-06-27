@@ -36,6 +36,10 @@ class Ko_Tool_Image_Imagick implements IKo_Tool_Image
 		{
 			$imgsrc = self::_VCreateImage($sSrc, $iFlag);
 			self::_VAlignImage($imgsrc);
+			if (!empty($aOption['sharpen']))
+			{
+				$imgsrc->sharpenImage($aOption['sharpen']['radius'], $aOption['sharpen']['sigma']);
+			}
 			if ($aOption['srcx'] || $aOption['srcy'] || $aOption['srcw'] || $aOption['srch'])
 			{
 				$w = $imgsrc->getImageWidth();
@@ -56,7 +60,11 @@ class Ko_Tool_Image_Imagick implements IKo_Tool_Image
 				}
 				$frame->cropThumbnailImage($iWidth, $iHeight);
 			}
-			$ret = self::_VSaveImage($imgsrc, $sDst, false, $iFlag);
+			if ($aOption['strip'])
+			{
+				$imgsrc->stripImage();
+			}
+			$ret = self::_VSaveImage($imgsrc, $sDst, false, $iFlag, intval($aOption['quality']));
 			$imgsrc->destroy();
 			return $ret;
 		}

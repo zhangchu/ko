@@ -22,6 +22,7 @@ interface IKo_Tool_Image
 	 * 保证生成的图片宽度为 iWidth，高度为 iHeight
 	 *
 	 * @param array $aOption srcx srcy srcw srch 在原图的指定部分基础上进行裁剪
+	 *                       sharpen.radius sharpen.sigma quality strip
 	 * @return boolean|string
 	 */
 	public static function VCrop($sSrc, $sDst, $iWidth, $iHeight, $iFlag = 0, $aOption = array());
