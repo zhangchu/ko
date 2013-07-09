@@ -15,6 +15,13 @@
 interface IKo_Tool_Input
 {
 	/**
+	 * 直接对一个变量进行参数校验
+	 * $param mixed $vValue 可以是一个值，也可以是一个数组
+	 * $param mixed $vVarType 可以是一个类型，也可以是一个类型数组，与 $vValue 对应
+	 * @return mixed
+	 */
+	public static function VCleanVar($vValue, $vVarType, $sCharset = KO_CHARSET);
+	/**
 	 * 解析指定名称的 cgi 参数
 	 * @param string $sSource 参数的来源，取值为 'g' 'p' 'c' 'r' 'f'，分别代表 $_GET $_POST $_COOKIE $_REQUEST $_FILES
 	 * @param string $sVarName 参数的名称
@@ -84,6 +91,25 @@ class Ko_Tool_Input implements IKo_Tool_Input
 
 	private static $s_aSuperGlobal = array ('g' => '_GET', 'p' => '_POST', 'c' => '_COOKIE', 'r' => '_REQUEST', 'f' => '_FILES');
 
+	/**
+	 * @return mixed
+	 */
+	public static function VCleanVar($vValue, $vVarType, $sCharset = KO_CHARSET)
+	{
+		if (is_array($vValue) && is_array($vVarType))
+		{
+			$aRet = array();
+			foreach ($vValue as $k => $v)
+			{
+				self::_VCleanOne($aRet, $vVarType, $k, $v, $sCharset);
+			}
+			return $aRet;
+		}
+		$aRet = array();
+		self::_VCleanOneType($aRet, array(), $vVarType, 'v', $vValue, $sCharset);
+		return $aRet['v'];
+	}
+	
 	/**
 	 * @return mixed
 	 */
