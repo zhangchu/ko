@@ -431,7 +431,7 @@ class Ko_Mode_OAuth2Server extends Ko_Mode_OAuthServerBase implements IKo_Mode_O
 		//http://tools.ietf.org/html/rfc6749#section-2.3.1
 		$client_id = urldecode($_SERVER['PHP_AUTH_USER']);
 		$client_secret = urldecode($_SERVER['PHP_AUTH_PW']);
-		if (0 === strlen($client_id))
+		if (0 === strlen($client_id) || 0 === strlen($client_secret))
 		{
 			$client_id = $this->_aReq['client_id'];
 			$client_secret = $this->_aReq['client_secret'];
