@@ -708,21 +708,24 @@ class Ko_Dao_DB implements IKo_Dao_DB, IKo_Dao_DBHelp, IKo_Dao_Mysql
 	private function _aObjs2IntIds($aObjs, $sUidKey, $sIdKey)
 	{
 		$uids = $ids = array();
-		foreach($aObjs as $obj)
+		if (is_array($aObjs))
 		{
-			if (is_array($obj))
+			foreach($aObjs as $obj)
 			{
-				$uids[] = intval($obj[$sUidKey]);
-				$ids[] = intval($obj[$sIdKey]);
-			}
-			else if (is_object($obj))
-			{
-				$uids[] = intval($obj->$sUidKey);
-				$ids[] = intval($obj->$sIdKey);
-			}
-			else
-			{
-				$uids[] = $ids[] = intval($obj);
+				if (is_array($obj))
+				{
+					$uids[] = intval($obj[$sUidKey]);
+					$ids[] = intval($obj[$sIdKey]);
+				}
+				else if (is_object($obj))
+				{
+					$uids[] = intval($obj->$sUidKey);
+					$ids[] = intval($obj->$sIdKey);
+				}
+				else
+				{
+					$uids[] = $ids[] = intval($obj);
+				}
 			}
 		}
 		return array($uids, $ids);
