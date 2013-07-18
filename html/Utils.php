@@ -24,6 +24,12 @@ interface IKo_Html_Utils
 	 * @return string
 	 */
 	public static function SHighlight($sText, $aWord, $iLength = 0, $sExt = '...', $sBefore = '<font color="red">', $sAfter = '</font>');
+	/**
+	 * 将数组转换为 html
+	 *
+	 * @return string
+	 */
+	public static function SArr2html($aData, $iDepth = 0);
 }
 
 class Ko_Html_Utils implements IKo_Html_Utils
@@ -79,6 +85,32 @@ class Ko_Html_Utils implements IKo_Html_Utils
 			}
 		}
 		return $sHtml;
+	}
+	
+	/**
+	 * @return string
+	 */
+	public static function SArr2html($aData, $iDepth = 0)
+	{
+		if (is_array($aData))
+		{
+			$space = '';
+			for ($i=0; $i<$iDepth; ++$i)
+			{
+				$space .= ' &nbsp;';
+			}
+			$html = 'Array (<br />'."\n";
+			foreach ($aData as $k => $v)
+			{
+				$html .= ' &nbsp;'.$space.'['.htmlspecialchars($k).'] => '.self::SArr2html($v, $iDepth+1).'<br />'."\n";
+			}
+			$html .= $space.')';
+		}
+		else
+		{
+			$html = htmlspecialchars($aData);
+		}
+		return $html;
 	}
 	
 	private static function _IGetHighlightMinPos($sText, $aWord)
