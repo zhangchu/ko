@@ -83,7 +83,7 @@ class Ko_Tool_Image_Imagick implements IKo_Tool_Image
 			$w = $page['width'];
 			$h = $page['height'];
 			if ((0 == $iWidth || $iWidth >= $w) && (0 == $iHeight || $iHeight >= $h))
-			{	//Ô­Í¼³ß´ç²»¹»Ö±½Ó½øÐÐ¸´ÖÆ£¬ºöÂÔ¸ñÊ½ºÍoption
+			{	//åŽŸå›¾å°ºå¯¸ä¸å¤Ÿç›´æŽ¥è¿›è¡Œå¤åˆ¶ï¼Œå¿½ç•¥æ ¼å¼å’Œoption
 				$imgsrc->destroy();
 				return self::_VCopyImage($sSrc, $sDst, $iFlag);
 			}
