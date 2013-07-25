@@ -86,6 +86,11 @@ class Ko_Tool_Image_Gd implements IKo_Tool_Image
 		}
 		$dst_w = $w = imagesx($imgsrc);
 		$dst_h = $h = imagesy($imgsrc);
+		if ((0 == $iWidth || $iWidth >= $w) && (0 == $iHeight || $iHeight >= $h))
+		{	//原图尺寸不够直接进行复制，忽略格式和option
+			imagedestroy($imgsrc);
+			return self::_VCopyImage($sSrc, $sDst, $iFlag);
+		}
 		
 		if ($iWidth > 0 && $dst_w > $iWidth)
 		{
@@ -264,5 +269,25 @@ class Ko_Tool_Image_Gd implements IKo_Tool_Image
 			return $content;
 		}
 		return $imagefunc($oImg, $sDst, self::$s_aExtFunc[$ext][$bLossless ? 2 : 1]);
+	}
+	
+	private static function _VCopyImage($sSrc, $sDst, $iFlag)
+	{
+		if (($iFlag & Ko_Tool_Image::FLAG_SRC_BLOB) && ($iFlag & Ko_Tool_Image::FLAG_DST_BLOB))
+		{
+			return $sSrc;
+		}
+		else if ($iFlag & Ko_Tool_Image::FLAG_SRC_BLOB)
+		{
+			return strlen($sSrc) === file_put_contents($sDst, $sSrc);
+		}
+		else if ($iFlag & Ko_Tool_Image::FLAG_DST_BLOB)
+		{
+			return file_get_contents($sSrc);
+		}
+		else
+		{
+			return copy($sSrc, $sDst);
+		}
 	}
 }

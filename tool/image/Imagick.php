@@ -79,6 +79,14 @@ class Ko_Tool_Image_Imagick implements IKo_Tool_Image
 		try
 		{
 			$imgsrc = self::_VCreateImage($sSrc, $iFlag);
+			$page = $imgsrc->getImagePage();
+			$w = $page['width'];
+			$h = $page['height'];
+			if ((0 == $iWidth || $iWidth >= $w) && (0 == $iHeight || $iHeight >= $h))
+			{	//原图尺寸不够直接进行复制，忽略格式和option
+				$imgsrc->destroy();
+				return self::_VCopyImage($sSrc, $sDst, $iFlag);
+			}
 			if (!empty($aOption['sharpen']))
 			{
 				$imgsrc->sharpenImage($aOption['sharpen']['radius'], $aOption['sharpen']['sigma']);
@@ -295,5 +303,25 @@ class Ko_Tool_Image_Imagick implements IKo_Tool_Image
 			return $oImg->writeImages($sDst, true);
 		}
 		return $oImg->writeImage($sDst);
+	}
+	
+	private static function _VCopyImage($sSrc, $sDst, $iFlag)
+	{
+		if (($iFlag & Ko_Tool_Image::FLAG_SRC_BLOB) && ($iFlag & Ko_Tool_Image::FLAG_DST_BLOB))
+		{
+			return $sSrc;
+		}
+		else if ($iFlag & Ko_Tool_Image::FLAG_SRC_BLOB)
+		{
+			return strlen($sSrc) === file_put_contents($sDst, $sSrc);
+		}
+		else if ($iFlag & Ko_Tool_Image::FLAG_DST_BLOB)
+		{
+			return file_get_contents($sSrc);
+		}
+		else
+		{
+			return copy($sSrc, $sDst);
+		}
 	}
 }
