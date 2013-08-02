@@ -92,7 +92,7 @@ interface IKo_Mode_Message
 	public function iGetThread($iUid, $aTo);
 	
 	/**
-	 * 判断用户是否在某个消息线limian
+	 * 判断用户是否在某个消息线里面
 	 *
 	 * @return boolean
 	 */
@@ -105,6 +105,13 @@ interface IKo_Mode_Message
 	 */
 	public function aJoinThread($aTo, $iThread);
 
+	/**
+	 * 用户删除会话，与离开会话不同，删除会话后，有新消息会导致回话重新出现
+	 *
+	 * @return boolean
+	 */
+	public function bDeleteThread($iUid, $iThread);
+	
 	/**
 	 * 用户离开会话
 	 *
@@ -219,9 +226,7 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	 */
 	public function iReplyThread($iUid, $iThread, $sContent, $sExinfo, $sLastinfo)
 	{
-		$userthreadDao = $this->_aConf['userthread'].'Dao';
-		$info = $this->$userthreadDao->aGet(array('uid' => $iUid, 'mid' => $iThread));
-		if (empty($info))
+		if ($this->bIsUserInThread($iUid, $iThread))
 		{	//不是消息线相关用户，不能回复
 			return 0;
 		}
@@ -265,9 +270,10 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	 */
 	public function bIsUserInThread($iUid, $iThread)
 	{
-		$userthreadDao = $this->_aConf['userthread'].'Dao';
-		$info = $this->$userthreadDao->aGet(array('uid' => $iUid, 'mid' => $iThread));
-		return !empty($info);
+		$threadDao = $this->_aConf['thread'].'Dao';
+		$info = $this->$threadDao->aGet($iThread);
+		$aUids = $this->_aUidsToArray($info['uids']);
+		return in_array($iUid, $aUids);
 	}
 	
 	/**
@@ -298,6 +304,15 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 			$this->$threadDao->iUpdate($iThread, $aUpdate);
 		}
 		return $aTo;
+	}
+	
+	/**
+	 * @return boolean
+	 */
+	public function bDeleteThread($iUid, $iThread)
+	{
+		$this->_iDeleteUserThread($iUid, $iThread);
+		return true;
 	}
 	
 	/**
@@ -514,12 +529,20 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	
 	private function _iUpdateUserThread($iUid, $iThread, $sLasttime, $iUnread)
 	{
+		$aData = array(
+			'uid' => $iUid,
+			'mid' => $iThread,
+			'lasttime' => $sLasttime,
+			'jointime' => $sLasttime,
+			'unread' => $iUnread,
+			);
 		$aUpdate = array(
 			'lasttime' => $sLasttime,
 			);
 		$aChange = $iUnread ? array('unread' => $iUnread) : array();
 		$userthreadDao = $this->_aConf['userthread'].'Dao';
-		return $this->$userthreadDao->iUpdate(array('uid' => $iUid, 'mid' => $iThread), $aUpdate, $aChange);
+		$this->$userthreadDao->aInsert($aData, $aUpdate, $aChange);
+		return 1;
 	}
 	
 	private function _iDeleteUserThread($iUid, $iThread)
