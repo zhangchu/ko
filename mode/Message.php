@@ -226,7 +226,10 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	 */
 	public function iReplyThread($iUid, $iThread, $sContent, $sExinfo, $sLastinfo)
 	{
-		if ($this->bIsUserInThread($iUid, $iThread))
+		$threadDao = $this->_aConf['thread'].'Dao';
+		$info = $this->$threadDao->aGet($iThread);
+		$aUids = $this->_aUidsToArray($info['uids']);
+		if (!in_array($iUid, $aUids))
 		{	//不是消息线相关用户，不能回复
 			return 0;
 		}
@@ -237,11 +240,8 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 		$aUpdate = array(
 			'lastinfo' => $sLastinfo,
 			);
-		$threadDao = $this->_aConf['thread'].'Dao';
 		$this->$threadDao->iUpdate($iThread, $aUpdate);	//更新消息线信息
 		
-		$info = $this->$threadDao->aGet($iThread);
-		$aUids = $this->_aUidsToArray($info['uids']);
 		foreach ($aUids as $uid)
 		{	//依次更新用户与消息线关系的时间戳
 			$this->_iUpdateUserThread($uid, $iThread, $ctime, ($uid == $iUid) ? 0 : 1);
