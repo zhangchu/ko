@@ -28,6 +28,11 @@ class Ko_Tool_Http
 		return $content;
 	}
 	
+	public static function vClear($sUrl)
+	{
+		Ko_Tool_CacheHttp::VClear(self::$s_sCacheDir, $sUrl);
+	}
+	
 	public static function sGet_Mock_ff($sUrl)
 	{
 		$header = array();

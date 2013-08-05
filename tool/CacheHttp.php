@@ -2,6 +2,16 @@
 
 class Ko_Tool_CacheHttp
 {
+	public static function VClear($sCacheDir, $sUrl)
+	{
+		$md5 = md5($sUrl);
+		$filename = $sCacheDir.'/'.substr($md5, 0, 2).'/'.substr($md5, 2, 2).'/'.$md5;
+		if (is_file($filename))
+		{
+			unlink($filename);
+		}
+	}
+	
 	public static function VSet($sCacheDir, $sUrl, $sContent)
 	{
 		$md5 = md5($sUrl);
