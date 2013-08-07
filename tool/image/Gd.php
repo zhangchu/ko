@@ -287,7 +287,12 @@ class Ko_Tool_Image_Gd implements IKo_Tool_Image
 		}
 		else
 		{
-			return copy($sSrc, $sDst);
+			$sSrc = file_get_contents($sSrc);
+			if (false === $sSrc)
+			{
+				return false;
+			}
+			return strlen($sSrc) === file_put_contents($sDst, $sSrc);
 		}
 	}
 }
