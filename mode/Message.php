@@ -146,6 +146,13 @@ interface IKo_Mode_Message
 	 * @return array
 	 */
 	public function aGetMessageList($iUid, $iThread, $iStart, $iNum);
+
+	/**
+	 * 用户查看会话消息列表详情，根据消息线id查询
+	 *
+	 * @return array
+	 */
+	public function aGetMessageListWithTotal($iUid, $iThread, &$iTotal, $iStart, $iNum);
 	
 	/**
 	 * 用户查看会话消息列表详情，根据参与者查询
@@ -153,6 +160,13 @@ interface IKo_Mode_Message
 	 * @return array
 	 */
 	public function aGetMessageListByUsers($iUid, $aTo, $iStart, $iNum);
+	
+	/**
+	 * 用户查看会话消息列表详情，根据参与者查询
+	 *
+	 * @return array
+	 */
+	public function aGetMessageListByUsersWithTotal($iUid, $aTo, &$iTotal, $iStart, $iNum);
 }
 
 /**
@@ -167,8 +181,8 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	 * array(
 	 *   'message' => 消息内容表
 	 *   'list' => 消息线的回复列表
-	 *   'thread' => 消息线信息表
-	 *   'userthread' => 用户参与的消息线表
+	 *   'thread' => 消息线信息表，可选
+	 *   'userthread' => 用户参与的消息线表，可选
 	 *   'threaduserlog' => 用户参与的消息线的变动表，可选
 	 *   'uidsthread' => 通过用户列表获取消息线，可选
 	 *   'maxusercount' => 一个消息线最多的参与人数，可选
@@ -226,25 +240,31 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	 */
 	public function iReplyThread($iUid, $iThread, $sContent, $sExinfo, $sLastinfo)
 	{
-		$threadDao = $this->_aConf['thread'].'Dao';
-		$info = $this->$threadDao->aGet($iThread);
-		$aUids = $this->_aUidsToArray($info['uids']);
-		if (!in_array($iUid, $aUids))
-		{	//不是消息线相关用户，不能回复
-			return 0;
+		if (isset($this->_aConf['thread']) && isset($this->_aConf['userthread']))
+		{
+			$threadDao = $this->_aConf['thread'].'Dao';
+			$info = $this->$threadDao->aGet($iThread);
+			$aUids = $this->_aUidsToArray($info['uids']);
+			if (!in_array($iUid, $aUids))
+			{	//不是消息线相关用户，不能回复
+				return 0;
+			}
 		}
 		
 		$ctime = date('Y-m-d H:i:s');
 		$mid = $this->_iInsertMessage($iUid, $sContent, $sExinfo, $ctime);	//添加消息
 		$this->_vInsertList($iThread, $mid, $ctime);	//添加到消息线消息列表
-		$aUpdate = array(
-			'lastinfo' => $sLastinfo,
-			);
-		$this->$threadDao->iUpdate($iThread, $aUpdate);	//更新消息线信息
 		
-		foreach ($aUids as $uid)
-		{	//依次更新用户与消息线关系的时间戳
-			$this->_iUpdateUserThread($uid, $iThread, $ctime, ($uid == $iUid) ? 0 : 1);
+		if (isset($this->_aConf['thread']) && isset($this->_aConf['userthread']))
+		{
+			$aUpdate = array(
+				'lastinfo' => $sLastinfo,
+				);
+			$this->$threadDao->iUpdate($iThread, $aUpdate);	//更新消息线信息
+			foreach ($aUids as $uid)
+			{	//依次更新用户与消息线关系的时间戳
+				$this->_iUpdateUserThread($uid, $iThread, $ctime, ($uid == $iUid) ? 0 : 1);
+			}
 		}
 		return $mid;
 	}
@@ -270,6 +290,8 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	 */
 	public function bIsUserInThread($iUid, $iThread)
 	{
+		assert(isset($this->_aConf['thread']));
+		
 		$threadDao = $this->_aConf['thread'].'Dao';
 		$info = $this->$threadDao->aGet($iThread);
 		$aUids = $this->_aUidsToArray($info['uids']);
@@ -281,6 +303,8 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	 */
 	public function aJoinThread($aTo, $iThread)
 	{
+		assert(isset($this->_aConf['thread']));
+		
 		$threadDao = $this->_aConf['thread'].'Dao';
 		$info = $this->$threadDao->aGet($iThread);
 		$aUids = $this->_aUidsToArray($info['uids']);
@@ -320,6 +344,8 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	 */
 	public function bQuitThread($iUid, $iThread)
 	{
+		assert(isset($this->_aConf['thread']));
+		
 		$threadDao = $this->_aConf['thread'].'Dao';
 		$info = $this->$threadDao->aGet($iThread);
 		$aUids = $this->_aUidsToArray($info['uids']);
@@ -359,6 +385,8 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	 */
 	public function aGetThreadInfo($iUid, $iThread)
 	{
+		assert(isset($this->_aConf['userthread']) && isset($this->_aConf['thread']));
+		
 		$userthreadDao = $this->_aConf['userthread'].'Dao';
 		$info = $this->$userthreadDao->aGet(array('uid' => $iUid, 'mid' => $iThread));
 		if (empty($info))
@@ -377,20 +405,57 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	 */
 	public function aGetMessageList($iUid, $iThread, $iStart, $iNum)
 	{
-		$userthreadDao = $this->_aConf['userthread'].'Dao';
-		$info = $this->$userthreadDao->aGet(array('uid' => $iUid, 'mid' => $iThread));
-		if (empty($info))
+		if (isset($this->_aConf['userthread']))
 		{
-			return array();
-		}
-		if ($info['unread'])
-		{
-			$this->$userthreadDao->iUpdate(array('uid' => $iUid, 'mid' => $iThread), array('unread' => 0));
+			$userthreadDao = $this->_aConf['userthread'].'Dao';
+			$info = $this->$userthreadDao->aGet(array('uid' => $iUid, 'mid' => $iThread));
+			if (empty($info))
+			{
+				return array();
+			}
+			if ($info['unread'])
+			{
+				$this->$userthreadDao->iUpdate(array('uid' => $iUid, 'mid' => $iThread), array('unread' => 0));
+			}
 		}
 		
 		$oOption = new Ko_Tool_SQL;
-		$oOption->oWhere('ctime >= ?', $info['jointime'])->oOrderBy('ctime desc')->oOffset($iStart)->oLimit($iNum);
+		if (isset($this->_aConf['userthread']))
+		{
+			$oOption->oWhere('ctime >= ?', $info['jointime']);
+		}
+		$oOption->oOrderBy('ctime desc')->oOffset($iStart)->oLimit($iNum);
 		return $this->_aGetMessageList($iThread, $oOption);
+	}
+
+	/**
+	 * @return array
+	 */
+	public function aGetMessageListWithTotal($iUid, $iThread, &$iTotal, $iStart, $iNum)
+	{
+		if (isset($this->_aConf['userthread']))
+		{
+			$userthreadDao = $this->_aConf['userthread'].'Dao';
+			$info = $this->$userthreadDao->aGet(array('uid' => $iUid, 'mid' => $iThread));
+			if (empty($info))
+			{
+				return array();
+			}
+			if ($info['unread'])
+			{
+				$this->$userthreadDao->iUpdate(array('uid' => $iUid, 'mid' => $iThread), array('unread' => 0));
+			}
+		}
+
+		$oOption = new Ko_Tool_SQL;
+		if (isset($this->_aConf['userthread']))
+		{
+			$oOption->oWhere('ctime >= ?', $info['jointime']);
+		}
+		$oOption->oOrderBy('ctime desc')->oOffset($iStart)->oLimit($iNum)->oCalcFoundRows(true);
+		$aRet = $this->_aGetMessageList($iThread, $oOption);
+		$iTotal = $oOption->iGetFoundRows();
+		return $aRet;
 	}
 	
 	/**
@@ -404,6 +469,19 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 			return array();
 		}
 		return $this->aGetMessageList($iUid, $iThread, $iStart, $iNum);
+	}
+	
+	/**
+	 * @return array
+	 */
+	public function aGetMessageListByUsersWithTotal($iUid, $aTo, &$iTotal, $iStart, $iNum)
+	{
+		$iThread = $this->iGetThread($iUid, $aTo);
+		if (empty($iThread))
+		{
+			return array();
+		}
+		return $this->aGetMessageListWithTotal($iUid, $iThread, $iTotal, $iStart, $iNum);
 	}
 	
 	private function _aGetThreadList($iUid, $oOption)
@@ -424,6 +502,8 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	
 	private function _aGetUserThreadList($iUid, $oOption)
 	{
+		assert(isset($this->_aConf['userthread']));
+		
 		$userthreadDao = $this->_aConf['userthread'].'Dao';
 		if (strlen($this->$userthreadDao->sGetSplitField()))
 		{
@@ -435,6 +515,8 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	
 	private function _aGetThreadDetails($aList)
 	{
+		assert(isset($this->_aConf['thread']));
+		
 		$threadDao = $this->_aConf['thread'].'Dao';
 		return $this->$threadDao->aGetListByKeys($aList);
 	}
@@ -496,6 +578,8 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	
 	private function _vInsertThread($iThread, $sUids, $sLastinfo)
 	{
+		assert(isset($this->_aConf['thread']));
+		
 		$threadDao = $this->_aConf['thread'].'Dao';
 		$aData = array(
 			'mid' => $iThread,
@@ -507,6 +591,8 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	
 	private function _bInsertUserThread($iUid, $iThread, $sLasttime, $iUnread)
 	{
+		assert(isset($this->_aConf['userthread']));
+		
 		try
 		{
 			$aData = array(
@@ -529,6 +615,8 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	
 	private function _iUpdateUserThread($iUid, $iThread, $sLasttime, $iUnread)
 	{
+		assert(isset($this->_aConf['userthread']));
+		
 		$aData = array(
 			'uid' => $iUid,
 			'mid' => $iThread,
@@ -547,6 +635,8 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	
 	private function _iDeleteUserThread($iUid, $iThread)
 	{
+		assert(isset($this->_aConf['userthread']));
+		
 		$userthreadDao = $this->_aConf['userthread'].'Dao';
 		$ret = $this->$userthreadDao->iDelete(array('uid' => $iUid, 'mid' => $iThread));
 		if ($ret)
@@ -573,7 +663,7 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	
 	private function _iGetMergeThread($sUids)
 	{
-		if (isset($this->_aConf['uidsthread']))
+		if (isset($this->_aConf['uidsthread']) && isset($this->_aConf['thread']))
 		{
 			$uidsthreadDao = $this->_aConf['uidsthread'].'Dao';
 			$info = $this->$uidsthreadDao->aGet($sUids);

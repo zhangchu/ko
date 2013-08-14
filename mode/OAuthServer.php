@@ -84,6 +84,12 @@ interface IKo_Mode_OAuthServer
 	 * @return array|exit 返回授权信息 array(uid, scope)
 	 */
 	public function aCheckAuthReq($sBaseuri = '');
+	/**
+	 * 直接获取用户的授权信息
+	 *
+	 * @return array 返回用户授权信息 array(token, secret)
+	 */
+	public function aGetUserTokenDirect($iCid, $iUid, $sScope = '');
 
 	/**
 	 * client Api: 获取 temp token 的接口 uri
@@ -210,7 +216,7 @@ class Ko_Mode_OAuthServer extends Ko_Mode_OAuthServerBase implements IKo_Mode_OA
 				header('HTTP/1.0 401 Unauthorized');
 				exit;
 			}
-			list($token, $secret) = $this->_aGetTokenCredentials($authinfo[0], $authinfo[1]);
+			list($token, $secret) = $this->aGetUserTokenDirect($this->_aReq['oauth_consumer_key'], $authinfo[0], $authinfo[1]);
 			$sBody = 'oauth_token='.urlencode($token).'&oauth_token_secret='.urlencode($secret);
 		}
 		else
@@ -223,7 +229,7 @@ class Ko_Mode_OAuthServer extends Ko_Mode_OAuthServerBase implements IKo_Mode_OA
 					header('HTTP/1.0 401 Unauthorized');
 					exit;
 				}
-				list($token, $secret) = $this->_aGetTokenCredentials($authinfo[0], $authinfo[1]);
+				list($token, $secret) = $this->aGetUserTokenDirect($this->_aReq['oauth_consumer_key'], $authinfo[0], $authinfo[1]);
 				$tt = $this->_iGetTokenTimeout();
 				$sBody = 'oauth_token='.urlencode($token).'&oauth_token_secret='.urlencode($secret).'&x_auth_expires='.($tt ? ($tt + time()) : 0);
 			}
@@ -250,6 +256,38 @@ class Ko_Mode_OAuthServer extends Ko_Mode_OAuthServerBase implements IKo_Mode_OA
 		$info = $this->$tokenApi->aGet($this->_aReq['oauth_token']);
 		assert(strval($info['cid']) === $this->_aReq['oauth_consumer_key']);
 		return array($info['uid'], $info['scope']);
+	}
+
+	/**
+	 * @return array
+	 */
+	public function aGetUserTokenDirect($iCid, $iUid, $sScope = '')
+	{
+		$tokenApi = $this->_aConf['tokenApi'];
+		$oOption = new Ko_Tool_SQL;
+		$tokenInfo = $this->$tokenApi->aGetList($oOption->oWhere('uid = ? and cid = ?', $iUid, $iCid)->oLimit(1));
+		if (!empty($tokenInfo))
+		{
+			$aUpdate = array(
+				'scope' => $sScope,
+				'ctime' => date('Y-m-d H:i:s'),
+			);
+			$this->$tokenApi->iUpdate($tokenInfo[0], $aUpdate);
+			return array($tokenInfo[0]['token'], $tokenInfo[0]['secret']);
+		}
+
+		$sToken = $this->_sGenKey();
+		$sSecret = $this->_sGenKey();
+		$aData = array(
+			'cid' => $iCid,
+			'token' => $sToken,
+			'secret' => $sSecret,
+			'uid' => $iUid,
+			'scope' => $sScope,
+			'ctime' => date('Y-m-d H:i:s'),
+			);
+		$this->$tokenApi->aInsert($aData);
+		return array($sToken, $sSecret);
 	}
 
 	/**
@@ -470,35 +508,6 @@ class Ko_Mode_OAuthServer extends Ko_Mode_OAuthServerBase implements IKo_Mode_OA
 			return false;
 		}
 		return $this->$temptokenDao->iDelete($this->_aReq['oauth_token']) ? array($info['uid'], $info['scope']) : false;
-	}
-
-	private function _aGetTokenCredentials($iUid, $sScope)
-	{
-		$tokenApi = $this->_aConf['tokenApi'];
-		$oOption = new Ko_Tool_SQL;
-		$tokenInfo = $this->$tokenApi->aGetList($oOption->oWhere('uid = ? and cid = ?', $iUid, $this->_aReq['oauth_consumer_key'])->oLimit(1));
-		if (!empty($tokenInfo))
-		{
-			$aUpdate = array(
-				'scope' => $sScope,
-				'ctime' => date('Y-m-d H:i:s'),
-			);
-			$this->$tokenApi->iUpdate($tokenInfo[0], $aUpdate);
-			return array($tokenInfo[0]['token'], $tokenInfo[0]['secret']);
-		}
-
-		$sToken = $this->_sGenKey();
-		$sSecret = $this->_sGenKey();
-		$aData = array(
-			'cid' => $this->_aReq['oauth_consumer_key'],
-			'token' => $sToken,
-			'secret' => $sSecret,
-			'uid' => $iUid,
-			'scope' => $sScope,
-			'ctime' => date('Y-m-d H:i:s'),
-			);
-		$this->$tokenApi->aInsert($aData);
-		return array($sToken, $sSecret);
 	}
 
 	private function _aGetTemporaryCredentials()
