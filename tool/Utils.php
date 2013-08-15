@@ -29,6 +29,15 @@ interface IKo_Tool_Utils
 	 */
 	public static function AObjs2map($vObjs, $sKey);
 	/**
+	 * 数组按照某个field进行排序
+	 * @param $aArr 待排数组
+	 * @param $sField 按照该字段排序
+	 * @param $bDesc 是否倒排（web上多数情况下desc = true, 故默认为true）
+	 * @param $bPreserveKey 是否保留键值
+	 * @return array
+	 */
+	public static function ASortByField(array $aArr, $sField, $bDesc = true, $bPreserveKey = false);
+	/**
 	 * @return array
 	 */
 	public static function AXml2arr($sXml, $sAttrKey = '@attributes', $sValueKey = '@value');
@@ -87,6 +96,32 @@ class Ko_Tool_Utils implements IKo_Tool_Utils
 			}
 		}
 		return $map;
+	}
+
+	/**
+	 * @return array
+	 */
+	public static function ASortByField(array $aArr, $sField, $bDesc = true, $bPreserveKey = false)
+	{
+		$aSortedArr = array();
+		$aMapping = array();
+		foreach($aArr as $sKey => $aItem)
+		{
+			$aMapping[$sKey] = is_array($aItem) ? $aItem[$sField] : null;
+		}
+		$bDesc ? arsort($aMapping) : asort($aMapping);
+		foreach($aMapping as $sKey => $v)
+		{
+			if($bPreserveKey)
+			{
+				$aSortedArr[$sKey] = $aArr[$sKey];
+			}
+			else
+			{
+				$aSortedArr[] = $aArr[$sKey];
+			}
+		}
+		return $aSortedArr;
 	}
 	
 	/**
