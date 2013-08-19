@@ -28,6 +28,14 @@
  *     unique(threadmid, mid),
  *     index(threadmid, ctime)
  *   )ENGINE=InnoDB DEFAULT CHARSET=UTF8;
+ *   CREATE TABLE kotest_message_userlist_0(
+ *     uid bigint unsigned not null default 0,
+ *     threadmid bigint unsigned not null default 0,
+ *     mid bigint unsigned not null default 0,
+ *     ctime timestamp NOT NULL default 0,
+ *     unique(uid, mid),
+ *     index(uid, threadmid, ctime)
+ *   )ENGINE=InnoDB DEFAULT CHARSET=UTF8;
  *   CREATE TABLE kotest_message_thread_0(
  *     mid bigint unsigned not null default 0,
  *     uids TEXT,
@@ -120,6 +128,13 @@ interface IKo_Mode_Message
 	public function bQuitThread($iUid, $iThread);
 	
 	/**
+	 * 用户删除消息，用户看不见了，但是其他参与人还可见
+	 *
+	 * @return boolean
+	 */
+	public function bDeleteMessage($iUid, $iMid);
+	
+	/**
 	 * 用户查看会话列表
 	 *
 	 * @return array
@@ -181,6 +196,7 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	 * array(
 	 *   'message' => 消息内容表
 	 *   'list' => 消息线的回复列表
+	 *   'userlist' => 每个用户的消息线回复列表，可选
 	 *   'thread' => 消息线信息表，可选
 	 *   'userthread' => 用户参与的消息线表，可选
 	 *   'threaduserlog' => 用户参与的消息线的变动表，可选
@@ -221,6 +237,7 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 		$ctime = date('Y-m-d H:i:s');
 		$mid = $this->_iInsertMessage($iUid, $sContent, $sExinfo, $ctime);	//添加消息
 		$this->_vInsertList($mid, $mid, $ctime);	//添加到消息线消息列表
+		$this->_vInsertUserList($aUids, $mid, $mid, $ctime);	//添加到用户消息线消息列表
 		$this->_vInsertThread($mid, $sUids, $sLastinfo);	//添加消息线信息
 		
 		foreach ($aUids as $uid)
@@ -250,13 +267,12 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 				return 0;
 			}
 		}
-		
 		$ctime = date('Y-m-d H:i:s');
 		$mid = $this->_iInsertMessage($iUid, $sContent, $sExinfo, $ctime);	//添加消息
 		$this->_vInsertList($iThread, $mid, $ctime);	//添加到消息线消息列表
-		
 		if (isset($this->_aConf['thread']) && isset($this->_aConf['userthread']))
 		{
+			$this->_vInsertUserList($aUids, $iThread, $mid, $ctime);	//添加到用户消息线消息列表
 			$aUpdate = array(
 				'lastinfo' => $sLastinfo,
 				);
@@ -359,6 +375,18 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	}
 
 	/**
+	 * @return boolean
+	 */
+	public function bDeleteMessage($iUid, $iMid)
+	{
+		assert(isset($this->_aConf['userlist']));
+		
+		$userlistDao = $this->_aConf['userlist'].'Dao';
+		$this->$userlistDao->iDelete(array('uid' => $iUid, 'mid' => $iMid));
+		return true;
+	}
+	
+	/**
 	 * @return array
 	 */
 	public function aGetThreadList($iUid, $iStart, $iNum)
@@ -425,7 +453,7 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 			$oOption->oWhere('ctime >= ?', $info['jointime']);
 		}
 		$oOption->oOrderBy('ctime desc')->oOffset($iStart)->oLimit($iNum);
-		return $this->_aGetMessageList($iThread, $oOption);
+		return $this->_aGetMessageList($iUid, $iThread, $oOption);
 	}
 
 	/**
@@ -453,7 +481,7 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 			$oOption->oWhere('ctime >= ?', $info['jointime']);
 		}
 		$oOption->oOrderBy('ctime desc')->oOffset($iStart)->oLimit($iNum)->oCalcFoundRows(true);
-		$aRet = $this->_aGetMessageList($iThread, $oOption);
+		$aRet = $this->_aGetMessageList($iUid, $iThread, $oOption);
 		$iTotal = $oOption->iGetFoundRows();
 		return $aRet;
 	}
@@ -521,9 +549,9 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 		return $this->$threadDao->aGetListByKeys($aList);
 	}
 	
-	private function _aGetMessageList($iThread, $oOption)
+	private function _aGetMessageList($iUid, $iThread, $oOption)
 	{
-		$list = $this->_aGetListList($iThread, $oOption);
+		$list = $this->_aGetListList($iUid, $iThread, $oOption);
 		if (!empty($list))
 		{
 			$messageDetail = $this->_aGetMessageDetails($list);
@@ -536,8 +564,20 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 		return $list;
 	}
 	
-	private function _aGetListList($iThread, $oOption)
+	private function _aGetListList($iUid, $iThread, $oOption)
 	{
+		if (isset($this->_aConf['userlist']))
+		{
+			$userlistDao = $this->_aConf['userlist'].'Dao';
+			$oOption->oAnd('threadmid = ?', $iThread);
+			if (strlen($this->$userlistDao->sGetSplitField()))
+			{
+				return $this->$userlistDao->aGetList($iUid, $oOption);
+			}
+			$oOption->oAnd('uid = ?', $iUid);
+			return $this->$userlistDao->aGetList($oOption);
+		}
+		
 		$listDao = $this->_aConf['list'].'Dao';
 		if (strlen($this->$listDao->sGetSplitField()))
 		{
@@ -574,6 +614,24 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 			'ctime' => $sCtime,
 			);
 		$this->$listDao->aInsert($aData);
+	}
+	
+	private function _vInsertUserList($aUids, $iThread, $iMid, $sCtime)
+	{
+		if (isset($this->_aConf['userlist']))
+		{
+			$userlistDao = $this->_aConf['userlist'].'Dao';
+			foreach ($aUids as $iUid)
+			{
+				$aData = array(
+					'uid' => $iUid,
+					'threadmid' => $iThread,
+					'mid' => $iMid,
+					'ctime' => $sCtime,
+					);
+				$this->$userlistDao->aInsert($aData);
+			}
+		}
 	}
 	
 	private function _vInsertThread($iThread, $sUids, $sLastinfo)
