@@ -1027,7 +1027,7 @@ class Ko_Mode_XList extends Ko_Busi_Api implements IKo_Mode_XList
 			$sContent = $this->_sGetErrorHtml($sError);
 			return false;
 		}
-		list($sDomain, $sDest, $sFilename, $sMimetype) = $this->_oStorage->aParseUniqStr($info[$aReq['sXSField']]);
+		list($sDomain, $sDest, $iSize, $sMimetype, $sFilename) = $this->_oStorage->aParseUniqStr($info[$aReq['sXSField']]);
 		$sContent = $this->_oStorage->sRead($sDomain, $sDest);
 		return false !== $sContent;
 	}
@@ -1218,7 +1218,7 @@ class Ko_Mode_XList extends Ko_Busi_Api implements IKo_Mode_XList
 				if (false !== $fileext
 					&& false !== $this->_oStorage->bWrite(file_get_contents($aReq[$cginame]['tmp_name']), $fileext, $this->_aConf['field'][$sField]['editinfo']['domain'], $dest))
 				{
-					return $this->_oStorage->sGetUniqStr($this->_aConf['field'][$sField]['editinfo']['domain'], $dest, $aReq[$cginame]['name'], $aReq[$cginame]['type']);
+					return $this->_oStorage->sGetUniqStr($this->_aConf['field'][$sField]['editinfo']['domain'], $dest, $aReq[$cginame]['size'], $aReq[$cginame]['type'], $aReq[$cginame]['name']);
 				}
 			}
 			$removeCginame = $this->_sGetFieldRemoveCginame($sField);
@@ -1449,8 +1449,8 @@ class Ko_Mode_XList extends Ko_Busi_Api implements IKo_Mode_XList
 		if (strlen($sValue))
 		{
 			$removeCginame = $this->_sGetFieldRemoveCginame($sField);
-			list($sDomain, $sDest, $sFilename, $sMimetype) = $this->_oStorage->aParseUniqStr($sValue);
-			$html .= '<label><input type=radio name="'.$removeCginame.'" value="1">remove file</label> <label><input type=radio name="'.$removeCginame.'" value="0">'.htmlspecialchars($sFilename).'</label><br>';
+			list($sDomain, $sDest, $iSize, $sMimetype, $sFilename) = $this->_oStorage->aParseUniqStr($sValue);
+			$html .= '<label><input type=radio name="'.$removeCginame.'" value="1">remove file</label> <label><input type=radio name="'.$removeCginame.'" value="0">'.htmlspecialchars($sFilename.'('.$iSize.')').'</label><br>';
 		}
 		$attr = '';
 		if ($aPara['size'])
@@ -1467,7 +1467,7 @@ class Ko_Mode_XList extends Ko_Busi_Api implements IKo_Mode_XList
 		if (strlen($sValue))
 		{
 			$removeCginame = $this->_sGetFieldRemoveCginame($sField);
-			list($sDomain, $sDest, $sFilename, $sMimetype) = $this->_oStorage->aParseUniqStr($sValue);
+			list($sDomain, $sDest, $iSize, $sMimetype, $sFilename) = $this->_oStorage->aParseUniqStr($sValue);
 			$image = $this->_oStorage->sGetUrl($sDomain, $sDest, $aPara['brief']);
 			$html .= '<label><input type=radio name="'.$removeCginame.'" value="1">remove image</label> <label><input type=radio name="'.$removeCginame.'" value="0"><img src="'.htmlspecialchars($image).'"></label><br>';
 		}

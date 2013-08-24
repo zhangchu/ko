@@ -12,7 +12,7 @@ interface IKo_Data_Storage
 	public function bWrite($sContent, $sExt, $sDomain, &$sDest);
 	public function sRead($sDomain, $sDest);
 
-	public function sGetUniqStr($sDomain, $sDest, $sFilename, $sMimetype);
+	public function sGetUniqStr($sDomain, $sDest, $iSize, $sMimetype, $sFilename);
 	public function aParseUniqStr($sUniqStr);
 	
 	public function sGetUrl($sDomain, $sDest, $sBriefTag);
@@ -53,15 +53,15 @@ class Ko_Data_Storage implements IKo_Data_Storage
 		assert(0);
 	}
 
-	public function sGetUniqStr($sDomain, $sDest, $sFilename, $sMimetype)
+	public function sGetUniqStr($sDomain, $sDest, $iSize, $sMimetype, $sFilename);
 	{
-		return urlencode($sDomain).'&'.urlencode($sDest).'&'.urlencode($sFilename).'&'.urlencode($sMimetype);
+		return urlencode($sDomain).'&'.urlencode($sDest).'&'.urlencode($iSize).'&'.urlencode($sMimetype).'&'.urlencode($sFilename);
 	}
 	
 	public function aParseUniqStr($sUniqStr)
 	{
-		list($sDomain, $sDest, $sFilename, $sMimetype) = explode('&', $sUniqStr, 4);
-		return array(urldecode($sDomain), urldecode($sDest), urldecode($sFilename), urldecode($sMimetype));
+		list($sDomain, $sDest, $iSize, $sMimetype, $sFilename) = explode('&', $sUniqStr, 5);
+		return array(urldecode($sDomain), urldecode($sDest), urldecode($iSize), urldecode($sMimetype), urldecode($sFilename));
 	}
 	
 	public function sGetUrl($sDomain, $sDest, $sBriefTag)

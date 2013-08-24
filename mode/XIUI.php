@@ -53,11 +53,11 @@ class Ko_Mode_XIUI extends Ko_Busi_Api implements IKo_Mode_XIUI
 			switch ($this->_aTypeinfo['editinfo']['type'])
 			{
 			case 'file':
-				list($sDomain, $sDest, $sFilename, $sMimetype) = $this->_oStorage->aParseUniqStr($aValue[$sField]);
-				$html = htmlspecialchars($sFilename);
+				list($sDomain, $sDest, $iSize, $sMimetype, $sFilename) = $this->_oStorage->aParseUniqStr($aValue[$sField]);
+				$html = htmlspecialchars($sFilename.'('.$iSize.')');
 				break;
 			case 'image':
-				list($sDomain, $sDest, $sFilename, $sMimetype) = $this->_oStorage->aParseUniqStr($aValue[$sField]);
+				list($sDomain, $sDest, $iSize, $sMimetype, $sFilename) = $this->_oStorage->aParseUniqStr($aValue[$sField]);
 				$big = $this->_oStorage->sGetUrl($sDomain, $sDest, '');
 				$image = $this->_oStorage->sGetUrl($sDomain, $sDest, $this->_aTypeinfo['cellinfo']['brief']);
 				$html = '<a href="'.htmlspecialchars($big).'" target="_blank"><img src="'.htmlspecialchars($image).'"></a>';
@@ -81,11 +81,11 @@ class Ko_Mode_XIUI extends Ko_Busi_Api implements IKo_Mode_XIUI
 			switch ($this->_aTypeinfo['editinfo']['type'])
 			{
 			case 'file':
-				list($sDomain, $sDest, $sFilename, $sMimetype) = $this->_oStorage->aParseUniqStr($aValue[$sField]);
-				$html = htmlspecialchars($sFilename).'<br>'.htmlspecialchars($aValue[$sField]);
+				list($sDomain, $sDest, $iSize, $sMimetype, $sFilename) = $this->_oStorage->aParseUniqStr($aValue[$sField]);
+				$html = htmlspecialchars($sFilename.'('.$iSize.')').'<br>'.htmlspecialchars($aValue[$sField]);
 				break;
 			case 'image':
-				list($sDomain, $sDest, $sFilename, $sMimetype) = $this->_oStorage->aParseUniqStr($aValue[$sField]);
+				list($sDomain, $sDest, $iSize, $sMimetype, $sFilename) = $this->_oStorage->aParseUniqStr($aValue[$sField]);
 				$big = $this->_oStorage->sGetUrl($sDomain, $sDest, '');
 				$image = $this->_oStorage->sGetUrl($sDomain, $sDest, $this->_aTypeinfo['editinfo']['brief']);
 				$html = '<a href="'.htmlspecialchars($big).'" target="_blank"><img src="'.htmlspecialchars($image).'"></a><br>'.htmlspecialchars($aValue[$sField]);
