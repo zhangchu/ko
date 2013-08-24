@@ -53,7 +53,7 @@ class Ko_Data_Storage implements IKo_Data_Storage
 		assert(0);
 	}
 
-	public function sGetUniqStr($sDomain, $sDest, $iSize, $sMimetype, $sFilename);
+	public function sGetUniqStr($sDomain, $sDest, $iSize, $sMimetype, $sFilename)
 	{
 		return urlencode($sDomain).'&'.urlencode($sDest).'&'.urlencode($iSize).'&'.urlencode($sMimetype).'&'.urlencode($sFilename);
 	}
