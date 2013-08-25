@@ -31,8 +31,8 @@ class Ko_Tool_Debug implements IKo_Tool_Debug
 		{
 			if (!file_exists(KO_LOG_FILE))
 			{
-				touch(KO_LOG_FILE);
-				chmod(KO_LOG_FILE, 0666);
+				@touch(KO_LOG_FILE);
+				@chmod(KO_LOG_FILE, 0666);
 			}
 			if (is_writable(KO_LOG_FILE))
 			{
@@ -45,7 +45,7 @@ class Ko_Tool_Debug implements IKo_Tool_Debug
 				if ($filesize >= 1024 * 1024 * 1024)
 				{
 					$newfilename = KO_LOG_FILE.'.'.date('YmdHis');
-					rename(KO_LOG_FILE, $newfilename);
+					@rename(KO_LOG_FILE, $newfilename);
 				}
 			}
 		}
