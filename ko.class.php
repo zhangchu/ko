@@ -55,9 +55,17 @@ if (!defined('KO_INCLUDE_DIR'))
 }
 
 /**
+ * Smarty 类文件定义
+ */
+if (!defined('KO_SMARTY_INC'))
+{
+	define('KO_SMARTY_INC', dirname(KO_DIR).'/vendor/Smarty-3.1.14/libs/Smarty.class.php');
+}
+
+/**
  * 应用模板路径
  */
-if(!defined('KO_TEMPLATE_DIR'))
+if (!defined('KO_TEMPLATE_DIR'))
 {
 	define('KO_TEMPLATE_DIR', dirname(KO_INCLUDE_DIR).DS.'template'.DS);
 }
@@ -65,7 +73,7 @@ if(!defined('KO_TEMPLATE_DIR'))
 /**
  * 模板编译路径
  */
-if(!defined('KO_TEMPLATE_C_DIR'))
+if (!defined('KO_TEMPLATE_C_DIR'))
 {
 	define('KO_TEMPLATE_C_DIR', KO_TEMPLATE_DIR.'templates_c'.DS);
 }
@@ -73,7 +81,7 @@ if(!defined('KO_TEMPLATE_C_DIR'))
 /**
  * 页面字符集，cgi 输入参数分析使用
  */
-if(!defined('KO_CHARSET'))
+if (!defined('KO_CHARSET'))
 {
 	define('KO_CHARSET', 'UTF-8');
 }
@@ -81,7 +89,7 @@ if(!defined('KO_CHARSET'))
 /**
  * 模版中使用的下面标记开头的变量可以由程序自动分析
  */
-if(!defined('KO_VIEW_AUTOTAG'))
+if (!defined('KO_VIEW_AUTOTAG'))
 {
 	define('KO_VIEW_AUTOTAG', 'koAuto');
 }
@@ -89,42 +97,42 @@ if(!defined('KO_VIEW_AUTOTAG'))
 /**
  * KProxy 位置的服务器
  */
-if(!defined('KO_PROXY'))
+if (!defined('KO_PROXY'))
 {
 	define('KO_PROXY', '');
 }
 /**
  * 配置数据库连接使用哪种引擎，如：kproxy/mysql
  */
-if(!defined('KO_DB_ENGINE'))
+if (!defined('KO_DB_ENGINE'))
 {
 	define('KO_DB_ENGINE', 'mysql');
 }
 /**
  * 配置数据库主机端口，直连数据库的时候使用
  */
-if(!defined('KO_DB_HOST'))
+if (!defined('KO_DB_HOST'))
 {
 	define('KO_DB_HOST', '192.168.0.140');
 }
 /**
  * 配置数据库用户名
  */
-if(!defined('KO_DB_USER'))
+if (!defined('KO_DB_USER'))
 {
 	define('KO_DB_USER', 'dev');
 }
 /**
  * 配置数据库密码
  */
-if(!defined('KO_DB_PASS'))
+if (!defined('KO_DB_PASS'))
 {
 	define('KO_DB_PASS', 'dev2008');
 }
 /**
  * 配置数据库库名
  */
-if(!defined('KO_DB_NAME'))
+if (!defined('KO_DB_NAME'))
 {
 	define('KO_DB_NAME', 'dev_config');
 }
@@ -132,42 +140,42 @@ if(!defined('KO_DB_NAME'))
 /**
  * 配置 MongoDB Host
  */
-if(!defined('KO_MONGO_HOST'))
+if (!defined('KO_MONGO_HOST'))
 {
 	define('KO_MONGO_HOST', '192.168.1.190:27017,192.168.1.190:27018,192.168.1.190:27019');
 }
 /**
  * 配置 MongoDB 副本集
  */
-if(!defined('KO_MONGO_REPLICASET'))
+if (!defined('KO_MONGO_REPLICASET'))
 {
 	define('KO_MONGO_REPLICASET', 'rs0');
 }
 /**
  * 配置 MongoDB 用户
  */
-if(!defined('KO_MONGO_USER'))
+if (!defined('KO_MONGO_USER'))
 {
 	define('KO_MONGO_USER', '');
 }
 /**
  * 配置 MongoDB 密码
  */
-if(!defined('KO_MONGO_PASS'))
+if (!defined('KO_MONGO_PASS'))
 {
 	define('KO_MONGO_PASS', '');
 }
 /**
  * 配置 MongoDB 数据库名称
  */
-if(!defined('KO_MONGO_NAME'))
+if (!defined('KO_MONGO_NAME'))
 {
 	define('KO_MONGO_NAME', 'testdb');
 }
 /**
  * 配置 MongoDB 缺省的安全模式
  */
-if(!defined('KO_MONGO_SAFE'))
+if (!defined('KO_MONGO_SAFE'))
 {
 	define('KO_MONGO_SAFE', 1);
 }
@@ -175,7 +183,7 @@ if(!defined('KO_MONGO_SAFE'))
 /**
  * 使用的序列化编码算法，Vbs/Serialize/IgBinary
  */
-if(!defined('KO_ENC'))
+if (!defined('KO_ENC'))
 {
 	define('KO_ENC', 'Serialize');
 }
@@ -183,7 +191,7 @@ if(!defined('KO_ENC'))
 /**
  * 使用的图形库，Gd/Imagick
  */
-if(!defined('KO_IMAGE'))
+if (!defined('KO_IMAGE'))
 {
 	define('KO_IMAGE', 'Imagick');
 }
@@ -191,35 +199,35 @@ if(!defined('KO_IMAGE'))
 /**
  * 配置使用的 memcache 的连接方式，kproxy/memcache/saemc
  */
-if(!defined('KO_MC_ENGINE'))
+if (!defined('KO_MC_ENGINE'))
 {
 	define('KO_MC_ENGINE', 'memcache');
 }
 /**
  * 配置使用的 memcache 服务器，KO_MC_ENGINE 为 memcache 有效
  */
-if(!defined('KO_MC_HOST'))
+if (!defined('KO_MC_HOST'))
 {
 	define('KO_MC_HOST', 'localhost:11211');
 }
 /**
  * 配置使用的 localcache 的连接方式，kproxy
  */
-if(!defined('KO_LC_ENGINE'))
+if (!defined('KO_LC_ENGINE'))
 {
 	define('KO_LC_ENGINE', 'kproxy');
 }
 /**
  * 配置使用的 redis 的连接方式，kproxy/redis
  */
-if(!defined('KO_REDIS_ENGINE'))
+if (!defined('KO_REDIS_ENGINE'))
 {
 	define('KO_REDIS_ENGINE', 'redis');
 }
 /**
  * 配置使用的 redis 服务器，KO_REDIS_ENGINE 为 redis 有效
  */
-if(!defined('KO_REDIS_HOST'))
+if (!defined('KO_REDIS_HOST'))
 {
 	define('KO_REDIS_HOST', 'localhost:6379');
 }
@@ -232,7 +240,7 @@ if (!defined('KO_SPL_AUTOLOAD'))
 	define('KO_SPL_AUTOLOAD', 0);
 }
 
-if(!KO_SPL_AUTOLOAD)
+if (!KO_SPL_AUTOLOAD)
 {
 	spl_autoload_register('koAutoload');
 }

@@ -7,10 +7,7 @@
  * @author zhangchu
  */
 
-if (!class_exists('Smarty'))
-{
-	require_once(KO_DIR.'vendor/Smarty-3.1.4/libs/Smarty.class.php');
-}
+include_once(KO_SMARTY_INC);
 
 /**
  * Smarty操作封装接口
