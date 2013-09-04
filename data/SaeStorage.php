@@ -9,7 +9,7 @@
 
 class Ko_Data_SaeStorage extends Ko_Data_Storage
 {
-	public function bWrite($sContent, $sExt, $sDomain, &$sDest)
+	protected function _bWrite($sContent, $sExt, $sDomain, &$sDest)
 	{
 		$sDest = str_replace('.', '_', uniqid('', true)).'.'.trim($sExt, '.');
 		return false !== Ko_Tool_Singleton::OInstance('SaeStorage')->write($sDomain, $sDest, $sContent);

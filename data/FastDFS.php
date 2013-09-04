@@ -12,7 +12,7 @@
 
 class Ko_Data_FastDFS extends Ko_Data_Storage
 {
-	public function bWrite($sContent, $sExt, $sDomain, &$sDest)
+	protected function _bWrite($sContent, $sExt, $sDomain, &$sDest)
 	{
 		$ret = fastdfs_storage_upload_by_filebuff1($sContent, trim($sExt, '.'));
 		if (false === $ret)
