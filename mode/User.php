@@ -578,7 +578,8 @@ class Ko_Mode_User extends Ko_Busi_Api implements IKo_Mode_User
 		if (!$this->_bUpdatePersistentToken($uid, $series, $token, $sNewToken))
 		{
 			// 每个 persistent_token 只能验证一次，如果重复验证可能是因为数据被重复提交，或者失窃
-			$this->$persistentDao->iDeleteByCond($uid, '1');
+			$oOption = new Ko_Tool_SQL;
+			$this->$persistentDao->iDeleteByCond($uid, $oOption->oWhere('1'));
 			$iErrno = self::E_PERSISTENT_TOKEN;
 			return 0;
 		}
