@@ -19,7 +19,7 @@ class Ko_Busi_Api extends Ko_Busi_Func
 	 *
 	 * @return mixed
 	 */
-	function __get($sName)
+	public function __get($sName)
 	{
 		if ('Api' === substr($sName, -3))
 		{

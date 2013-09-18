@@ -19,7 +19,7 @@ class Ko_Busi_Func
 	 *
 	 * @return mixed
 	 */
-	function __get($sName)
+	public function __get($sName)
 	{
 		if ('Dao' === substr($sName, -3))
 		{
