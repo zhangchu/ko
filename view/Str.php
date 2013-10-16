@@ -103,7 +103,7 @@ class Ko_View_Str extends Ko_Tool_StrParser implements IKo_View_Str
 	 */
 	public function bGetAutoStr_Exit()
 	{
-		return $this->bIsBlank() || '[' === $this->sChar() || ']' === $this->sChar() || '-' === $this->sChar() || ')' === $this->sChar();
+		return $this->bIsBlank() || '@' === $this->sChar() || '[' === $this->sChar() || ']' === $this->sChar() || '-' === $this->sChar() || ')' === $this->sChar();
 	}
 
 	/**
