@@ -57,6 +57,12 @@ interface IKo_Mode_Counter
 	 */
 	public function iGet($vKey, $bMC2DB = false);
 	/**
+	 * 批量查询，db为单表才可以使用
+	 *
+	 * @return array
+	 */
+	public function aGetMulti($aKey);
+	/**
 	 * 扫描数据库中长期未更新的数据，进行同步
 	 */
 	public function vSyncAll();
@@ -130,14 +136,13 @@ class Ko_Mode_Counter extends Ko_Busi_Api implements IKo_Mode_Counter
 	 */
 	public function iGet($vKey, $bMC2DB = false)
 	{
-		$key = $this->_sGetMCKey($vKey);
-
 		if ($this->_bForbidMC)
 		{
 			$mcinfo = 0;
 		}
 		else
 		{
+			$key = $this->_sGetMCKey($vKey);
 			$mcDao = $this->_aConf['mc'].'Dao';
 			$mcinfo = intval($this->$mcDao->vGet($key));
 		}
@@ -152,6 +157,35 @@ class Ko_Mode_Counter extends Ko_Busi_Api implements IKo_Mode_Counter
 			return $mcinfo;
 		}
 		return $dbinfo['times'] + $mcinfo;
+	}
+	
+	/**
+	 * @return array
+	 */
+	public function aGetMulti($aKey)
+	{
+		$keys = array();
+		if ($this->_bForbidMC)
+		{
+			$mcinfo = array();
+		}
+		else
+		{
+			foreach ($aKey as $key)
+			{
+				$keys[$key] = $this->_sGetMCKey($key);
+			}
+			$mcDao = $this->_aConf['mc'].'Dao';
+			$mcinfo = $this->$mcDao->vGet(array_values($keys));
+		}
+		$dbDao = $this->_aConf['db'].'Dao';
+		$dbinfo = $this->$dbDao->aGetListByKeys($aKey);
+		$ret = array();
+		foreach ($aKey as $key)
+		{
+			$ret[$key] = $dbinfo[$key]['times'] + $mcinfo[$keys[$key]];
+		}
+		return $ret;
 	}
 
 	public function vSyncAll()
