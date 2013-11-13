@@ -91,7 +91,6 @@ class Ko_Dao_DB implements IKo_Dao_DB, IKo_Dao_DBHelp, IKo_Dao_Mysql
 
 	//其他属性 配置
 	private $_bIsSplitString = false;
-	private $_bIsDirectSlave = false;
 	private $_bIsMongoDB = false;
 
 	//中间层对象
@@ -191,8 +190,6 @@ class Ko_Dao_DB implements IKo_Dao_DB, IKo_Dao_DBHelp, IKo_Dao_Mysql
 		{
 		case 'issplitstring':
 			return $this->_bIsSplitString;
-		case 'isdirectslave':
-			return $this->_bIsDirectSlave;
 		case 'ismongodb':
 			return $this->_bIsMongoDB;
 		}
@@ -205,9 +202,6 @@ class Ko_Dao_DB implements IKo_Dao_DB, IKo_Dao_DBHelp, IKo_Dao_Mysql
 		{
 		case 'issplitstring':
 			$this->_bIsSplitString = $vValue;
-			break;
-		case 'isdirectslave':
-			$this->_bIsDirectSlave = $vValue;
 			break;
 		case 'ismongodb':
 			$this->_bIsMongoDB = $vValue;
@@ -700,7 +694,7 @@ class Ko_Dao_DB implements IKo_Dao_DB, IKo_Dao_DBHelp, IKo_Dao_Mysql
 	{
 		if (is_null($this->_oDirectMysql))
 		{
-			$this->_oDirectMysql = Ko_Dao_MysqlAgent::OInstance($this->_sTable, $this->_bIsDirectSlave);
+			$this->_oDirectMysql = Ko_Dao_MysqlAgent::OInstance($this->_sTable, true);
 		}
 		return $this->_oDirectMysql;
 	}

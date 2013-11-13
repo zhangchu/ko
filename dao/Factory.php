@@ -58,7 +58,6 @@ class Ko_Dao_Factory implements IKo_Dao_Factory
 	private static function _OSetAttribute_db($oDB, $aConfig, $aParam)
 	{
 		$oDB->vSetAttribute('issplitstring', self::_VGetValue($aConfig, 'issplitstring'));
-		$oDB->vSetAttribute('isdirectslave', self::_VGetValue($aConfig, 'isdirectslave'));
 		return $oDB;
 	}
 
