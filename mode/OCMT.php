@@ -195,10 +195,10 @@ class Ko_Mode_OCMT extends Ko_Busi_Api implements IKo_Mode_OCMT
 	 * array(
 	 *   'audit' => array 不同的 aid 对应的审核模式
 	 *   'audit_default' => 缺省的审核模式
-	 *   'content' => 内容表 Dao 名称
-	 *   'index' => 主线索引表 Dao 名称
-	 *   'reply' => 回复索引表 Dao 名称
-	 *   'queue' => 审核队列表 Dao 名称
+	 *   'content' => 内容表 Dao 名称，要求db_split类型
+	 *   'index' => 主线索引表 Dao 名称，要求db_split类型
+	 *   'reply' => 回复索引表 Dao 名称，要求db_split类型
+	 *   'queue' => 审核队列表 Dao 名称，要求db_split类型
 	 *   'cacheflag' => 缓存标记表 Dao 名称
 	 *   'cache' => 缓存内容表 Dao 名称
 	 *   'action' => 操作记录表 Dao 名称
@@ -217,36 +217,19 @@ class Ko_Mode_OCMT extends Ko_Busi_Api implements IKo_Mode_OCMT
 	{
 		$oid = $this->_iGetOid($iAid, $iBid);
 		$contentDao = $this->_aConf['content'].'Dao';
-		$splitField = $this->$contentDao->sGetSplitField();
 		$key = array('oid' => $oid, 'cid' => $iCid);
 		$aContent = $this->$contentDao->aGet($key);
 		if ($bReply && !empty($aContent))
 		{
 			$aContent['replylist'] = array();
 			$replyDao = $this->_aConf['reply'].'Dao';
-			$replysplitField = $this->$replyDao->sGetSplitField();
 			$oOption = new Ko_Tool_SQL;
 			$oOption->oWhere('thread_cid = ?', $iCid)->oOrderBy('cid desc')->oLimit(self::MAX_REPLY);
-			if (strlen($replysplitField))
-			{
-				$aReply = $this->$replyDao->aGetList($oid, $oOption);
-			}
-			else
-			{
-				$oOption->oAnd('oid = ?', $oid);
-				$aReply = $this->$replyDao->aGetList($oOption);
-			}
+			$aReply = $this->$replyDao->aGetList($oid, $oOption);
 			$aReplyCid = Ko_Tool_Utils::AObjs2ids($aReply, 'cid');
 			if (!empty($aReplyCid))
 			{
-				if (strlen($splitField))
-				{
-					$aReplyContent = $this->$contentDao->aGetListByKeys($oid, $aReplyCid);
-				}
-				else
-				{
-					$aReplyContent = $this->$contentDao->aGetListByKeys($aReplyCid);
-				}
+				$aReplyContent = $this->$contentDao->aGetListByKeys($oid, $aReplyCid);
 				$aReplyCid = array_reverse($aReplyCid);
 				foreach ($aReplyCid as $v)
 				{
@@ -314,17 +297,8 @@ class Ko_Mode_OCMT extends Ko_Busi_Api implements IKo_Mode_OCMT
 		$oid = $this->_iGetOid($iAid, $iBid);
 
 		$queueDao = $this->_aConf['queue'].'Dao';
-		$splitField = $this->$queueDao->sGetSplitField();
 		$oOption->oCalcFoundRows(true)->oOrderBy('cid '.($bAsc ? 'asc' : 'desc'));
-		if (strlen($splitField))
-		{
-			return $this->$queueDao->aGetList($oid, $oOption);
-		}
-		else
-		{
-			$oOption->oAnd('oid = ?', $oid);
-			return $this->$queueDao->aGetList($oOption);
-		}
+		return $this->$queueDao->aGetList($oid, $oOption);
 	}
 
 	/**
@@ -400,17 +374,8 @@ class Ko_Mode_OCMT extends Ko_Busi_Api implements IKo_Mode_OCMT
 	private function _aGetList($iOid, $oOption, $bAsc, $bReply)
 	{
 		$indexDao = $this->_aConf['index'].'Dao';
-		$splitField = $this->$indexDao->sGetSplitField();
 		$oOption->oCalcFoundRows(true)->oOrderBy('cid '.($bAsc ? 'asc' : 'desc'));
-		if (strlen($splitField))
-		{
-			$aIndex = $this->$indexDao->aGetList($iOid, $oOption);
-		}
-		else
-		{
-			$oOption->oAnd('oid = ?', $iOid);
-			$aIndex = $this->$indexDao->aGetList($oOption);
-		}
+		$aIndex = $this->$indexDao->aGetList($iOid, $oOption);
 		$aIndexCid = Ko_Tool_Utils::AObjs2ids($aIndex, 'cid');
 		$info = $this->_aGetContentByIndex($iOid, $aIndexCid, $bReply);
 		if (0 == $oOption->iOffset())
@@ -467,18 +432,9 @@ class Ko_Mode_OCMT extends Ko_Busi_Api implements IKo_Mode_OCMT
 			return array();
 		}
 		$replyDao = $this->_aConf['reply'].'Dao';
-		$replysplitField = $this->$replyDao->sGetSplitField();
 		$oOption = new Ko_Tool_SQL;
 		$oOption->oWhere('thread_cid in (?)', $aIndexCid)->oOrderBy('cid desc')->oLimit(self::MAX_REPLY);
-		if (strlen($replysplitField))
-		{
-			$aReply = $this->$replyDao->aGetList($iOid, $oOption);
-		}
-		else
-		{
-			$oOption->oAnd('oid = ?', $iOid);
-			$aReply = $this->$replyDao->aGetList($oOption);
-		}
+		$aReply = $this->$replyDao->aGetList($iOid, $oOption);
 		return Ko_Tool_Utils::AObjs2ids($aReply, 'cid');
 	}
 
@@ -489,12 +445,7 @@ class Ko_Mode_OCMT extends Ko_Busi_Api implements IKo_Mode_OCMT
 			return array();
 		}
 		$contentDao = $this->_aConf['content'].'Dao';
-		$splitField = $this->$contentDao->sGetSplitField();
-		if (strlen($splitField))
-		{
-			return $this->$contentDao->aGetListByKeys($iOid, $aCids);
-		}
-		return $this->$contentDao->aGetListByKeys($aCids);
+		return $this->$contentDao->aGetListByKeys($iOid, $aCids);
 	}
 
 	private function _iInsertContentEx($iAid, $iBid, $iThread, $iUid, $sContent, $vAdmin, $iForceFlag)

@@ -195,10 +195,10 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	 * <pre>
 	 * array(
 	 *   'message' => 消息内容表
-	 *   'list' => 消息线的回复列表
-	 *   'userlist' => 每个用户的消息线回复列表，可选
+	 *   'list' => 消息线的回复列表，要求db_split类型
+	 *   'userlist' => 每个用户的消息线回复列表，可选，要求db_split类型
 	 *   'thread' => 消息线信息表，可选
-	 *   'userthread' => 用户参与的消息线表，可选
+	 *   'userthread' => 用户参与的消息线表，可选，要求db_split类型
 	 *   'threaduserlog' => 用户参与的消息线的变动表，可选
 	 *   'uidsthread' => 通过用户列表获取消息线，可选
 	 *   'maxusercount' => 一个消息线最多的参与人数，可选
@@ -533,12 +533,7 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 		assert(isset($this->_aConf['userthread']));
 		
 		$userthreadDao = $this->_aConf['userthread'].'Dao';
-		if (strlen($this->$userthreadDao->sGetSplitField()))
-		{
-			return $this->$userthreadDao->aGetList($iUid, $oOption);
-		}
-		$oOption->oAnd('uid = ?', $iUid);
-		return $this->$userthreadDao->aGetList($oOption);
+		return $this->$userthreadDao->aGetList($iUid, $oOption);
 	}
 	
 	private function _aGetThreadDetails($aList)
@@ -570,21 +565,11 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 		{
 			$userlistDao = $this->_aConf['userlist'].'Dao';
 			$oOption->oAnd('threadmid = ?', $iThread);
-			if (strlen($this->$userlistDao->sGetSplitField()))
-			{
-				return $this->$userlistDao->aGetList($iUid, $oOption);
-			}
-			$oOption->oAnd('uid = ?', $iUid);
-			return $this->$userlistDao->aGetList($oOption);
+			return $this->$userlistDao->aGetList($iUid, $oOption);
 		}
 		
 		$listDao = $this->_aConf['list'].'Dao';
-		if (strlen($this->$listDao->sGetSplitField()))
-		{
-			return $this->$listDao->aGetList($iThread, $oOption);
-		}
-		$oOption->oAnd('threadmid = ?', $iThread);
-		return $this->$listDao->aGetList($oOption);
+		return $this->$listDao->aGetList($iThread, $oOption);
 	}
 	
 	private function _aGetMessageDetails($aList)
