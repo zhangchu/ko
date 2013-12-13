@@ -50,6 +50,10 @@ interface IKo_Mode_Tree
 	 * @return array
 	 */
 	public function aTree2Arr($aTree);
+	/**
+	 * @return array
+	 */
+	public function aTree2DepthArr($aTree, $iDepth = 1);
 }
 
 class Ko_Mode_Tree extends Ko_Busi_Api implements IKo_Mode_Tree
@@ -146,6 +150,23 @@ class Ko_Mode_Tree extends Ko_Busi_Api implements IKo_Mode_Tree
 		foreach ($aTree as $k => $v)
 		{
 			$ret = array_merge($ret, $this->aTree2Arr($v));
+		}
+		return $ret;
+	}
+	
+	/**
+	 * @return array
+	 */
+	public function aTree2DepthArr($aTree, $iDepth = 1)
+	{
+		$ret = array();
+		foreach ($aTree as $k => $v)
+		{
+			$ret[$k] = $iDepth;
+		}
+		foreach ($aTree as $k => $v)
+		{
+			$ret += $this->aTree2DepthArr($v, $iDepth + 1);
 		}
 		return $ret;
 	}
