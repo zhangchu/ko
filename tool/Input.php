@@ -109,14 +109,14 @@ class Ko_Tool_Input implements IKo_Tool_Input
 		self::_VCleanOneType($aRet, array(), $vVarType, 'v', $vValue, $sCharset);
 		return $aRet['v'];
 	}
-	
+
 	/**
 	 * @return mixed
 	 */
 	public static function VClean($sSource, $sVarName, $iVarType = false, $sCharset = KO_CHARSET)
 	{
 		self::_VInit();
-		
+
 		if (false === $iVarType)
 		{
 			$first = substr($sVarName, 0, 1);
@@ -152,7 +152,7 @@ class Ko_Tool_Input implements IKo_Tool_Input
 		}
 		return $aRet;
 	}
-	
+
 	/**
 	 * @return array
 	 */
@@ -182,7 +182,7 @@ class Ko_Tool_Input implements IKo_Tool_Input
 		}
 		return $aRet;
 	}
-	
+
 	/**
 	 * @return bool
 	 */
@@ -211,10 +211,11 @@ class Ko_Tool_Input implements IKo_Tool_Input
 	{
 		if (is_array($vValue))
 		{
-			foreach ($vValue as $sKey => $vVal)
+			foreach ($vValue as $sKey => &$vVal)
 			{
 				self::_VStripslashesRecursively($vVal);
 			}
+			unset($vVal);
 		}
 		else if (is_string($vValue))
 		{
@@ -241,7 +242,7 @@ class Ko_Tool_Input implements IKo_Tool_Input
 			}
 		}
 	}
-	
+
 	private static function _VCleanOneType(&$aRet, $aValTypes, $iType, $sName, $vValue, $sCharset)
 	{
 		if (self::T_ARRAY == $iType)
@@ -260,7 +261,7 @@ class Ko_Tool_Input implements IKo_Tool_Input
 			$aRet[$sName] = self::_VDoClean($vValue, $iType, $sCharset);
 		}
 	}
-	
+
 	private static function _VConvertData($fnConvert, $vData, $sCharset)
 	{
 		if (is_array($vData))
@@ -279,7 +280,7 @@ class Ko_Tool_Input implements IKo_Tool_Input
 	{
 		return intval($vData);
 	}
-	
+
 	private static function _IConvert_UINT($vData, $sCharset)
 	{
 		return max(0, intval($vData));
@@ -294,12 +295,12 @@ class Ko_Tool_Input implements IKo_Tool_Input
 	{
 		return trim(strval($vData));
 	}
-	
+
 	private static function _IConvert_NOTRIM($vData, $sCharset)
 	{
 		return strval($vData);
 	}
-	
+
 	private static function _IConvert_HTML($vData, $sCharset)
 	{
 		if($_REQUEST['texttype'] == 'plain')
@@ -308,7 +309,7 @@ class Ko_Tool_Input implements IKo_Tool_Input
 		}
 		return Ko_Html_MsgParse::sParse($vData, 65535, $sCharset);
 	}
-	
+
 	private static function _IConvert_RICHHTML($vData, $sCharset)
 	{
 		if($_REQUEST['texttype'] == 'plain')
@@ -317,7 +318,7 @@ class Ko_Tool_Input implements IKo_Tool_Input
 		}
 		return Ko_Html_WebParse::sParse($vData, 65535, $sCharset);
 	}
-	
+
 	private static function _VDoClean($vData, $iType, $sCharset)
 	{
 		switch ($iType)
@@ -379,7 +380,7 @@ class Ko_Tool_Input implements IKo_Tool_Input
 		}
 		return Ko_Tool_Str::SFilterErrorCode($vData, $sCharset);
 	}
-	
+
 	private static function _VParseFileArray(&$aFile, $sName, $vTmpNameValue, $vNameValue, $vTypeValue, $vErrorValue, $vSizeValue)
 	{
 		if (is_array($vTmpNameValue))
