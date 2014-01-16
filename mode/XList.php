@@ -1399,7 +1399,7 @@ class Ko_Mode_XList extends Ko_Busi_Api implements IKo_Mode_XList
 			foreach ($aPara['values'] as $k => $v)
 			{
 				$attr = '';
-				if ($k == $sValue)
+				if ($k.'' === $sValue)
 				{
 					$attr .= ' checked';
 				}
@@ -1418,7 +1418,7 @@ class Ko_Mode_XList extends Ko_Busi_Api implements IKo_Mode_XList
 			foreach ($aPara['values'] as $k => $v)
 			{
 				$attr = '';
-				if ($k == $sValue)
+				if ($k.'' === $sValue)
 				{
 					$attr .= ' selected';
 				}
