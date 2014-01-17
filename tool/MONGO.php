@@ -51,6 +51,10 @@ interface IKo_Tool_MONGO
 	/**
 	 * @return Ko_Tool_MONGO 返回 $this
 	 */
+	public function oForceMaster($bForceMaster);
+	/**
+	 * @return Ko_Tool_MONGO 返回 $this
+	 */
 	public function oUpsert($bUpsert);
 	/**
 	 * @return Ko_Tool_MONGO 返回 $this
@@ -84,6 +88,10 @@ interface IKo_Tool_MONGO
 	/**
 	 * @return boolean
 	 */
+	public function bForceMaster();
+	/**
+	 * @return boolean
+	 */
 	public function bUpsert();
 	/**
 	 * @return array
@@ -108,6 +116,7 @@ class Ko_Tool_MONGO implements IKo_Tool_MONGO
 	private $_iOffset = 0;
 	private $_iLimit = 0;
 	private $_bCalcFoundRows = false;
+	private $_bForceMaster = false;
 	private $_bUpsert = false;
 	private $_aCommand = array();
 
@@ -125,6 +134,7 @@ class Ko_Tool_MONGO implements IKo_Tool_MONGO
 		$option->_iOffset = $this->_iOffset;
 		$option->_iLimit = $this->_iLimit;
 		$option->_bCalcFoundRows = $this->_bCalcFoundRows;
+		$option->_bForceMaster = $this->_bForceMaster;
 		$option->_bUpsert = $this->_bUpsert;
 		$option->_aCommand = $this->_aCommand;
 		$option->_iFoundRows = $this->_iFoundRows;
@@ -220,6 +230,15 @@ class Ko_Tool_MONGO implements IKo_Tool_MONGO
 	/**
 	 * @return Ko_Tool_MONGO
 	 */
+	public function oForceMaster($bForceMaster)
+	{
+		$this->_bForceMaster = $bForceMaster;
+		return $this;
+	}
+
+	/**
+	 * @return Ko_Tool_MONGO
+	 */
 	public function oUpsert($bUpsert)
 	{
 		$this->_bUpsert = $bUpsert;
@@ -281,6 +300,14 @@ class Ko_Tool_MONGO implements IKo_Tool_MONGO
 	public function bCalcFoundRows()
 	{
 		return $this->_bCalcFoundRows;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function bForceMaster()
+	{
+		return $this->_bForceMaster;
 	}
 
 	/**

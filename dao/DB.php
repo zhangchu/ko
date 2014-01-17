@@ -393,7 +393,7 @@ class Ko_Dao_DB implements IKo_Dao_DB, IKo_Dao_DBHelp, IKo_Dao_Mysql
 	public function aGetList($vHintId, $oOption, $iCacheTime=0)
 	{
 		$oOption = $this->_vBuildOption($oOption, $vHintId, array());
-		return $this->_oGetSqlAgent()->aSelect($this->_sTable, $this->iGetHintId($vHintId), $oOption, $iCacheTime, false);
+		return $this->_oGetSqlAgent()->aSelect($this->_sTable, $this->iGetHintId($vHintId), $oOption, $iCacheTime, $this->_bGetForceMaster($oOption));
 	}
 
 	public function vDeleteCache($vHintId, $vKey)
@@ -600,6 +600,15 @@ class Ko_Dao_DB implements IKo_Dao_DB, IKo_Dao_DBHelp, IKo_Dao_Mysql
 			$keys[] = $key.':'.urlencode($aKey[$key]);
 		}
 		return implode(':', $keys);
+	}
+	
+	private function _bGetForceMaster($oOption)
+	{
+		if (is_array($oOption))
+		{
+			return false;
+		}
+		return $oOption->bForceMaster();
 	}
 
 	private function _vBuildOption($oOption, $vHintId, $aKey)

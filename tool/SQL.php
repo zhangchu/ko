@@ -56,6 +56,10 @@ interface IKo_Tool_SQL
 	 * @return Ko_Tool_SQL 返回 $this
 	 */
 	public function oCalcFoundRows($bCalcFoundRows);
+	/**
+	 * @return Ko_Tool_SQL 返回 $this
+	 */
+	public function oForceMaster($bForceMaster);
 
 	/**
 	 * @return string
@@ -89,6 +93,10 @@ interface IKo_Tool_SQL
 	 * @return boolean
 	 */
 	public function bCalcFoundRows();
+	/**
+	 * @return boolean
+	 */
+	public function bForceMaster();
 
 	public function vSetFoundRows($iFoundRows);
 	/**
@@ -110,6 +118,7 @@ class Ko_Tool_SQL implements IKo_Tool_SQL
 	private $_iOffset = 0;
 	private $_iLimit = 0;
 	private $_bCalcFoundRows = false;
+	private $_bForceMaster = false;
 
 	private $_iFoundRows = 0;
 
@@ -127,6 +136,7 @@ class Ko_Tool_SQL implements IKo_Tool_SQL
 		$option->_iOffset = $this->_iOffset;
 		$option->_iLimit = $this->_iLimit;
 		$option->_bCalcFoundRows = $this->_bCalcFoundRows;
+		$option->_bForceMaster = $this->_bForceMaster;
 		$option->_iFoundRows = $this->_iFoundRows;
 		return $option;
 	}
@@ -238,6 +248,15 @@ class Ko_Tool_SQL implements IKo_Tool_SQL
 	}
 
 	/**
+	 * @return Ko_Tool_SQL
+	 */
+	public function oForceMaster($bForceMaster)
+	{
+		$this->_bForceMaster = $bForceMaster;
+		return $this;
+	}
+
+	/**
 	 * @return string
 	 */
 	public function sFields()
@@ -299,6 +318,14 @@ class Ko_Tool_SQL implements IKo_Tool_SQL
 	public function bCalcFoundRows()
 	{
 		return $this->_bCalcFoundRows;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function bForceMaster()
+	{
+		return $this->_bForceMaster;
 	}
 
 	public function vSetFoundRows($iFoundRows)
