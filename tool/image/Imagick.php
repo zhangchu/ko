@@ -35,30 +35,51 @@ class Ko_Tool_Image_Imagick implements IKo_Tool_Image
 		try
 		{
 			$imgsrc = self::_VCreateImage($sSrc, $iFlag);
-			self::_VAlignImage($imgsrc);
+			$page = $imgsrc->getImagePage();
+			$w = $page['width'];
+			$h = $page['height'];
 			if (!empty($aOption['sharpen']))
 			{
 				$imgsrc->sharpenImage($aOption['sharpen']['radius'], $aOption['sharpen']['sigma']);
 			}
 			if ($aOption['srcx'] || $aOption['srcy'] || $aOption['srcw'] || $aOption['srch'])
 			{
-				$w = $imgsrc->getImageWidth();
-				$h = $imgsrc->getImageHeight();
 				$w = min($aOption['srcw'] ? $aOption['srcw'] : $w, $w - $aOption['srcx']);
 				$h = min($aOption['srch'] ? $aOption['srch'] : $h, $h - $aOption['srcy']);
 				if ($w <= 0 || $h <= 0 || $aOption['srcx'] < 0 || $aOption['srcy'] < 0)
 				{
-					$aOption['srcx'] = $aOption['srcy'] = $aOption['srcw'] = $aOption['srch'] = 0;
+					$aOption['srcx'] = $aOption['srcy'] = 0;
+					$w = $page['width'];
+					$h = $page['height'];
 				}
 			}
+
+			if ($w / $h > $iWidth / $iHeight)
+			{	//原图片比例宽了，左右需要裁切
+				$r = $iHeight / $h;
+				$src_y = $aOption['srcy'];
+				$src_h = $h;
+				$src_w = $src_h * $iWidth / $iHeight;
+				$src_x = $aOption['srcx'] + ($w - $src_w) / 2;
+			}
+			else
+			{	//源图片比例高了，上下需要裁切
+				$r = $iWidth / $w;
+				$src_x = $aOption['srcx'];
+				$src_w = $w;
+				$src_h = $src_w * $iHeight / $iWidth;
+				$src_y = $aOption['srcy'] + ($h - $src_h) / 2;
+			}
+
 			foreach($imgsrc as $frame)
 			{
-				if ($aOption['srcx'] || $aOption['srcy'] || $aOption['srcw'] || $aOption['srch'])
-				{
-					$frame->cropImage($w, $h, $aOption['srcx'], $aOption['srcy']);
-					$frame->setImagePage($w, $h, 0, 0);
-				}
-				$frame->cropThumbnailImage($iWidth, $iHeight);
+				$page = $frame->getImagePage();
+				$newpagex = ($src_x < $page['x']) ? ($page['x'] - $src_x) : 0;
+				$newpagey = ($src_y < $page['y']) ? ($page['y'] - $src_y) : 0;
+				
+				$frame->cropImage($src_w, $src_h, $src_x, $src_y);
+				$frame->scaleImage($frame->getImageWidth() * $r, $frame->getImageHeight() * $r);
+				$frame->setImagePage($src_w * $r, $src_h * $r, $newpagex * $r, $newpagey * $r);
 			}
 			if ($aOption['strip'])
 			{
@@ -219,8 +240,9 @@ class Ko_Tool_Image_Imagick implements IKo_Tool_Image
 		{
 			$imgsrc = self::_VCreateImage($sSrc, $iFlag);
 			$imgcomposite = self::_VCreateImageObject($sComposite, $iFlag & Ko_Tool_Image::FLAG_COMPOSITE_BLOB);
-			$composite_w = $imgcomposite->getImageWidth();
-			$composite_h = $imgcomposite->getImageHeight();
+			$page = $imgcomposite->getImagePage();
+			$composite_w = $page['width'];
+			$composite_h = $page['height'];
 			foreach($imgsrc as $frame)
 			{
 				$page = $frame->getImagePage();
