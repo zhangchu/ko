@@ -78,7 +78,7 @@ class Ko_Tool_Image_Imagick implements IKo_Tool_Image
 				$newpagey = ($src_y < $page['y']) ? ($page['y'] - $src_y) : 0;
 				
 				$frame->cropImage($src_w, $src_h, $src_x, $src_y);
-				$frame->scaleImage($frame->getImageWidth() * $r, $frame->getImageHeight() * $r);
+				$frame->scaleImage(max(1, $frame->getImageWidth() * $r), max(1, $frame->getImageHeight() * $r));
 				$frame->setImagePage($src_w * $r, $src_h * $r, $newpagex * $r, $newpagey * $r);
 			}
 			if ($aOption['strip'])
