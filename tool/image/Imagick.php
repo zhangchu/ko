@@ -129,7 +129,7 @@ class Ko_Tool_Image_Imagick implements IKo_Tool_Image
 				}
 				$rw = $dst_w / $page['width'];
 				$rh = $dst_h / $page['height'];
-				$frame->scaleImage($frame->getImageWidth() * $rw, $frame->getImageHeight() * $rh);
+				$frame->scaleImage(max(1, $frame->getImageWidth() * $rw), max(1, $frame->getImageHeight() * $rh));
 				$frame->setImagePage($dst_w, $dst_h, $page['x'] * $rw, $page['y'] * $rh);
 			}
 			if ($aOption['strip'])
