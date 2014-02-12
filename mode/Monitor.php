@@ -62,6 +62,10 @@
 interface IKo_Mode_Monitor
 {
 	/**
+	 * 检查所有服务器状况
+	 */
+	public function vCheck();
+	/**
 	 * 汇报当前服务器服务状况
 	 */
 	public function vReport($bImmediately = false);
@@ -93,6 +97,7 @@ class Ko_Mode_Monitor extends Ko_Busi_Api implements IKo_Mode_Monitor
 	 *
 	 * <pre>
 	 * array(
+	 *   'community' => snmp设置
 	 *   'ipsegmentApi' => ip段表
 	 *   'ipApi' => ip表
 	 *   'iproleApi' => ip角色表
@@ -112,6 +117,27 @@ class Ko_Mode_Monitor extends Ko_Busi_Api implements IKo_Mode_Monitor
 	 * @var array
 	 */
 	protected $_aConf = array();
+	
+	public function vCheck()
+	{
+		$ipApi = $this->_aConf['ipApi'];
+		$option = new Ko_Tool_SQL;
+		$iplist = $this->$ipApi->aGetList($option->oOrderBy('ip'));
+		foreach ($iplist as $ipinfo)
+		{
+			$ip = long2ip($ipinfo['ip']);
+			$memtotal = $this->_sGetMemTotal($ip);
+			if (strlen($memtotal))
+			{
+				$this->_aInsertIpReport($ipinfo['ip'], 'hw_mem', $memtotal);
+			}
+			$cpuinfo = $this->_sGetCpuInfo($ip);
+			if (strlen($cpuinfo))
+			{
+				$this->_aInsertIpReport($ipinfo['ip'], 'hw_cpu', $cpuinfo);
+			}
+		}
+	}
 	
 	public function vReport($bImmediately = false)
 	{
@@ -134,10 +160,6 @@ class Ko_Mode_Monitor extends Ko_Busi_Api implements IKo_Mode_Monitor
 			}
 		}
 		unset($v);
-		
-		$aHWInfo = $this->_aGetHardwareInfo();
-		$this->_aInsertIpReport($ip, 'hw_mem', $aHWInfo['memtotal']);
-		$this->_aInsertIpReport($ip, 'hw_cpu', $aHWInfo['cpuinfo']);
 	}
 	
 	public function vFindRole($bImmediately = false)
@@ -418,13 +440,48 @@ class Ko_Mode_Monitor extends Ko_Busi_Api implements IKo_Mode_Monitor
 		return $sLocalAddr;
 	}
 	
-	private function _aGetHardwareInfo()
+	private function _sGetMemTotal($sIp)
 	{
-		return array(
-			'memtotal' => Ko_Tool_CMD::IGetMemTotal(),
-			'cpuinfo' => Ko_Tool_CMD::AGetCPUInfo(),
-		);
+		$ret = snmpget($sIp, $this->_aConf['community'], 'hrMemorySize.0', 3000);
+		if (false !== $ret)
+		{
+			list($t, $s) = explode(':', $ret);
+			return ceil(intval(trim($s)) / (1024. * 1024.)).' G';
+		}
+		return '';
+	}
+	
+	private function _sGetCpuInfo($sIp)
+	{
+		$cpuinfo = array();
+		$ret = snmpwalk($sIp, $this->_aConf['community'], 'hrDeviceEntry', 300000);
+		if (is_array($ret))
+		{
+			$len = 0;
+			foreach ($ret as $k => $v)
+			{
+				list($t, $s) = explode(':', $v);
+				if ('INTEGER' !== $t)
+				{
+					$len = $k;
+					break;
+				}
+			}
+			for ($i=0; $i<$len; $i++)
+			{
+				list($t, $s) = explode(':', $ret[$len+$i], 2);
+				if (' HOST-RESOURCES-TYPES::hrDeviceProcessor' == $s)
+				{
+					list($t, $s) = explode(':', $ret[2*$len+$i], 2);
+					$cpuinfo[trim($s)]++;
+				}
+			}
+		}
+		$ret = array();
+		foreach ($cpuinfo as $k => $v)
+		{
+			$ret[] = $v.'个逻辑CPU，'.$k;
+		}
+		return implode(' || ', $ret);
 	}
 }
-
-?>

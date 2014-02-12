@@ -46,18 +46,6 @@ interface IKo_Tool_CMD
 	 * @return boolean
 	 */
 	public static function BRsync($sSrc, $sDest);
-	/**
-	 * 获取内存大小
-	 *
-	 * @return int
-	 */
-	public static function IGetMemTotal();
-	/**
-	 * 获取CPU信息
-	 *
-	 * @return array
-	 */
-	public static function AGetCPUInfo();
 }
 
 /**
@@ -163,76 +151,7 @@ class Ko_Tool_CMD implements IKo_Tool_CMD
 		list($output, $retval) = self::_AExecCmd('/usr/bin/rsync -auv '.$sSrc.' '.escapeshellarg($sDest));
 		return 0 == $retval;
 	}
-	
-	/**
-	 * @return int
-	 */
-	public static function IGetMemTotal()
-	{
-		$lines = file_get_contents('/proc/meminfo');
-		$lines = explode("\n", $lines);
-		foreach ($lines as $line)
-		{
-			list($tag, $info) = explode(':', $line);
-			if ('MemTotal' === $tag)
-			{
-				 return ceil(intval(trim($info)) / (1024. * 1024.)).' G';
-			}
-		}
-		return '';
-	}
-	
-	/**
-	 * @return array
-	 */
-	public static function AGetCPUInfo()
-	{
-		$ret = array();
-		$lines = file_get_contents('/proc/cpuinfo');
-		$lines = explode("\n", $lines);
-		$modelname = '';
-		$cachesize = '';
-		$physical = '';
-		$siblings = '';
-		$cores = '';
-		foreach ($lines as $line)
-		{
-			if (0 === strlen($line))
-			{
-				$ret[$physical] = array(
-					'model name' => $modelname,
-					'cache size' => $cachesize,
-					'siblings' => $siblings,
-					'cpu cores' => $cores,
-				);
-			}
-			list($tag, $info) = explode(':', $line);
-			$tag = trim($tag);
-			if ('model name' === $tag)
-			{
-				$modelname = trim($info);
-			}
-			else if ('cache size' === $tag)
-			{
-				$cachesize = trim($info);
-			}
-			else if ('physical id' === $tag)
-			{
-				$physical = trim($info);
-			}
-			else if ('siblings' === $tag)
-			{
-				$siblings = trim($info);
-			}
-			else if ('cpu cores' === $tag)
-			{
-				$cores = trim($info);
-			}
-		}
-		ksort($ret);
-		return $ret;
-	}
-	
+
 	private static function _AExecCmd($cmd)
 	{
 		$output = array();
