@@ -30,6 +30,12 @@ interface IKo_Html_Utils
 	 * @return string
 	 */
 	public static function SArr2html($aData, $iDepth = 0);
+	/**
+	 * 返回时间的一个缩短显示格式
+	 *
+	 * @return string
+	 */
+	public static function SGetShortTime($sTime);
 }
 
 class Ko_Html_Utils implements IKo_Html_Utils
@@ -111,6 +117,26 @@ class Ko_Html_Utils implements IKo_Html_Utils
 			$html = htmlspecialchars($aData);
 		}
 		return $html;
+	}
+	
+	/**
+	 * @return string
+	 */
+	public static function SGetShortTime($sTime)
+	{
+		$t = strtotime($sTime);
+		$showtime = date('Y-m-d H:i:s', $t);
+		$now = time();
+		$interval = $now - $t;
+		if ($interval > 90 * 86400)
+		{
+			return '<a title="'.htmlspecialchars($sTime).'">'.htmlspecialchars(substr($showtime, 0, 10)).'</a>';
+		}
+		else if ($interval > 12 * 3600)
+		{
+			return '<a title="'.htmlspecialchars($sTime).'">'.htmlspecialchars(substr($showtime, 5, 11)).'</a>';
+		}
+		return '<a title="'.htmlspecialchars($sTime).'">'.htmlspecialchars(substr($showtime, 11, 8)).'</a>';
 	}
 	
 	private static function _IGetHighlightMinPos($sText, $aWord)
