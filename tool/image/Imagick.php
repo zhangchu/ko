@@ -70,6 +70,8 @@ class Ko_Tool_Image_Imagick implements IKo_Tool_Image
 				$src_h = $src_w * $iHeight / $iWidth;
 				$src_y = $aOption['srcy'] + ($h - $src_h) / 2;
 			}
+			$src_w = ceil($src_w);
+			$src_h = ceil($src_h);
 
 			foreach($imgsrc as $frame)
 			{
@@ -78,8 +80,8 @@ class Ko_Tool_Image_Imagick implements IKo_Tool_Image
 				$newpagey = ($src_y < $page['y']) ? ($page['y'] - $src_y) : 0;
 				
 				$frame->cropImage($src_w, $src_h, $src_x, $src_y);
-				$frame->scaleImage(max(1, $frame->getImageWidth() * $r), max(1, $frame->getImageHeight() * $r));
-				$frame->setImagePage($src_w * $r, $src_h * $r, $newpagex * $r, $newpagey * $r);
+				$frame->scaleImage(min($iWidth, max(1, $frame->getImageWidth() * $r)), min($iHeight, max(1, $frame->getImageHeight() * $r)));
+				$frame->setImagePage($iWidth, $iHeight, $newpagex * $r, $newpagey * $r);
 			}
 			if ($aOption['strip'])
 			{
