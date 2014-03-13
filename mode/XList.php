@@ -41,6 +41,7 @@ interface IKo_Mode_XList
 	public function vAttachAuth($oAuth);
 	public function vAttachUI($oUI);
 	public function vAttachStorage($oStorage);
+	public function vAttachData($oData);
 }
 
 /**
@@ -142,6 +143,7 @@ class Ko_Mode_XList extends Ko_Busi_Api implements IKo_Mode_XList
 	private $_aAuth = array();
 	private $_oUI;
 	private $_oStorage;
+	private $_aData = array();
 
 	public function vMain($aReq, $vAdmin='')
 	{
@@ -255,6 +257,12 @@ class Ko_Mode_XList extends Ko_Busi_Api implements IKo_Mode_XList
 		{
 			$this->_oUI->vAttachStorage($this->_oStorage);
 		}
+	}
+	
+	public function vAttachData($oData)
+	{
+		assert($oData instanceof Ko_Mode_XIData);
+		$this->_aData[] = $oData;
 	}
 
 	private function _vMain_Get($aReq)
@@ -865,7 +873,7 @@ class Ko_Mode_XList extends Ko_Busi_Api implements IKo_Mode_XList
 		$pagenum = $this->_iGetListPageNum();
 		$curpage = max(1, $aReq['iXSPage']);
 		$oOption->oCalcFoundRows(true)->oOrderBy($this->_sGetReqOrder($aReq))->oOffset(($curpage - 1) * $pagenum)->oLimit($pagenum);
-		$info = $this->_aGetList_Item($oOption);
+		$info = $this->_aGetList_Item($aReq, $oOption);
 		$iCount = count($info);
 		$aExkeyInfos = $this->_aGetExkeyInfos($showfield, $info);
 
@@ -1234,14 +1242,33 @@ class Ko_Mode_XList extends Ko_Busi_Api implements IKo_Mode_XList
 		return false;
 	}
 
-	private function _aGetList_Item($oOption)
+	private function _aGetList_Item($aReq, $oOption)
 	{
-		$itemApi = $this->_aConf['itemApi'];
-		if ($this->_bIsSplitDB())
+		foreach ($this->_aData as $oData)
 		{
-			return $this->$itemApi->aGetList($this->_sSplitValue, $oOption);
+			$list = $oData->aGetList($aReq, $oOption);
+			if (!empty($list))
+			{
+				break;
+			}
 		}
-		return $this->$itemApi->aGetList($oOption);
+		if (empty($list))
+		{
+			$itemApi = $this->_aConf['itemApi'];
+			if ($this->_bIsSplitDB())
+			{
+				$list = $this->$itemApi->aGetList($this->_sSplitValue, $oOption);
+			}
+			else
+			{
+				$list = $this->$itemApi->aGetList($oOption);
+			}
+		}
+		foreach ($this->_aData as $oData)
+		{
+			$oData->vAfterGetList($list);
+		}
+		return $list;
 	}
 
 	private function _sGetTableName_Item()
