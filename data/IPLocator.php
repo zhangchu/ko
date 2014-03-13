@@ -1,6 +1,6 @@
 <?php
 /**
- * IPLocator
+ * IPLocator 本文件使用gb编码保存，不能使用utf-8编码保存
  *
  * @package ko
  * @subpackage data
@@ -24,6 +24,25 @@ class Ko_Data_IPLocator extends Ko_Data_KProxy implements IKo_Data_IPLocator
 	const PROXY_ARRMAX = 1000;
 	private static $s_OInstance;
 
+	private static $s_aChineseMainlandPrefix = array(
+		'安徽' => 1, '北京' => 1, '福建' => 1, '甘肃' => 1, '广东' => 1,
+		'广西' => 1, '贵州' => 1, '海南' => 1, '河北' => 1, '河南' => 1,
+		'黑龙' => 1, '湖北' => 1, '湖南' => 1, '吉林' => 1, '江苏' => 1,
+		'江西' => 1, '辽宁' => 1, '内蒙' => 1, '宁夏' => 1, '青海' => 1,
+		'山东' => 1, '山西' => 1, '陕西' => 1, '上海' => 1, '四川' => 1,
+		'天津' => 1, '西藏' => 1, '新疆' => 1, '云南' => 1, '浙江' => 1,
+		'重庆' => 1, '中国' => 1, '全国' => 1, '华东' => 1, '华北' => 1,
+		'中经' => 1, '內蒙' => 1, '聚友' => 1, '中科' => 1, '奇虎' => 1,
+		'联通' => 1, '本机' => 1, '局域' => 1, 'CNNI' => 1, 'UCWE' => 1,
+	);
+	private static $s_aHkmotwPrefix = array(
+		'澳门' => 1, '香港' => 1, '台湾' => 1,
+	);
+	
+	const RANGE_C1_FOREIGN = 0;
+	const RANGE_C1_CHINESEMAINLAND = 1;
+	const RANGE_C1_HKMOTW = 2;
+	
 	protected function __construct ()
 	{
 		KO_DEBUG >= 6 && Ko_Tool_Debug::VAddTmpLog('data/IPLocator', '__construct');
@@ -64,6 +83,21 @@ class Ko_Data_IPLocator extends Ko_Data_KProxy implements IKo_Data_IPLocator
 			$ret = array_merge($ret, $tmp['locations']);
 		}
 		return $ret;
+	}
+	
+	public function iGetRangeC1($sIp)
+	{
+		$location = $this->sGetLocation($sIp);
+		$head = substr($location, 0, 4);
+		if (isset(self::$s_aChineseMainlandPrefix[$head]))
+		{
+			return self::RANGE_C1_CHINESEMAINLAND;
+		}
+		else if (isset(self::$s_aHkmotwPrefix[$head]))
+		{
+			return self::RANGE_C1_HKMOTW;
+		}
+		return self::RANGE_C1_FOREIGN;
 	}
 }
 
