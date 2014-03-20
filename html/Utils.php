@@ -10,17 +10,17 @@
 interface IKo_Html_Utils
 {
 	/**
-	 * 判断html字符串的某个位置是否位于tag内部
+	 * 去除文本中无用的空白字符
 	 *
-	 * @return boolean
+	 * @return string
 	 */
-	public static function BIsInTag($sHtml, $iPos);
+	public static function SDeleteUselessBlank($sText);
 	/**
 	 * 将文本进行标红处理，并截取摘要
 	 * 传入的数据是文本格式，返回的数据是 html 格式
 	 * 只支持UTF-8编码的文本，同时，外部需要进行 mb_internal_encoding('UTF-8') 设置
 	 *
-	 * @param array $aWord 要标红的词列表，应按照长度排序，最长的在前面，防止包含关系导致长词无法标红
+	 * @param array $aWord 要标红的词列表
 	 * @return string
 	 */
 	public static function SHighlight($sText, $aWord, $iLength = 0, $sExt = '...', $sBefore = '<font color="red">', $sAfter = '</font>');
@@ -41,21 +41,16 @@ interface IKo_Html_Utils
 class Ko_Html_Utils implements IKo_Html_Utils
 {
 	/**
-	 * @return boolean
+	 * @return string
 	 */
-	public static function BIsInTag($sHtml, $iPos)
+	public static function SDeleteUselessBlank($sText)
 	{
-		$pos1 = mb_strpos($sHtml, '>', $iPos);
-		if (false === $pos1)
+		$sText = str_replace(array("\t", "\r", "\n"), array(' ', ' ', ' '), $sText);
+		while (false !== strpos($sText, '  '))
 		{
-			return false;
+			$sText = str_replace('  ', ' ', $sText);
 		}
-		$pos2 = mb_strpos($sHtml, '<', $iPos);
-		if (false === $pos2 || $pos2 > $pos1)
-		{
-			return true;
-		}
-		return false;
+		return $sText;
 	}
 	
 	/**
@@ -63,34 +58,10 @@ class Ko_Html_Utils implements IKo_Html_Utils
 	 */
 	public static function SHighlight($sText, $aWord, $iLength = 0, $sExt = '...', $sBefore = '<font color="red">', $sAfter = '</font>')
 	{
+		$sText = self::SDeleteUselessBlank($sText);
 		$minpos = self::_IGetHighlightMinPos($sText, $aWord);
 		$sSubText = self::_SGetHighlightSubStr($sText, $iLength, $sExt, $minpos);
-
-		$sHtml = htmlspecialchars($sSubText);
-		$htmllen = mb_strlen($sHtml);
-		$linklen = mb_strlen($sBefore) + mb_strlen($sAfter);
-		foreach ($aWord as $word)
-		{
-			$wlen = mb_strlen($word);
-			$offset = 0;
-			while ($offset < $htmllen)
-			{
-				$pos = mb_stripos($sHtml, $word, $offset);
-				if (false === $pos)
-				{
-					break;
-				}
-				if (self::BIsInTag($sHtml, $pos) || self::_BIsInHighlight($sHtml, $pos, $sBefore, $sAfter))
-				{
-					$offset = $pos + $wlen;
-					continue;
-				}
-				$sHtml = mb_substr($sHtml, 0, $pos).$sBefore.mb_substr($sHtml, $pos, $wlen).$sAfter.mb_substr($sHtml, $pos + $wlen);
-				$htmllen += $linklen;
-				$offset = $pos + $linklen + $wlen;
-			}
-		}
-		return $sHtml;
+		return self::_SHighlight($sSubText, $aWord, $sBefore, $sAfter);
 	}
 	
 	/**
@@ -172,18 +143,65 @@ class Ko_Html_Utils implements IKo_Html_Utils
 		return $sText;
 	}
 	
-	private static function _BIsInHighlight($sHtml, $iPos, $sBefore, $sAfter)
+	private static function _BIsAlreadyHighlight($start, $end, &$posarr)
 	{
-		$pos1 = mb_strpos($sHtml, $sAfter, $iPos);
-		if (false === $pos1)
+		$delarr = array();
+		foreach ($posarr as $k => $v)
 		{
-			return false;
+			if ($start <= $k && $v <= $end)
+			{
+				$delarr[] = $k;
+			}
+			else
+			{
+				if ($k <= $start && $start < $v)
+				{
+					return true;
+				}
+				if ($k < $end && $end <= $v)
+				{
+					return true;
+				}
+			}
 		}
-		$pos2 = mb_strpos($sHtml, $sBefore, $iPos);
-		if (false === $pos2 || $pos2 > $pos1)
+		foreach ($delarr as $k)
 		{
-			return true;
+			unset($posarr[$k]);
 		}
 		return false;
+	}
+	
+	private static function _SHighlight($sText, $aWord, $sBefore, $sAfter)
+	{
+		$posarr = array();
+		$textlen = mb_strlen($sText);
+		foreach ($aWord as $word)
+		{
+			$wlen = mb_strlen($word);
+			$offset = 0;
+			while ($offset < $textlen)
+			{
+				$pos = mb_stripos($sText, $word, $offset);
+				if (false === $pos)
+				{
+					break;
+				}
+				$offset = $pos + $wlen;
+				if (self::_BIsAlreadyHighlight($pos, $offset, $posarr))
+				{
+					continue;
+				}
+				$posarr[$pos] = $offset;
+			}
+		}
+		krsort($posarr, SORT_NUMERIC);
+		$sHtml = '';
+		foreach ($posarr as $k => $v)
+		{
+			$sHtml = $sBefore.htmlspecialchars(mb_substr($sText, $k, $v - $k)).$sAfter.htmlspecialchars(mb_substr($sText, $v)).$sHtml;
+			$sText = mb_substr($sText, 0, $k);
+		}
+		$sHtml = htmlspecialchars($sText).$sHtml;
+		return $sHtml;
 	}
 }
