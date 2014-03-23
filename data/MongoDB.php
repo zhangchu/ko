@@ -39,7 +39,7 @@ class Ko_Data_MongoDB implements IKo_Data_SqlAgent
 		assert(empty($aUpdate) && empty($aChange));
 		$options = array('safe' => self::SAFE);
 		$ret = $this->_oGetEngine()->oSelectCollection($sKind)->insert($aData, $options);
-		return array('data' => array(), 'rownum' => 0, 'insertid' => 0, 'affectedrows' => $ret['n']);
+		return array('data' => array(), 'rownum' => 0, 'insertid' => $aData['_id'], 'affectedrows' => 1);
 	}
 	
 	/**
