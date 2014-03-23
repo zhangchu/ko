@@ -21,8 +21,8 @@ interface IKo_Data_Gis
 class Ko_Data_Gis extends Ko_Data_KProxy implements IKo_Data_Gis
 {
 	const REGION = 0x1;
-	const MDD = 0x2;
-	const BOTH = 0x3;
+	const MDD    = 0x2;
+	const AREA   = 0x4;
 
 	private static $s_OInstance;
 
@@ -39,6 +39,14 @@ class Ko_Data_Gis extends Ko_Data_KProxy implements IKo_Data_Gis
 			self::$s_OInstance = new self();
 		}
 		return self::$s_OInstance;
+	}
+	
+	public function vReload($iHow = self::REGION)
+	{
+		$aPara = array(
+			'how' => intval($iHow),
+			);
+		$this->_oProxy->invoke('reload', $aPara);
 	}
 
 	public function aGetRegion($fLat, $fLng, $iHow = self::REGION)
