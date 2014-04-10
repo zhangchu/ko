@@ -47,7 +47,7 @@ class Ko_Data_DBMan extends Ko_Data_KProxy implements IKo_Data_DBMan
 			'hintId' => intval($iHintId),
 			'sql' => $sSql,
 			'convert' => true,
-			'MASTER' => $bMaster ? true : false,
+			'master' => $bMaster ? true : false,
 			);
 		$oReturn = $this->_oProxy->invoke('sQuery', $aPara, $oCtx);
 		return $this->_aFormatResult($oReturn);
@@ -61,7 +61,7 @@ class Ko_Data_DBMan extends Ko_Data_KProxy implements IKo_Data_DBMan
 			'hintId' => intval($iHintId),
 			'sqls' => $aSqls,
 			'convert' => true,
-			'MASTER' => $bMaster ? true : false,
+			'master' => $bMaster ? true : false,
 			);
 		$oReturn = $this->_oProxy->invoke('mQuery', $aPara, $oCtx);
 		return $this->_aFormatMResult($oReturn);
