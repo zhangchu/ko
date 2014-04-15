@@ -34,6 +34,12 @@ interface IKo_Tool_Image
 	 */
 	public static function VResize($sSrc, $sDst, $iWidth = 0, $iHeight = 0, $iFlag = 0, $aOption = array());
 	/**
+	 * 计算 VResize 生成图片的尺寸
+	 *
+	 * @return array array($realwidth, $realheight)
+	 */
+	public static function ACalcResize($iSrcW, $iSrcH, $iWidth = 0, $iHeight = 0);
+	/**
 	 * 旋转图片，fAngle 通常为 90 的整数倍，顺时针方向旋转
 	 *
 	 * @return boolean|string
@@ -83,6 +89,28 @@ class Ko_Tool_Image implements IKo_Tool_Image
 	public static function VResize($sSrc, $sDst, $iWidth = 0, $iHeight = 0, $iFlag = 0, $aOption = array())
 	{
 		return call_user_func(array('Ko_Tool_Image_'.KO_IMAGE, 'VResize'), $sSrc, $sDst, $iWidth, $iHeight, $iFlag, $aOption);
+	}
+	
+	public static function ACalcResize($iSrcW, $iSrcH, $iWidth = 0, $iHeight = 0)
+	{
+		if ((0 == $iWidth || $iWidth >= $iSrcW) && (0 == $iHeight || $iHeight >= $iSrcH))
+		{
+			return array($iSrcW, $iSrcH);
+		}
+		
+		$dst_w = $iSrcW;
+		$dst_h = $iSrcH;
+		if ($iWidth > 0 && $dst_w > $iWidth)
+		{
+			$dst_h = intval($dst_h * $iWidth / $dst_w);
+			$dst_w = $iWidth;
+		}
+		if ($iHeight > 0 && $dst_h > $iHeight)
+		{
+			$dst_w = intval($dst_w * $iHeight / $dst_h);
+			$dst_h = $iHeight;
+		}
+		return array($dst_w, $dst_h);
 	}
 
 	public static function VRotate($sSrc, $sDst, $fAngle, $iBgColor = 0xffffff, $iFlag = 0)
