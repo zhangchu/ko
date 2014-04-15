@@ -15,21 +15,6 @@ class Ko_Tool_Image_Gd implements IKo_Tool_Image
 		'jpg' => array('imagejpeg', 90, 98),
 	);
 	
-	public static function VValidImageType($sFile)
-	{
-		$type = exif_imagetype($sFile);
-		switch ($type)
-		{
-		case IMAGETYPE_GIF:
-			return 'gif';
-		case IMAGETYPE_JPEG:
-			return 'jpg';
-		case IMAGETYPE_PNG:
-			return 'png';
-		}
-		return false;
-	}
-
 	public static function VCrop($sSrc, $sDst, $iWidth, $iHeight, $iFlag = 0, $aOption = array())
 	{
 		$imgsrc = self::_VCreateImage($sSrc, $iFlag);

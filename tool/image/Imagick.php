@@ -15,21 +15,6 @@ class Ko_Tool_Image_Imagick implements IKo_Tool_Image
 		'jpg' => array(90, false),
 	);
 	
-	public static function VValidImageType($sFile)
-	{
-		$type = exif_imagetype($sFile);
-		switch ($type)
-		{
-		case IMAGETYPE_GIF:
-			return 'gif';
-		case IMAGETYPE_JPEG:
-			return 'jpg';
-		case IMAGETYPE_PNG:
-			return 'png';
-		}
-		return false;
-	}
-	
 	public static function VCrop($sSrc, $sDst, $iWidth, $iHeight, $iFlag = 0, $aOption = array())
 	{
 		try

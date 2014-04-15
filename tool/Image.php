@@ -10,7 +10,7 @@
 //define('KO_IMAGE', 'Gd');
 //include_once(dirname(__FILE__).'/../ko.class.php');
 
-interface IKo_Tool_Image
+interface IKo_Tool_ImageHelp
 {
 	/**
 	 * 获取文件的类型
@@ -18,6 +18,16 @@ interface IKo_Tool_Image
 	 * @return string|boolean 返回 false 表示不支持的文件类型
 	 */
 	public static function VValidImageType($sFile);
+	/**
+	 * 计算 VResize 生成图片的尺寸
+	 *
+	 * @return array array($realwidth, $realheight)
+	 */
+	public static function ACalcResize($iSrcW, $iSrcH, $iWidth = 0, $iHeight = 0);
+}
+
+interface IKo_Tool_Image
+{
 	/**
 	 * 保证生成的图片宽度为 iWidth，高度为 iHeight
 	 *
@@ -33,12 +43,6 @@ interface IKo_Tool_Image
 	 * @return boolean|string
 	 */
 	public static function VResize($sSrc, $sDst, $iWidth = 0, $iHeight = 0, $iFlag = 0, $aOption = array());
-	/**
-	 * 计算 VResize 生成图片的尺寸
-	 *
-	 * @return array array($realwidth, $realheight)
-	 */
-	public static function ACalcResize($iSrcW, $iSrcH, $iWidth = 0, $iHeight = 0);
 	/**
 	 * 旋转图片，fAngle 通常为 90 的整数倍，顺时针方向旋转
 	 *
@@ -66,7 +70,7 @@ interface IKo_Tool_Image
 	public static function VComposite($sSrc, $sDst, $sComposite, $iX, $iY, $iFlag = 0, $aOption = array());
 }
 
-class Ko_Tool_Image implements IKo_Tool_Image
+class Ko_Tool_Image implements IKo_Tool_Image, IKo_Tool_ImageHelp
 {
 	const FLAG_SRC_BLOB = 0x1;
 	const FLAG_DST_BLOB = 0x2;
@@ -78,17 +82,17 @@ class Ko_Tool_Image implements IKo_Tool_Image
 	
 	public static function VValidImageType($sFile)
 	{
-		return call_user_func(array('Ko_Tool_Image_'.KO_IMAGE, 'VValidImageType'), $sFile);
-	}
-	
-	public static function VCrop($sSrc, $sDst, $iWidth, $iHeight, $iFlag = 0, $aOption = array())
-	{
-		return call_user_func(array('Ko_Tool_Image_'.KO_IMAGE, 'VCrop'), $sSrc, $sDst, $iWidth, $iHeight, $iFlag, $aOption);
-	}
-	
-	public static function VResize($sSrc, $sDst, $iWidth = 0, $iHeight = 0, $iFlag = 0, $aOption = array())
-	{
-		return call_user_func(array('Ko_Tool_Image_'.KO_IMAGE, 'VResize'), $sSrc, $sDst, $iWidth, $iHeight, $iFlag, $aOption);
+		$type = exif_imagetype($sFile);
+		switch ($type)
+		{
+		case IMAGETYPE_GIF:
+			return 'gif';
+		case IMAGETYPE_JPEG:
+			return 'jpg';
+		case IMAGETYPE_PNG:
+			return 'png';
+		}
+		return false;
 	}
 	
 	public static function ACalcResize($iSrcW, $iSrcH, $iWidth = 0, $iHeight = 0)
@@ -111,6 +115,16 @@ class Ko_Tool_Image implements IKo_Tool_Image
 			$dst_h = $iHeight;
 		}
 		return array($dst_w, $dst_h);
+	}
+	
+	public static function VCrop($sSrc, $sDst, $iWidth, $iHeight, $iFlag = 0, $aOption = array())
+	{
+		return call_user_func(array('Ko_Tool_Image_'.KO_IMAGE, 'VCrop'), $sSrc, $sDst, $iWidth, $iHeight, $iFlag, $aOption);
+	}
+	
+	public static function VResize($sSrc, $sDst, $iWidth = 0, $iHeight = 0, $iFlag = 0, $aOption = array())
+	{
+		return call_user_func(array('Ko_Tool_Image_'.KO_IMAGE, 'VResize'), $sSrc, $sDst, $iWidth, $iHeight, $iFlag, $aOption);
 	}
 
 	public static function VRotate($sSrc, $sDst, $fAngle, $iBgColor = 0xffffff, $iFlag = 0)
