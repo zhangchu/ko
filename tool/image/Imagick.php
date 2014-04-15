@@ -106,12 +106,12 @@ class Ko_Tool_Image_Imagick implements IKo_Tool_Image
 				$dst_h = $page['height'];
 				if ($iWidth > 0 && $dst_w > $iWidth)
 				{
-					$dst_h = $dst_h * $iWidth / $dst_w;
+					$dst_h = max(1, intval($dst_h * $iWidth / $dst_w));
 					$dst_w = $iWidth;
 				}
 				if ($iHeight > 0 && $dst_h > $iHeight)
 				{
-					$dst_w = $dst_w * $iHeight / $dst_h;
+					$dst_w = max(1, intval($dst_w * $iHeight / $dst_h));
 					$dst_h = $iHeight;
 				}
 				$rw = $dst_w / $page['width'];

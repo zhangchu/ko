@@ -106,12 +106,12 @@ class Ko_Tool_Image implements IKo_Tool_Image, IKo_Tool_ImageHelp
 		$dst_h = $iSrcH;
 		if ($iWidth > 0 && $dst_w > $iWidth)
 		{
-			$dst_h = intval($dst_h * $iWidth / $dst_w);
+			$dst_h = max(1, intval($dst_h * $iWidth / $dst_w));
 			$dst_w = $iWidth;
 		}
 		if ($iHeight > 0 && $dst_h > $iHeight)
 		{
-			$dst_w = intval($dst_w * $iHeight / $dst_h);
+			$dst_w = max(1, intval($dst_w * $iHeight / $dst_h));
 			$dst_h = $iHeight;
 		}
 		return array($dst_w, $dst_h);
