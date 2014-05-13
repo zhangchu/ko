@@ -347,7 +347,7 @@ class Ko_Dao_DB implements IKo_Dao_DB, IKo_Dao_DBHelp, IKo_Dao_Mysql
 		$aRet = array();
 		foreach ($aKey as $key)
 		{
-			$aRet[$key] = $this->_aGet($vHintId, array($this->_aKeyField[0] => $key), true);
+			$aRet[strval($key)] = $this->_aGet($vHintId, array($this->_aKeyField[0] => $key), true);
 		}
 		return $aRet;
 	}
@@ -509,7 +509,7 @@ class Ko_Dao_DB implements IKo_Dao_DB, IKo_Dao_DBHelp, IKo_Dao_Mysql
 			{
 				if (!empty($v))
 				{
-					$sCacheKey = $aIdKeyMap[$v[$this->_aKeyField[0]]];
+					$sCacheKey = $aIdKeyMap[strval($v[$this->_aKeyField[0]])];
 					$this->_oGetDBCache()->vSet($sCacheKey, $v, false);
 				}
 			}
@@ -563,7 +563,7 @@ class Ko_Dao_DB implements IKo_Dao_DB, IKo_Dao_DBHelp, IKo_Dao_Mysql
 				$sCacheKey .= urlencode($vHintId).':';
 			}
 			$sCacheKey .= $this->_aKeyField[0].':'.urlencode($key);
-			$aIdKeyMap[$key] = $sCacheKey;
+			$aIdKeyMap[strval($key)] = $sCacheKey;
 			$aKeyIdMap[$sCacheKey] = $key;
 		}
 		return array($aIdKeyMap, $aKeyIdMap);
