@@ -59,7 +59,7 @@ if (!defined('KO_INCLUDE_DIR'))
  */
 if (!defined('KO_SMARTY_INC'))
 {
-	define('KO_SMARTY_INC', dirname(KO_DIR).'/vendor/Smarty-3.1.14/libs/Smarty.class.php');
+	define('KO_SMARTY_INC', KO_DIR.'/vendor/Smarty-3.1.14/libs/Smarty.class.php');
 }
 
 /**
