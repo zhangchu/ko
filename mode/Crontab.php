@@ -50,7 +50,7 @@ class Ko_Mode_Crontab implements IKo_App_Base
 		$curdir = getcwd();
 		foreach ($this->_aConf['crontab'] as $v)
 		{
-			if (!$this->_bCheckTime($week, $hour, $minute, $v))
+			if (!Ko_Tool_Time::BCheckTime($week, $hour, $minute, $v))
 			{
 				continue;
 			}
@@ -75,34 +75,5 @@ class Ko_Mode_Crontab implements IKo_App_Base
 				chdir($curdir);
 			}
 		}
-	}
-	
-	private function _bCheckTime($iWeek, $iHour, $iMinute, $aCron)
-	{
-		return $this->_bCheckTimeArr('week', $iWeek, $aCron)
-			&& $this->_bCheckTimeArr('hour', $iHour, $aCron)
-			&& $this->_bCheckTimeArr('minute', $iMinute, $aCron);
-	}
-	
-	private function _bCheckTimeArr($sUnit, $iUnit, $aCron)
-	{
-		if (isset($aCron[$sUnit]))
-		{
-			if (is_array($aCron[$sUnit]))
-			{
-				if (!in_array($iUnit, $aCron[$sUnit]))
-				{
-					return false;
-				}
-			}
-			else
-			{
-				if ($aCron[$sUnit] != $iUnit)
-				{
-					return false;
-				}
-			}
-		}
-		return true;
 	}
 }
