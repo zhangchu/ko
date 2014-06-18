@@ -33,7 +33,7 @@ interface IKo_Data_MCache
  */
 class Ko_Data_MCache extends Ko_Data_KProxy implements IKo_Data_MCache, IKo_Data_MCAgent
 {
-	const PROXY_ARRMAX = 1000;
+	const PROXY_ARRMAX = 500;
 	private static $s_aInstances = array();
 
 	protected function __construct ($sTag, $sExinfo)
