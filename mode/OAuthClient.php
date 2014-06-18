@@ -4,7 +4,7 @@
  *
  * <b>简介</b>
  * <pre>
- *   实现 OAuth 1.0，RFC 5849
+ *   实现 OAuth 1.0 -- http://tools.ietf.org/html/rfc5849
  *   支持 XAuth -- http://tools.ietf.org/id/draft-dehora-farrell-oauth-accesstoken-creds-02.txt
  * </pre>
  *

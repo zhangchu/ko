@@ -4,7 +4,7 @@
  *
  * <b>简介</b>
  * <pre>
- *   实现 OAuth 2.0 -- http://tools.ietf.org/html/draft-ietf-oauth-v2-22
+ *   实现 OAuth 2.0 -- http://tools.ietf.org/html/rfc6749
  * </pre>
  *
  * <b>数据库例表</b>
