@@ -503,7 +503,7 @@ class Ko_Mode_OCMT extends Ko_Busi_Api implements IKo_Mode_OCMT
 			'uid' => $iUid,
 			'thread_cid' => $iThread,
 			'content' => $sContent,
-			'ctime' => array('NOW()'),
+			'ctime' => date('Y-m-d H:i:s'),
 		);
 		return $this->$contentDao->iInsert($arr);
 	}
@@ -520,7 +520,7 @@ class Ko_Mode_OCMT extends Ko_Busi_Api implements IKo_Mode_OCMT
 				'action' => $iAction,
 				'admin' => is_array($vAdmin) ? Ko_Tool_Enc::SEncode($vAdmin) : $vAdmin,
 				'ip' => Ko_Tool_Ip::SGetClientIP(),
-				'ctime' => array('NOW()'),
+				'ctime' => date('Y-m-d H:i:s'),
 			);
 			$this->$actionDao->aInsert($arr);
 		}

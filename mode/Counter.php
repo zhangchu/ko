@@ -209,7 +209,7 @@ class Ko_Mode_Counter extends Ko_Busi_Api implements IKo_Mode_Counter
 		if ($mcinfo)
 		{
 			$update = array(
-				'mtime' => array('NOW()'),
+				'mtime' => date('Y-m-d H:i:s'),
 				);
 			$change = array(
 				'times' => $mcinfo,
@@ -242,14 +242,14 @@ class Ko_Mode_Counter extends Ko_Busi_Api implements IKo_Mode_Counter
 		$dbDao = $this->_aConf['db'].'Dao';
 		$data = $this->$dbDao->aKeyToArray($vKey);
 		$data['times'] = $iValue;
-		$data['mtime'] = array('NOW()');
+		$data['mtime'] = date('Y-m-d H:i:s');
 		$update = array(
-			'mtime' => array('NOW()'),
+			'mtime' => $data['mtime'],
 			);
 		$change = array(
 			'times' => $iValue,
 			);
-		$this->$dbDao->iInsert($data, $update, $change);
+		$this->$dbDao->aInsert($data, $update, $change);
 	}
 
 	private function _sGetMCKey($vKey)

@@ -106,7 +106,7 @@ class Ko_Mode_LimitMysql extends Ko_Mode_LimitBase
 	{
 		$update = array(
 			'times' => $iTimes,
-			'ctime' => array('NOW()'),
+			'ctime' => date('Y-m-d H:i:s'),
 			);
 		$oOption = new Ko_Tool_SQL;
 		$oOption->oWhere('ctime = ?', $sCtime);
@@ -138,7 +138,7 @@ class Ko_Mode_LimitMysql extends Ko_Mode_LimitBase
 			$indexField[0] => $vObj,
 			$indexField[1] => $sAction,
 			'times' => $iTimes,
-			'ctime' => array('NOW()'),
+			'ctime' => date('Y-m-d H:i:s'),
 			);
 		return $this->_oDbDao->aInsert($data);
 	}
