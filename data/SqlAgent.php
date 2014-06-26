@@ -122,7 +122,7 @@ class Ko_Data_SqlAgent implements IKo_Data_SqlAgent
 		}
 		return $ret;
 	}
-
+	
 	private function _sGetSetSql($aUpdate, $aChange)
 	{
 		assert(is_array($aUpdate));
@@ -131,27 +131,12 @@ class Ko_Data_SqlAgent implements IKo_Data_SqlAgent
 		$set = array();
 		foreach($aUpdate as $k => $v)
 		{
-			if (is_array($v))
-			{
-				assert(1 === count($v));
-				$set[] = $k.' = '.$v[0];
-			}
-			else
-			{
-				$set[] = $k.' = "'.Ko_Data_Mysql::SEscape($v).'"';
-			}
+			$set[] = $k.' = "'.Ko_Data_Mysql::SEscape($v).'"';
 		}
 		foreach($aChange as $k => $v)
 		{
-			if (is_numeric($v))
-			{
-				$abs = abs($v);
-				$set[] = $k.' = '.$k.' '.($v >= 0 ? '+' : '-').' '.$abs;
-			}
-			else
-			{
-				$set[] = $k.' = CONCAT('.$k.', "'.Ko_Data_Mysql::SEscape($v).'")';
-			}
+			$abs = abs($v);
+			$set[] = $k.' = '.$k.' '.($v >= 0 ? '+' : '-').' '.$abs;
 		}
 		return implode(', ', $set);
 	}
