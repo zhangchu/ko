@@ -2,8 +2,7 @@
 /**
  * Text
  *
- * @package ko
- * @subpackage html
+ * @package ko\html
  * @author zhangchu
  */
 
