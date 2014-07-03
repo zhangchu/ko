@@ -6,15 +6,7 @@
  * @author zhangchu
  */
 
-interface IKo_Mode_LimitBase
-{
-	/**
-	 * @return int
-	 */
-	public static function IGetStartTime($sCtime, $bAlign, $iSecond, $iOffset);
-}
-
-class Ko_Mode_LimitBase extends Ko_Busi_Api implements IKo_Mode_Limit, IKo_Mode_LimitBase
+class Ko_Mode_LimitBase extends Ko_Busi_Api implements IKo_Mode_Limit
 {
 	/**
 	 * @return int

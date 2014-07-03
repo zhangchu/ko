@@ -6,25 +6,11 @@
  * @author zhangchu
  */
 
-interface IKo_Mode_OAuthClientBase
+class Ko_Mode_OAuthClientBase extends Ko_Mode_OAuthBase
 {
 	/**
 	 * 查询用户 token 信息
 	 * 
-	 * @return array
-	 */
-	public function aGetUserToken($sSrc, $iUid, $sToken);
-	/**
-	 * 查询用户关联信息
-	 * 
-	 * @return array
-	 */
-	public function aGetLastToken($sSrc, $iUid);
-}
-
-class Ko_Mode_OAuthClientBase extends Ko_Mode_OAuthBase implements IKo_Mode_OAuthClientBase
-{
-	/**
 	 * @return array
 	 */
 	public function aGetUserToken($sSrc, $iUid, $sToken)
@@ -34,6 +20,8 @@ class Ko_Mode_OAuthClientBase extends Ko_Mode_OAuthBase implements IKo_Mode_OAut
 	}
 	
 	/**
+	 * 查询用户关联信息
+	 * 
 	 * @return array
 	 */
 	public function aGetLastToken($sSrc, $iUid)

@@ -6,20 +6,7 @@
  * @author zhangchu
  */
 
-interface IKo_Data_Storage
-{
-	public function bWrite($sContent, $sExt, $sDomain, &$sDest);
-	public function sRead($sDomain, $sDest);
-
-	public function sGetUniqStr($sDomain, $sDest, $iSize, $sMimetype, $sFilename);
-	public function aParseUniqStr($sUniqStr);
-	
-	public function sGetUrl($sDomain, $sDest, $sBriefTag);
-	public function aParseUrl($sUrl);
-	public function bGenBrief($sDomain, $sDest, $sBriefTag);
-}
-
-class Ko_Data_Storage extends Ko_Busi_Api implements IKo_Data_Storage
+class Ko_Data_Storage extends Ko_Busi_Api
 {
 	/**
 	 * 缩略图配置数组

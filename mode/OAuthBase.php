@@ -6,22 +6,14 @@
  * @author zhangchu
  */
 
-interface IKo_Mode_OAuthBase
-{
-	/**
-	 * 临时授权 / 用户授权 / token 接口 / 回调接口
-	 *
-	 * @return array
-	 */
-	public function aGetPara($aReqType = array());
-}
-
-class Ko_Mode_OAuthBase extends Ko_Busi_Api implements IKo_Mode_OAuthBase
+class Ko_Mode_OAuthBase extends Ko_Busi_Api
 {
 	protected $_aReqType = array();
 	protected $_aReq = array();
 
 	/**
+	 * 临时授权 / 用户授权 / token 接口 / 回调接口
+	 *
 	 * @return array
 	 */
 	public function aGetPara($aReqType = array())

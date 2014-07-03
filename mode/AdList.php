@@ -30,21 +30,7 @@
  * @author zhangchu
  */
 
-interface IKo_Mode_AdList
-{
-	/**
-	 * 重置当前的列表缓存
-	 */
-	public function vResetCurrentListCache();
-	/**
-	 * 获取投放广告ID
-	 *
-	 * @return int
-	 */
-	public function iGetId($sGrp, $iUid = 0, $sIp = '');
-}
-
-class Ko_Mode_AdList extends Ko_Busi_Api implements IKo_Mode_AdList
+class Ko_Mode_AdList extends Ko_Busi_Api
 {
 	/**
 	 * 配置数组
@@ -61,6 +47,9 @@ class Ko_Mode_AdList extends Ko_Busi_Api implements IKo_Mode_AdList
 	 */
 	protected $_aConf = array();
 	
+	/**
+	 * 重置当前的列表缓存
+	 */
 	public function vResetCurrentListCache()
 	{
 		$listApi = $this->_aConf['listApi'];
@@ -71,6 +60,8 @@ class Ko_Mode_AdList extends Ko_Busi_Api implements IKo_Mode_AdList
 	}
 	
 	/**
+	 * 获取投放广告ID
+	 *
 	 * @return int
 	 */
 	public function iGetId($sGrp, $iUid = 0, $sIp = '')

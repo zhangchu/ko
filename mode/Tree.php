@@ -25,37 +25,7 @@
  * @author zhangchu
  */
 
-interface IKo_Mode_Tree
-{
-	/**
-	 * @return boolean
-	 */
-	public function bAdd($iId, $iPid);
-	/**
-	 * @return boolean
-	 */
-	public function bDel($iId, $iPid);
-	/**
-	 * @param int $iDepth 获取父id的层数，如果为0表示一直获取到最顶层
-	 * @return array
-	 */
-	public function aGetParent($iId, $iDepth = 1);
-	/**
-	 * @param int $iDepth 获取子id的层数，如果为0表示一直获取到最低层
-	 * @return array
-	 */
-	public function aGetChild($iId, $iDepth = 1);
-	/**
-	 * @return array
-	 */
-	public function aTree2Arr($aTree);
-	/**
-	 * @return array
-	 */
-	public function aTree2DepthArr($aTree, $iDepth = 1);
-}
-
-class Ko_Mode_Tree extends Ko_Busi_Api implements IKo_Mode_Tree
+class Ko_Mode_Tree extends Ko_Busi_Api
 {
 	/**
 	 * 配置数组
@@ -112,6 +82,7 @@ class Ko_Mode_Tree extends Ko_Busi_Api implements IKo_Mode_Tree
 	}
 	
 	/**
+	 * @param int $iDepth 获取父id的层数，如果为0表示一直获取到最顶层
 	 * @return array
 	 */
 	public function aGetParent($iId, $iDepth = 1)
@@ -132,6 +103,7 @@ class Ko_Mode_Tree extends Ko_Busi_Api implements IKo_Mode_Tree
 	}
 	
 	/**
+	 * @param int $iDepth 获取子id的层数，如果为0表示一直获取到最低层
 	 * @return array
 	 */
 	public function aGetChild($iId, $iDepth = 1)
