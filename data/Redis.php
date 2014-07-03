@@ -2,8 +2,7 @@
 /**
  * Redis
  *
- * @package ko
- * @subpackage data
+ * @package ko\data
  * @author zhangchu
  */
 
