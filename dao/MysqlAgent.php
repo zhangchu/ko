@@ -2,8 +2,7 @@
 /**
  * MysqlAgent
  *
- * @package ko
- * @subpackage data
+ * @package ko\dao
  * @author zhangchu
  */
 

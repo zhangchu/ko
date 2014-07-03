@@ -2,8 +2,7 @@
 /**
  * CustomFactory
  *
- * @package ko
- * @subpackage dao
+ * @package ko\dao
  * @author zhangchu
  */
 
