@@ -1,4 +1,10 @@
 <?php
+/**
+ * Http
+ *
+ * @package ko\tool
+ * @author zhangchu
+ */
 
 class Ko_Tool_Http
 {

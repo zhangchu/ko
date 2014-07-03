@@ -2,8 +2,7 @@
 /**
  * Ip
  *
- * @package ko
- * @subpackage tool
+ * @package ko\tool
  * @author zhangchu
  */
 

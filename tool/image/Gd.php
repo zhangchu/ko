@@ -2,8 +2,7 @@
 /**
  * Image_Gd
  *
- * @package ko
- * @subpackage tool
+ * @package ko\tool\image
  * @author zhangchu
  */
 

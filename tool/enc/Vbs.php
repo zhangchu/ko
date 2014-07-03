@@ -2,8 +2,7 @@
 /**
  * Enc_Vbs
  *
- * @package ko
- * @subpackage tool
+ * @package ko\tool\enc
  * @author zhangchu
  */
 

@@ -1,4 +1,10 @@
 <?php
+/**
+ * CacheHttp
+ *
+ * @package ko\tool
+ * @author zhangchu
+ */
 
 class Ko_Tool_CacheHttp
 {

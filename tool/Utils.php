@@ -2,8 +2,7 @@
 /**
  * Utils
  *
- * @package ko
- * @subpackage tool
+ * @package ko\tool
  * @author zhangchu
  */
 
