@@ -2,8 +2,7 @@
 /**
  * XIAuth
  *
- * @package ko
- * @subpackage mode
+ * @package ko\mode
  * @author zhangchu
  */
 

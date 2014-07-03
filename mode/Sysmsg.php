@@ -49,8 +49,7 @@ CREATE TABLE kotest_sysmsg_massqueue(
  * <b>_aConf 配置</b>
  * @see Ko_Mode_Sysmsg::$_aConf
  *
- * @package ko
- * @subpackage mode
+ * @package ko\mode
  * @author zhangchu
  */
 

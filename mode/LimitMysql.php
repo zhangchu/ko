@@ -29,8 +29,7 @@
  *  )ENGINE=InnoDB DEFAULT CHARSET=latin1;
  * </pre>
  *
- * @package ko
- * @subpackage mode
+ * @package ko\mode
  * @author zhangchu
  */
 

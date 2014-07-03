@@ -8,8 +8,7 @@
  *   在临界时间点并发情况下可能会导致限制不严格的情况
  * </pre>
  *
- * @package ko
- * @subpackage mode
+ * @package ko\mode
  * @author zhangchu
  */
 
