@@ -13,29 +13,9 @@
 //include_once('../ko.class.php');
 
 /**
- * 数据表分表直连操作类接口
+ * 数据表分表直连操作类
  */
-interface IKo_Dao_Mysql
-{
-	/**
-	 * @return int
-	 */
-	public function iTableCount();
-	/**
-	 * @return Ko_Data_Mysql
-	 */
-	public function oConnectDB($no);
-	/**
-	 * @return string
-	 */
-	public function sGetRealTableName($no);
-	public function vDoFetchSelect($sSql, $fnCallback);
-}
-
-/**
- * 数据表分表直连操作类实现
- */
-class Ko_Dao_Mysql implements IKo_Dao_Mysql, IKo_Dao_MysqlAgent
+class Ko_Dao_Mysql implements IKo_Dao_Table
 {
 	private $_sKind;
 

@@ -7,17 +7,9 @@
  */
 
 /**
- * 创建对象的接口
- */
-interface IKo_Dao_MysqlAgent
-{
-	public static function OInstance($sKind, $bSlave = false);
-}
-
-/**
  * 创建对象的实现
  */
-class Ko_Dao_MysqlAgent implements IKo_Dao_MysqlAgent
+class Ko_Dao_MysqlAgent
 {
 	public static function OInstance($sKind, $bSlave = false)
 	{

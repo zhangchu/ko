@@ -9,7 +9,7 @@
 /**
  * Ko_Dao_DB 适配器基类
  */
-class Ko_Dao_DBHandler implements IKo_Dao_DBHelp, IKo_Dao_Mysql
+class Ko_Dao_DBHandler implements IKo_Dao_DBHelp, IKo_Dao_Table
 {
 	/**
 	 * @var Ko_Dao_DB

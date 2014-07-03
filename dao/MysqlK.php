@@ -15,7 +15,7 @@
 /**
  * 数据表分表直连操作类实现，使用了 server_setting, kind_setting, table_setting 来决定分表位置
  */
-class Ko_Dao_MysqlK implements IKo_Dao_Mysql, IKo_Dao_MysqlAgent
+class Ko_Dao_MysqlK implements IKo_Dao_Table
 {
 	private $_aServerList = array();
 	private $_aTableList = array();
