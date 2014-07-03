@@ -2,65 +2,15 @@
 /**
  * Escape
  *
- * @package ko
- * @subpackage view
+ * @package ko\view
  * @author zhangchu
  */
-
-interface IKo_View_Escape
-{
-	/**
-	 * ·â×° addslashes ºÍ _SForbidScript ±àÂë
-	 *
-	 * @return string
-	 */
-	public static function SAddSlashes($sInput);
-	/**
-	 * ·â×° addslashes ºÍ _SForbidScript ºÍ htmlspecialchars ±àÂë
-	 *
-	 * @return string
-	 */
-	public static function SAddSlashesHtml($sInput);
-	/**
-	 * ·â×° nl2br ºÍ htmlspecialchars ±àÂë
-	 *
-	 * @return string
-	 */
-	public static function SMultiline($sInput);
-	/**
-	 * JSON_ENCODE
-	 *
-	 * @return string
-	 */
-	public static function SEscapeJson($vValue);
-	/**
-	 * ½«HTML×÷ÎªÆÕÍ¨ÎÄ±¾ÉèÖÃµ½±à¼­Æ÷ÖĞ£¬»ò htmlÎÄ±¾ ±à¼­Æ÷±à¼­
-	 *
-	 * @return string
-	 */
-	public static function SEscapeEditor($sValue, $sTextType='html');
-	
-	/**
-	 * µ¥ĞĞÎÄ±¾ input±à¼­/ÏÔÊ¾ »ò ¶àĞĞÎÄ±¾ textarea±à¼­
-	 */
-	public static function VEscapeHtml($vValue, $aExclude=array());
-	/**
-	 * µ¥ĞĞÎÄ±¾ ¼òµ¥µÄ×÷ÎªJS±äÁ¿
-	 */
-	public static function VEscapeSlashes($vValue, $aExclude=array());
-	/**
-	 * µ¥ĞĞÎÄ±¾ ×÷ÎªJS±äÁ¿£¬²¢×îÖÕÊä³öµ½Ò³ÃæÏÔÊ¾
-	 */
-	public static function VEscapeSlashesHtml($vValue, $aExclude=array());
-	/**
-	 * ¶àĞĞÎÄ±¾ ÏÔÊ¾
-	 */
-	public static function VEscapeMultiline($vValue, $aExclude=array());
-}
 
 class Ko_View_Escape
 {
 	/**
+	 * å°è£… addslashes å’Œ _SForbidScript ç¼–ç 
+	 *
 	 * @return string
 	 */
 	public static function SAddSlashes($sInput)
@@ -69,6 +19,8 @@ class Ko_View_Escape
 	}
 
 	/**
+	 * å°è£… addslashes å’Œ _SForbidScript å’Œ htmlspecialchars ç¼–ç 
+	 *
 	 * @return string
 	 */
 	public static function SAddSlashesHtml($sInput)
@@ -77,6 +29,8 @@ class Ko_View_Escape
 	}
 
 	/**
+	 * å°è£… nl2br å’Œ htmlspecialchars ç¼–ç 
+	 *
 	 * @return string
 	 */
 	public static function SMultiline($sInput)
@@ -85,6 +39,8 @@ class Ko_View_Escape
 	}
 	
 	/**
+	 * JSON_ENCODE
+	 *
 	 * @return string
 	 */
 	public static function SEscapeJson($vValue)
@@ -93,6 +49,8 @@ class Ko_View_Escape
 	}
 	
 	/**
+	 * å°†HTMLä½œä¸ºæ™®é€šæ–‡æœ¬è®¾ç½®åˆ°ç¼–è¾‘å™¨ä¸­ï¼Œæˆ– htmlæ–‡æœ¬ ç¼–è¾‘å™¨ç¼–è¾‘
+	 *
 	 * @return string
 	 */
 	public static function SEscapeEditor($sValue, $sTextType='html')
@@ -105,21 +63,33 @@ class Ko_View_Escape
 		return str_replace(array("\n", "\r"), array('\\n', ''), self::SAddSlashes($sValue));
 	}
 
+	/**
+	 * å•è¡Œæ–‡æœ¬ inputç¼–è¾‘/æ˜¾ç¤º æˆ– å¤šè¡Œæ–‡æœ¬ textareaç¼–è¾‘
+	 */
 	public static function VEscapeHtml($vValue, $aExclude=array())
 	{
 		return self::_VEscape('', $vValue, 'htmlspecialchars', $aExclude);
 	}
 	
+	/**
+	 * å•è¡Œæ–‡æœ¬ ç®€å•çš„ä½œä¸ºJSå˜é‡
+	 */
 	public static function VEscapeSlashes($vValue, $aExclude=array())
 	{
 		return self::_VEscape('', $vValue, array('self', 'SAddSlashes'), $aExclude);
 	}
 	
+	/**
+	 * å•è¡Œæ–‡æœ¬ ä½œä¸ºJSå˜é‡ï¼Œå¹¶æœ€ç»ˆè¾“å‡ºåˆ°é¡µé¢æ˜¾ç¤º
+	 */
 	public static function VEscapeSlashesHtml($vValue, $aExclude=array())
 	{
 		return self::_VEscape('', $vValue, array('self', 'SAddSlashesHtml'), $aExclude);
 	}
 	
+	/**
+	 * å¤šè¡Œæ–‡æœ¬ æ˜¾ç¤º
+	 */
 	public static function VEscapeMultiline($vValue, $aExclude=array())
 	{
 		return self::_VEscape('', $vValue, array('self', 'SMultiline'), $aExclude);

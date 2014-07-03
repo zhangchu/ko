@@ -2,54 +2,15 @@
 /**
  * Str
  *
- * @package ko
- * @subpackage view
+ * @package ko\view
  * @author zhangchu
  */
 
-interface IKo_View_Str
+class Ko_View_Str extends Ko_Tool_StrParser
 {
 	/**
 	 * 解析 {固定前缀}{注册模块名}_{函数名}_{参数1}_{参数2}_..._{参数N}
 	 *
-	 * @return array
-	 */
-	public static function AParseAutoStr($sItem);
-	/**
-	 * 拼凑一个自动分析串
-	 *
-	 * @return string
-	 */
-	public static function SAssembleAutoStr($sRegName, $sFuncName, $aViewPara);
-	/**
-	 * 获取模版文件的全路经
-	 *
-	 * @return string
-	 */
-	public static function SGetAbsoluteFile($sFile, $sTemplateDir);
-	/**
-	 * 分析模版中都使用了哪些自动分析的变量，并转换成数组
-	 *
-	 * @return array
-	 */
-	public function aParseArr($sStart, $sEnd, $sTemplateDir, &$aFilelist);
-	/**
-	 * 获取 KO_VIEW_AUTOTAG 开头的模版标签
-	 *
-	 * @return string
-	 */
-	public function sGetAutoStr();
-	/**
-	 * 获取 $sStart 开头，$sEnd 结束的中间的串
-	 *
-	 * @return string
-	 */
-	public function sGetBlockStr($sStart, $sEnd);
-}
-
-class Ko_View_Str extends Ko_Tool_StrParser implements IKo_View_Str
-{
-	/**
 	 * @return array
 	 */
 	public static function AParseAutoStr($sItem)
@@ -61,6 +22,8 @@ class Ko_View_Str extends Ko_Tool_StrParser implements IKo_View_Str
 	}
 
 	/**
+	 * 拼凑一个自动分析串
+	 *
 	 * @return string
 	 */
 	public static function SAssembleAutoStr($sRegName, $sFuncName, $aViewPara)
@@ -70,6 +33,8 @@ class Ko_View_Str extends Ko_Tool_StrParser implements IKo_View_Str
 	}
 
 	/**
+	 * 获取模版文件的全路经
+	 *
 	 * @return string
 	 */
 	public static function SGetAbsoluteFile($sFile, $sTemplateDir)
@@ -82,6 +47,8 @@ class Ko_View_Str extends Ko_Tool_StrParser implements IKo_View_Str
 	}
 
 	/**
+	 * 分析模版中都使用了哪些自动分析的变量，并转换成数组
+	 *
 	 * @return array
 	 */
 	public function aParseArr($sStart, $sEnd, $sTemplateDir, &$aFilelist)
@@ -90,6 +57,8 @@ class Ko_View_Str extends Ko_Tool_StrParser implements IKo_View_Str
 	}
 
 	/**
+	 * 获取 KO_VIEW_AUTOTAG 开头的模版标签
+	 *
 	 * @return string
 	 */
 	public function sGetAutoStr()
@@ -107,6 +76,8 @@ class Ko_View_Str extends Ko_Tool_StrParser implements IKo_View_Str
 	}
 
 	/**
+	 * 获取 $sStart 开头，$sEnd 结束的中间的串
+	 *
 	 * @return string
 	 */
 	public function sGetBlockStr($sStart, $sEnd)

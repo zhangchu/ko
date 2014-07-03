@@ -2,84 +2,16 @@
 /**
  * Smarty
  *
- * @package ko
- * @subpackage view
+ * @package ko\view
  * @author zhangchu
  */
 
 include_once(KO_SMARTY_INC);
 
 /**
- * Smarty操作封装接口
+ * Smarty操作封装
  */
-interface IKo_View_Smarty
-{
-	/**
-	 * 单行文本 input编辑/显示 或 多行文本 textarea编辑
-	 */
-	public function vAssignHtml($vTplVar, $vValue=null, $aExclude=array());
-	/**
-	 * 单行文本 简单的作为JS变量
-	 */
-	public function vAssignSlashes($vTplVar, $sValue=null, $aExclude=array());
-	/**
-	 * 单行文本 作为JS变量，并最终输出到页面显示
-	 */
-	public function vAssignSlashesHtml($vTplVar, $sValue=null, $aExclude=array());
-	/**
-	 * 多行文本 显示
-	 */
-	public function vAssignMultiline($vTplVar, $sValue=null, $aExclude=array());
-	/**
-	 * JSON，不支持批量设置
-	 */
-	public function vAssignJson($sName, $vValue);
-	/**
-	 * 将HTML作为普通文本设置到编辑器中，不支持批量设置 或 html文本 编辑器编辑
-	 */
-	public function vAssignEditor($sName, $sValue, $sTextType='html');
-	/**
-	 * assign raw，不推荐使用 或 html文本 显示
-	 */
-	public function vAssignRaw($vTplVar, $vValue=null);
-	public function vClearAssign($vVar);
-	public function vClearAllAssign();
-
-	/**
-	 * 输出模板
-	 */
-	public function vDisplay($sFilePath, $sCacheId = null);
-	/**
-	 * 返回模板替换后内容
-	 *
-	 * @return string
-	 */
-	public function sFetch($sFilePath, $sCacheId = null);
-	/**
-	 * @return boolean
-	 */
-	public function bIsCached($sFilePath, $sCacheId = null);
-	public function vClearCache($sFilePath, $sCacheId = null);
-	public function vClearAllCache();
-
-	public function vSetCaching($iCaching);
-	public function vSetCachingType($sType);
-	public function vSetCacheLifeTime($iLifeTime);
-
-	/**
-	 * 注册模版自动分析处理类
-	 */
-	public function vRegAutoInfoClass($sName, $sClass);
-	/**
-	 * 设置模版自动分析函数的参数
-	 */
-	public function vRegAutoInfoFunc($sName, $sFunc, $aPara);
-}
-
-/**
- * Smarty操作封装实现
- */
-class Ko_View_Smarty implements IKo_View_Smarty
+class Ko_View_Smarty
 {
 	private $_oSmarty;
 	private $_aAutoInfo = array();
@@ -95,36 +27,57 @@ class Ko_View_Smarty implements IKo_View_Smarty
 		}
 	}
 
+	/**
+	 * 单行文本 input编辑/显示 或 多行文本 textarea编辑
+	 */
 	public function vAssignHtml($vTplVar, $vValue=null, $aExclude=array())
 	{
 		$this->_vAssignEscape($vTplVar, $vValue, array('Ko_View_Escape', 'VEscapeHtml'), $aExclude);
 	}
 
+	/**
+	 * 单行文本 简单的作为JS变量
+	 */
 	public function vAssignSlashes($vTplVar, $vValue=null, $aExclude=array())
 	{
 		$this->_vAssignEscape($vTplVar, $vValue, array('Ko_View_Escape', 'VEscapeSlashes'), $aExclude);
 	}
 
+	/**
+	 * 单行文本 作为JS变量，并最终输出到页面显示
+	 */
 	public function vAssignSlashesHtml($vTplVar, $vValue=null, $aExclude=array())
 	{
 		$this->_vAssignEscape($vTplVar, $vValue, array('Ko_View_Escape', 'VEscapeSlashesHtml'), $aExclude);
 	}
 
+	/**
+	 * 多行文本 显示
+	 */
 	public function vAssignMultiline($vTplVar, $vValue=null, $aExclude=array())
 	{
 		$this->_vAssignEscape($vTplVar, $vValue, array('Ko_View_Escape', 'VEscapeMultiline'), $aExclude);
 	}
 
+	/**
+	 * JSON，不支持批量设置
+	 */
 	public function vAssignJson($sName, $vValue)
 	{
 		$this->_oSmarty->assign($sName, Ko_View_Escape::SEscapeJson($vValue));
 	}
 
+	/**
+	 * 将HTML作为普通文本设置到编辑器中，不支持批量设置 或 html文本 编辑器编辑
+	 */
 	public function vAssignEditor($sName, $sValue, $sTextType='html')
 	{
 		$this->_oSmarty->assign($sName, Ko_View_Escape::SEscapeEditor($sValue, $sTextType));
 	}
 
+	/**
+	 * assign raw，不推荐使用 或 html文本 显示
+	 */
 	public function vAssignRaw($vTplVar, $vValue=null)
 	{
 		$this->_oSmarty->assign($vTplVar, $vValue);
@@ -140,12 +93,17 @@ class Ko_View_Smarty implements IKo_View_Smarty
 		$this->_oSmarty->clearAllAssign();
 	}
 
+	/**
+	 * 输出模板
+	 */
 	public function vDisplay($sFilePath, $sCacheId = null)
 	{
 		echo $this->sFetch($sFilePath, $sCacheId);
 	}
 
 	/**
+	 * 返回模板替换后内容
+	 *
 	 * @return string
 	 */
 	public function sFetch($sFilePath, $sCacheId = null)
@@ -195,11 +153,17 @@ class Ko_View_Smarty implements IKo_View_Smarty
 		$this->_oSmarty->cache_lifetime = $iLifeTime;
 	}
 	
+	/**
+	 * 注册模版自动分析处理类
+	 */
 	public function vRegAutoInfoClass($sName, $sClass)
 	{
 		$this->_aAutoInfo[$sName]['class'] = $sClass;
 	}
 
+	/**
+	 * 设置模版自动分析函数的参数
+	 */
 	public function vRegAutoInfoFunc($sName, $sFunc, $aPara)
 	{
 		$this->_aAutoInfo[$sName]['func'][$sFunc] = $aPara;

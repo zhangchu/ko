@@ -2,8 +2,7 @@
 /**
  * Base
  *
- * @package ko
- * @subpackage view
+ * @package ko\view
  * @author zhangchu
  */
 
