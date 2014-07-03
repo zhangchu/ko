@@ -9,18 +9,9 @@
 //include_once('../ko.class.php');
 
 /**
- * 封装 DBManCtrl 的接口
+ * 封装 DBManCtrl
  */
-interface IKo_Data_DBManCtrl
-{
-	public function bReload();
-	public function sGetStat();
-}
-
-/**
- * 封装 DBManCtrl 的实现
- */
-class Ko_Data_DBManCtrl extends Ko_Data_KProxy implements IKo_Data_DBManCtrl
+class Ko_Data_DBManCtrl extends Ko_Data_KProxy
 {
 	private static $s_AInstance = array();
 

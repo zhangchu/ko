@@ -6,7 +6,7 @@
  * @author zhangchu
  */
 
-class Ko_Data_DBMysql implements IKo_Data_DBMan
+class Ko_Data_DBMysql
 {
 	private static $s_AInstance = array();
 
@@ -25,6 +25,9 @@ class Ko_Data_DBMysql implements IKo_Data_DBMan
 		return self::$s_AInstance[$sName];
 	}
 
+	/**
+	 * 一条sql查询
+	 */
 	public function aSingleQuery($sKind, $iHintId, $sSql, $iCacheTime, $bMaster)
 	{
 		if (!$this->_oGetMysql()->bQuery($sSql))
@@ -45,6 +48,9 @@ class Ko_Data_DBMysql implements IKo_Data_DBMan
 			);
 	}
 
+	/**
+	 * 多条sql查询
+	 */
 	public function aMultiQuery($sKind, $iHintId, $aSqls, $iCacheTime, $bMaster)
 	{
 		$ret = array();

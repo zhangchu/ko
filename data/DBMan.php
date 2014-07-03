@@ -7,19 +7,9 @@
  */
 
 /**
- * 封装 DBMan 的接口
+ * 封装 DBMan
  */
-interface IKo_Data_DBMan
-{
-	public static function OInstance($sName = '');							//instance
-	public function aSingleQuery($sKind, $iHintId, $sSql, $iCacheTime, $bMaster);		//一条sql查询
-	public function aMultiQuery($sKind, $iHintId, $aSqls, $icacheTime, $bMaster);		//多条sql查询
-}
-
-/**
- * 封装 DBMan 的实现
- */
-class Ko_Data_DBMan extends Ko_Data_KProxy implements IKo_Data_DBMan
+class Ko_Data_DBMan extends Ko_Data_KProxy
 {
 	private static $s_AInstance = array();
 
@@ -38,6 +28,9 @@ class Ko_Data_DBMan extends Ko_Data_KProxy implements IKo_Data_DBMan
 		return self::$s_AInstance[$sName];
 	}
 
+	/**
+	 * 一条sql查询
+	 */
 	public function aSingleQuery($sKind, $iHintId, $sSql, $iCacheTime, $bMaster)
 	{
 		$oCtx = $this->_aGetCacheContext($iCacheTime);
@@ -52,6 +45,9 @@ class Ko_Data_DBMan extends Ko_Data_KProxy implements IKo_Data_DBMan
 		return $this->_aFormatResult($oReturn);
 	}
 
+	/**
+	 * 多条sql查询
+	 */
 	public function aMultiQuery($sKind, $iHintId, $aSqls, $iCacheTime, $bMaster)
 	{
 		$oCtx = $this->_aGetCacheContext($iCacheTime);

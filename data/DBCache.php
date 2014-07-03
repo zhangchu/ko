@@ -7,24 +7,9 @@
  */
 
 /**
- * 封装使用 MCache 和 InProcCache 对数据库信息进行缓存的接口
+ * 封装使用 MCache 和 InProcCache 对数据库信息进行缓存的
  */
-interface IKo_Data_DBCache
-{
-	// 将数据设置进入 cache
-	public function vSet($sId, $aItem, $bCheckMemSize);
-	// 将数据从 cache 删除
-	public function vDel($sId);
-	// 从 cache 查询数据，数据不存在返回 false，否则返回数组
-	public function vGet($sId, $bCheckMemcache);
-	// 将在 cache 中的 id 过滤掉，返回不在 cache 里面的 id 列表
-	public function aFilterInCache($aId);
-}
-
-/**
- * 封装使用 MCache 和 InProcCache 对数据库信息进行缓存的实现
- */
-class Ko_Data_DBCache implements IKo_Data_DBCache
+class Ko_Data_DBCache
 {
 	const CHECK_MEM_COUNT = 10000;					//s_aCache 达到这个数量左右时，清空，防止内存占用太大，导致崩溃
 
@@ -43,6 +28,9 @@ class Ko_Data_DBCache implements IKo_Data_DBCache
 		$this->_iMCacheTime = $iMCacheTime;
 	}
 
+	/**
+	 * 将数据设置进入 cache
+	 */
 	public function vSet($sId, $aItem, $bCheckMemSize)
 	{
 		KO_DEBUG >= 3 && Ko_Tool_Debug::VAddTmpLog('data/DBCache', 'vSet:'.$this->_sKind.':'.$sId);
@@ -59,6 +47,9 @@ class Ko_Data_DBCache implements IKo_Data_DBCache
 		self::$s_aCache[$sKey] = $aItem;
 	}
 
+	/**
+	 * 将数据从 cache 删除
+	 */
 	public function vDel($sId)
 	{
 		KO_DEBUG >= 3 && Ko_Tool_Debug::VAddTmpLog('data/DBCache', 'vDel:'.$this->_sKind.':'.$sId);
@@ -70,6 +61,9 @@ class Ko_Data_DBCache implements IKo_Data_DBCache
 		unset(self::$s_aCache[$sKey]);
 	}
 
+	/**
+	 * 从 cache 查询数据，数据不存在返回 false，否则返回数组
+	 */
 	public function vGet($sId, $bCheckMemcache)
 	{
 		KO_DEBUG >= 3 && Ko_Tool_Debug::VAddTmpLog('data/DBCache', 'vGet:'.$this->_sKind.':'.$sId);
@@ -97,6 +91,9 @@ class Ko_Data_DBCache implements IKo_Data_DBCache
 		return $aRet;
 	}
 
+	/**
+	 * 将在 cache 中的 id 过滤掉，返回不在 cache 里面的 id 列表
+	 */
 	public function aFilterInCache($aId)
 	{
 		KO_DEBUG >= 3 && Ko_Tool_Debug::VAddTmpLog('data/DBCache', 'aFilterInCache:'.$this->_sKind.':'.count($aId));
