@@ -10,7 +10,7 @@
 //include_once('../ko.class.php');
 
 /**
- * ��װ Gis �Ľӿ�
+ * 封装 Gis 的接口
  */
 interface IKo_Data_Gis
 {

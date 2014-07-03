@@ -8,7 +8,7 @@
  */
 
 /**
- * ·â×° sina app engine memcache µÄÊµÏÖ
+ * å°è£… sina app engine memcache çš„å®ç°
  */
 class Ko_Data_MCSae extends Ko_Data_MemCache implements IKo_Data_MCAgent
 {
