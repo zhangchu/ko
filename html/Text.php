@@ -8,13 +8,7 @@
 
 //include_once('../ko.class.php');
 
-interface IKo_Html_Text
-{
-	public function sGetText();
-	public function vSetText($sText);
-}
-
-class Ko_Html_Text implements IKo_Html_Text, IKo_Html_Item
+class Ko_Html_Text implements IKo_Html_Item
 {
 	private $_sText = '';
 

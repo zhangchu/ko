@@ -8,7 +8,7 @@
 
 //include_once('../ko.class.php');
 
-class Ko_Html_Style implements IKo_Html_Attr
+class Ko_Html_Style
 {
 	private $_sName = '';
 	private $_sValue = '';

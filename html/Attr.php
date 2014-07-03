@@ -8,15 +8,7 @@
 
 //include_once('../ko.class.php');
 
-interface IKo_Html_Attr
-{
-	public function sGetName();
-	public function vSetName($sName);
-	public function sGetValue();
-	public function vSetValue($sValue);
-}
-
-class Ko_Html_Attr implements IKo_Html_Attr, IKo_Html_Item
+class Ko_Html_Attr implements IKo_Html_Item
 {
 	private $_sName = '';
 	private $_sValue = '';
