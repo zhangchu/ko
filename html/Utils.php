@@ -6,40 +6,11 @@
  * @author zhangchu
  */
 
-interface IKo_Html_Utils
+class Ko_Html_Utils
 {
 	/**
 	 * 去除文本中无用的空白字符
 	 *
-	 * @return string
-	 */
-	public static function SDeleteUselessBlank($sText);
-	/**
-	 * 将文本进行标红处理，并截取摘要
-	 * 传入的数据是文本格式，返回的数据是 html 格式
-	 * 只支持UTF-8编码的文本，同时，外部需要进行 mb_internal_encoding('UTF-8') 设置
-	 *
-	 * @param array $aWord 要标红的词列表
-	 * @return string
-	 */
-	public static function SHighlight($sText, $aWord, $iLength = 0, $sExt = '...', $sBefore = '<font color="red">', $sAfter = '</font>');
-	/**
-	 * 将数组转换为 html
-	 *
-	 * @return string
-	 */
-	public static function SArr2html($aData, $iDepth = 0);
-	/**
-	 * 返回时间的一个缩短显示格式
-	 *
-	 * @return string
-	 */
-	public static function SGetShortTime($sTime);
-}
-
-class Ko_Html_Utils implements IKo_Html_Utils
-{
-	/**
 	 * @return string
 	 */
 	public static function SDeleteUselessBlank($sText)
@@ -53,6 +24,11 @@ class Ko_Html_Utils implements IKo_Html_Utils
 	}
 	
 	/**
+	 * 将文本进行标红处理，并截取摘要
+	 * 传入的数据是文本格式，返回的数据是 html 格式
+	 * 只支持UTF-8编码的文本，同时，外部需要进行 mb_internal_encoding('UTF-8') 设置
+	 *
+	 * @param array $aWord 要标红的词列表
 	 * @return string
 	 */
 	public static function SHighlight($sText, $aWord, $iLength = 0, $sExt = '...', $sBefore = '<font color="red">', $sAfter = '</font>')
@@ -64,6 +40,8 @@ class Ko_Html_Utils implements IKo_Html_Utils
 	}
 	
 	/**
+	 * 将数组转换为 html
+	 *
 	 * @return string
 	 */
 	public static function SArr2html($aData, $iDepth = 0)
@@ -90,6 +68,8 @@ class Ko_Html_Utils implements IKo_Html_Utils
 	}
 	
 	/**
+	 * 返回时间的一个缩短显示格式
+	 *
 	 * @return string
 	 */
 	public static function SGetShortTime($sTime)

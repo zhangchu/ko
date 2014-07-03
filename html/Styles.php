@@ -8,23 +8,7 @@
 
 //include_once('../ko.class.php');
 
-interface IKo_Html_Styles
-{
-	/**
-	 * 释放对 parent 的引用，防止内存无法释放
-	 */
-	public function vFreeParent();
-	/**
-	 * 从 html 中拆分 Style 列表
-	 */
-	public function bParse($sHtml);
-	/**
-	 * 生成 html 代码
-	 */
-	public function sHtml($aFilter);
-}
-
-class Ko_Html_Styles implements IKo_Html_Styles
+class Ko_Html_Styles
 {
 	private $_oParent;
 	private $_aStyle = array();
@@ -36,11 +20,17 @@ class Ko_Html_Styles implements IKo_Html_Styles
 		$this->_oParent = $oParent;
 	}
 
+	/**
+	 * 释放对 parent 的引用，防止内存无法释放
+	 */
 	public function vFreeParent()
 	{
 		$this->_oParent = null;
 	}
 
+	/**
+	 * 从 html 中拆分 Style 列表
+	 */
 	public function bParse($sHtml)
 	{
 		$aList = explode(';', $sHtml);
@@ -61,6 +51,9 @@ class Ko_Html_Styles implements IKo_Html_Styles
 		return true;
 	}
 
+	/**
+	 * 生成 html 代码
+	 */
 	public function sHtml($aFilters)
 	{
 		$sHtml = '';

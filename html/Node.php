@@ -8,25 +8,7 @@
 
 //include_once('../ko.class.php');
 
-interface IKo_Html_Node
-{
-	/**
-	 * 释放对 parent 的引用，防止内存无法释放
-	 */
-	public function vFreeParent();
-	/**
-	 * 添加过滤器
-	 */
-	public function vAddFilter($oFilter);
-	/**
-	 * 限制返回最大长度
-	 */
-	public function sHtmlEx($iMaxLength = 0, $sCharset = '');
-	public function sGetTag();
-	public function vSetTag($sTag);
-}
-
-class Ko_Html_Node implements IKo_Html_Node, IKo_Html_Item
+class Ko_Html_Node implements IKo_Html_Item
 {
 	static private $s_aSingleTag = array('br', 'hr', 'img', 'embed');
 
@@ -93,6 +75,9 @@ class Ko_Html_Node implements IKo_Html_Node, IKo_Html_Item
 		return $this->sHtmlEx();
 	}
 
+	/**
+	 * 释放对 parent 的引用，防止内存无法释放
+	 */
 	public function vFreeParent()
 	{
 		if (!is_null($this->_oStyles))
@@ -109,6 +94,9 @@ class Ko_Html_Node implements IKo_Html_Node, IKo_Html_Item
 		$this->_oParent = null;
 	}
 
+	/**
+	 * 添加过滤器
+	 */
 	public function vAddFilter($oFilter)
 	{
 		assert($oFilter instanceof IKo_Html_Filter);
@@ -116,6 +104,9 @@ class Ko_Html_Node implements IKo_Html_Node, IKo_Html_Item
 		$this->_aFilter[] = $oFilter;
 	}
 
+	/**
+	 * 限制返回最大长度
+	 */
 	public function sHtmlEx($iMaxLength = 0, $sCharset = '')
 	{
 		$iLen = 0;

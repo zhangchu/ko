@@ -8,11 +8,6 @@
 
 //include_once('../ko.class.php');
 
-interface IKo_Html_Parse
-{
-	public static function sParse($sHtml, $iMaxLength = 0, $sCharset = '');
-}
-
 class Ko_Html_Parse
 {
 	public static function sParse($oFilter, $sHtml, $iMaxLength = 0, $sCharset = '')

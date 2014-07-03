@@ -9,7 +9,7 @@
 //include_once('../../../htdocs/global.php');
 //include_once('../ko.class.php');
 
-class Ko_Html_WebParse implements IKo_Html_Parse
+class Ko_Html_WebParse
 {
 	public static function sParse($sHtml, $iMaxLength = 0, $sCharset = '')
 	{

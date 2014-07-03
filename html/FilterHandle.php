@@ -8,17 +8,7 @@
 
 //include_once('../ko.class.php');
 
-interface IKo_Html_FilterHandle
-{
-	public static function BFilterTag($oNode, $aAllowTag);
-	public static function BFilterStyle($oNode, $oStyle, $aAllowStyle);
-	public static function BFilterAttr($oNode, $oAttr, $aAllowAttr, $aCheckProtocolsAttr, $aAllowProtocols);
-	public static function BFilterChild($oNode, $oChild, $aForbidTag);
-	public static function SGetExtraAttr($oNode, $aExtraAttr);
-	public static function SFilterHtml($sHtml);
-}
-
-class Ko_Html_FilterHandle implements IKo_Html_FilterHandle
+class Ko_Html_FilterHandle
 {
 	public static function BFilterTag($oNode, $aAllowTag)
 	{

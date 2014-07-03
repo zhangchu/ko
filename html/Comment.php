@@ -8,13 +8,7 @@
 
 //include_once('../ko.class.php');
 
-interface IKo_Html_Comment
-{
-	public function sGetComment();
-	public function vSetComment($sComment);
-}
-
-class Ko_Html_Comment implements IKo_Html_Comment, IKo_Html_Item
+class Ko_Html_Comment implements IKo_Html_Item
 {
 	private $_sComment = '';
 
