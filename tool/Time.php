@@ -6,19 +6,11 @@
  * @author zhangchu
  */
 
-interface IKo_Tool_Time
+class Ko_Tool_Time
 {
 	/**
-	 * 检查是否为Crontab运行时间
+	 * 妫�鏌ユ槸鍚︿负Crontab杩愯鏃堕棿
 	 *
-	 * @return boolean
-	 */
-	public static function BCheckTime($iWeek, $iHour, $iMinute, $aCron);
-}
-
-class Ko_Tool_Time implements IKo_Tool_Time
-{
-	/**
 	 * @return boolean
 	 */
 	public static function BCheckTime($iWeek, $iHour, $iMinute, $aCron)

@@ -6,21 +6,13 @@
  * @author zhangchu
  */
 
-interface IKo_Tool_Lock
-{
-	/**
-	 * 获取写锁，独占锁，不阻塞
-	 *
-	 * @return boolean
-	 */
-	public static function BGetExLock($sName);
-}
-
-class Ko_Tool_Lock implements IKo_Tool_Lock
+class Ko_Tool_Lock
 {
 	private static $s_aLockHandle = array();
 
 	/**
+	 * 鑾峰彇鍐欓攣锛岀嫭鍗犻攣锛屼笉闃诲
+	 *
 	 * @return boolean
 	 */
 	public static function BGetExLock($sName)

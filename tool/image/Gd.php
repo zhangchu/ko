@@ -6,7 +6,7 @@
  * @author zhangchu
  */
 
-class Ko_Tool_Image_Gd implements IKo_Tool_Image
+class Ko_Tool_Image_Gd
 {
 	private static $s_aExtFunc = array(
 		'gif' => array('imagegif', 0, 0),
