@@ -4,239 +4,239 @@
  * @author zhangchu
  */
 
-/**
- * 目录分隔符
- */
 if (!defined('DS'))
 {
+	/**
+	 * 目录分隔符
+	 */
 	define('DS', DIRECTORY_SEPARATOR);
 }
 
-/**
- * 临时文件目录
- */
 if (!defined('KO_TEMPDIR'))
 {
+	/**
+	 * 临时文件目录
+	 */
 	define('KO_TEMPDIR', '/tmp/');
 }
 
-/**
- * 取值0-9，为0为生产状态，其他为调试状态，调试状态输出调试内容，调试信息输出到 KO_LOG_FILE 定义的文件，取值越大，信息越多
- * 1: SQL 语句，cache 统计
- * 2: 其他中间层请求
- */
 if (!defined('KO_DEBUG'))
 {
+	/**
+	 * 取值0-9，为0为生产状态，其他为调试状态，调试状态输出调试内容，调试信息输出到 KO_LOG_FILE 定义的文件，取值越大，信息越多
+	 * 1: SQL 语句，cache 统计
+	 * 2: 其他中间层请求
+	 */
 	define('KO_DEBUG', 0);
 }
 
-/**
- * 保存调试信息的文件名
- */
 if (!defined('KO_LOG_FILE'))
 {
+	/**
+	 * 保存调试信息的文件名
+	 */
 	define('KO_LOG_FILE', '/tmp/ko.log');
 }
 
-/**
- * KO 部署的路径
- */
 if (!defined('KO_DIR'))
 {
+	/**
+	 * KO 部署的路径
+	 */
 	define('KO_DIR', dirname(__FILE__).DS);
 }
 
-/**
- * 应用 include 路径
- */
 if (!defined('KO_INCLUDE_DIR'))
 {
+	/**
+	 * 应用 include 路径
+	 */
 	define('KO_INCLUDE_DIR', dirname(KO_DIR).DS);
 }
 
-/**
- * Smarty 类文件定义
- */
 if (!defined('KO_SMARTY_INC'))
 {
+	/**
+	 * Smarty 类文件定义
+	 */
 	define('KO_SMARTY_INC', KO_DIR.'/vendor/Smarty-3.1.14/libs/Smarty.class.php');
 }
 
-/**
- * 应用模板路径
- */
 if (!defined('KO_TEMPLATE_DIR'))
 {
+	/**
+	 * 应用模板路径
+	 */
 	define('KO_TEMPLATE_DIR', dirname(KO_INCLUDE_DIR).DS.'template'.DS);
 }
 
-/**
- * 模板编译路径
- */
 if (!defined('KO_TEMPLATE_C_DIR'))
 {
+	/**
+	 * 模板编译路径
+	 */
 	define('KO_TEMPLATE_C_DIR', KO_TEMPLATE_DIR.'templates_c'.DS);
 }
 
-/**
- * 页面字符集，cgi 输入参数分析使用
- */
 if (!defined('KO_CHARSET'))
 {
+	/**
+	 * 页面字符集，cgi 输入参数分析使用
+	 */
 	define('KO_CHARSET', 'UTF-8');
 }
 
-/**
- * 模版中使用的下面标记开头的变量可以由程序自动分析
- */
 if (!defined('KO_VIEW_AUTOTAG'))
 {
+	/**
+	 * 模版中使用的下面标记开头的变量可以由程序自动分析
+	 */
 	define('KO_VIEW_AUTOTAG', 'koAuto');
 }
 
-/**
- * KProxy 位置的服务器
- */
 if (!defined('KO_PROXY'))
 {
+	/**
+	 * KProxy 位置的服务器
+	 */
 	define('KO_PROXY', '');
 }
-/**
- * 配置数据库连接使用哪种引擎，如：kproxy/mysql
- */
 if (!defined('KO_DB_ENGINE'))
 {
+	/**
+	 * 配置数据库连接使用哪种引擎，如：kproxy/mysql
+	 */
 	define('KO_DB_ENGINE', 'mysql');
 }
-/**
- * 配置数据库主机端口，直连数据库的时候使用
- */
 if (!defined('KO_DB_HOST'))
 {
+	/**
+	 * 配置数据库主机端口，直连数据库的时候使用
+	 */
 	define('KO_DB_HOST', '192.168.0.140');
 }
-/**
- * 配置数据库用户名
- */
 if (!defined('KO_DB_USER'))
 {
+	/**
+	 * 配置数据库用户名
+	 */
 	define('KO_DB_USER', 'dev');
 }
-/**
- * 配置数据库密码
- */
 if (!defined('KO_DB_PASS'))
 {
+	/**
+	 * 配置数据库密码
+	 */
 	define('KO_DB_PASS', 'dev2008');
 }
-/**
- * 配置数据库库名
- */
 if (!defined('KO_DB_NAME'))
 {
+	/**
+	 * 配置数据库库名
+	 */
 	define('KO_DB_NAME', 'dev_config');
 }
 
-/**
- * 配置 MongoDB Host
- */
 if (!defined('KO_MONGO_HOST'))
 {
+	/**
+	 * 配置 MongoDB Host
+	 */
 	define('KO_MONGO_HOST', '192.168.1.190:27017,192.168.1.190:27018,192.168.1.190:27019');
 }
-/**
- * 配置 MongoDB 副本集
- */
 if (!defined('KO_MONGO_REPLICASET'))
 {
+	/**
+	 * 配置 MongoDB 副本集
+	 */
 	define('KO_MONGO_REPLICASET', 'rs0');
 }
-/**
- * 配置 MongoDB 用户
- */
 if (!defined('KO_MONGO_USER'))
 {
+	/**
+	 * 配置 MongoDB 用户
+	 */
 	define('KO_MONGO_USER', '');
 }
-/**
- * 配置 MongoDB 密码
- */
 if (!defined('KO_MONGO_PASS'))
 {
+	/**
+	 * 配置 MongoDB 密码
+	 */
 	define('KO_MONGO_PASS', '');
 }
-/**
- * 配置 MongoDB 数据库名称
- */
 if (!defined('KO_MONGO_NAME'))
 {
+	/**
+	 * 配置 MongoDB 数据库名称
+	 */
 	define('KO_MONGO_NAME', 'testdb');
 }
-/**
- * 配置 MongoDB 缺省的安全模式
- */
 if (!defined('KO_MONGO_SAFE'))
 {
+	/**
+	 * 配置 MongoDB 缺省的安全模式
+	 */
 	define('KO_MONGO_SAFE', 1);
 }
 
-/**
- * 使用的序列化编码算法，Vbs/Serialize/IgBinary
- */
 if (!defined('KO_ENC'))
 {
+	/**
+	 * 使用的序列化编码算法，Vbs/Serialize/IgBinary
+	 */
 	define('KO_ENC', 'Serialize');
 }
 
-/**
- * 使用的图形库，Gd/Imagick
- */
 if (!defined('KO_IMAGE'))
 {
+	/**
+	 * 使用的图形库，Gd/Imagick
+	 */
 	define('KO_IMAGE', 'Imagick');
 }
 
-/**
- * 配置使用的 memcache 的连接方式，kproxy/memcache/saemc
- */
 if (!defined('KO_MC_ENGINE'))
 {
+	/**
+	 * 配置使用的 memcache 的连接方式，kproxy/memcache/saemc
+	 */
 	define('KO_MC_ENGINE', 'memcache');
 }
-/**
- * 配置使用的 memcache 服务器，KO_MC_ENGINE 为 memcache 有效
- */
 if (!defined('KO_MC_HOST'))
 {
+	/**
+	 * 配置使用的 memcache 服务器，KO_MC_ENGINE 为 memcache 有效
+	 */
 	define('KO_MC_HOST', 'localhost:11211');
 }
-/**
- * 配置使用的 localcache 的连接方式，kproxy
- */
 if (!defined('KO_LC_ENGINE'))
 {
+	/**
+	 * 配置使用的 localcache 的连接方式，kproxy
+	 */
 	define('KO_LC_ENGINE', 'kproxy');
 }
-/**
- * 配置使用的 redis 的连接方式，kproxy/redis
- */
 if (!defined('KO_REDIS_ENGINE'))
 {
+	/**
+	 * 配置使用的 redis 的连接方式，kproxy/redis
+	 */
 	define('KO_REDIS_ENGINE', 'redis');
 }
-/**
- * 配置使用的 redis 服务器，KO_REDIS_ENGINE 为 redis 有效
- */
 if (!defined('KO_REDIS_HOST'))
 {
+	/**
+	 * 配置使用的 redis 服务器，KO_REDIS_ENGINE 为 redis 有效
+	 */
 	define('KO_REDIS_HOST', 'localhost:6379');
 }
 
-/**
- * KO对于 K 和 IK 开头的接口和类定义了 AutoLoad 的处理方式，如果应用需要自己处理 AutoLoad 可以设置 KO_SPL_AUTOLOAD 为 1
- */
 if (!defined('KO_SPL_AUTOLOAD'))
 {
+	/**
+	 * KO对于 K 和 IK 开头的接口和类定义了 AutoLoad 的处理方式，如果应用需要自己处理 AutoLoad 可以设置 KO_SPL_AUTOLOAD 为 1
+	 */
 	define('KO_SPL_AUTOLOAD', 0);
 }
 
@@ -245,11 +245,11 @@ if (!KO_SPL_AUTOLOAD)
 	spl_autoload_register('koAutoload');
 }
 
-/**
- * KO定义了断言操作的处理方式，如果应用需要自己处理，可以设置 KO_ASSERT 为 1
- */
 if (!defined('KO_ASSERT'))
 {
+	/**
+	 * KO定义了断言操作的处理方式，如果应用需要自己处理，可以设置 KO_ASSERT 为 1
+	 */
 	define('KO_ASSERT', 0);
 }
 
