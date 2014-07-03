@@ -7,66 +7,9 @@
  */
 
 /**
- * 对数据库分库分表的性质操作进行封装的接口
+ * 对数据库分库分表的性质操作进行封装
  */
-interface IKo_Dao_DB
-{
-	/**
-	 * @return int 返回 insertid
-	 */
-	public function iInsert($aData, $aUpdate = array(), $aChange = array());
-	/**
-	 * @return array 返回完整的信息array(data, rownum, insertid, affectedrows)
-	 */
-	public function aInsert($aData, $aUpdate = array(), $aChange = array());
-	/**
-	 * @param Ko_Tool_SQL|Ko_Tool_MONGO|array $oOption
-	 * @return int 返回 affectedrows
-	 */
-	public function iUpdate($vHintId, $vKey, $aUpdate, $aChange=array(), $oOption=null);
-	/**
-	 * @param Ko_Tool_SQL|Ko_Tool_MONGO|array $oOption
-	 * @return int 返回 affectedrows
-	 */
-	public function iUpdateByCond($vHintId, $oOption, $aUpdate, $aChange=array());
-	/**
-	 * @param Ko_Tool_SQL|Ko_Tool_MONGO|array $oOption
-	 * @return int 返回 affectedrows
-	 */
-	public function iDelete($vHintId, $vKey, $oOption=null);
-	/**
-	 * @param Ko_Tool_SQL|Ko_Tool_MONGO|array $oOption
-	 * @return int 返回 affectedrows
-	 */
-	public function iDeleteByCond($vHintId, $oOption);
-	/**
-	 * @return array 根据 _aKeyField 查询一条数据
-	 */
-	public function aGet($vHintId, $vKey);
-	/**
-	 * 配置 key 才可用
-	 *
-	 * @return array 根据 _aKeyField 查询多条数据
-	 */
-	public function aGetListByKeys($vHintId, $aKey, $sKeyField = '');
-	/**
-	 * useuo 为真 才可用
-	 *
-	 * @return array 从 UOBject 查询多条数据
-	 */
-	public function aGetDetails($oObjs, $sSplitField = '', $sKeyField = '', $bRetmap = true);
-	/**
-	 * @param Ko_Tool_SQL|Ko_Tool_MONGO|array $oOption
-	 * @return array 根据 Option 查询
-	 */
-	public function aGetList($vHintId, $oOption, $iCacheTime=0);
-	public function vDeleteCache($vHintId, $vKey);
-}
-
-/**
- * 对数据库分库分表的性质操作进行封装的实现
- */
-class Ko_Dao_DB implements IKo_Dao_DB, IKo_Dao_DBHelp, IKo_Dao_Mysql
+class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Mysql
 {
 	const SPLIT_COUNT = 1000;		//数据量太大的情况下，切分为多个小块数据进行获取，防止返回数据超过ICE定义的最大尺寸
 
@@ -211,7 +154,7 @@ class Ko_Dao_DB implements IKo_Dao_DB, IKo_Dao_DBHelp, IKo_Dao_Mysql
 	//////////////////////////// 写入操作 ////////////////////////////
 
 	/**
-	 * @return int
+	 * @return int 返回 insertid
 	 */
 	public function iInsert($aData, $aUpdate = array(), $aChange = array())
 	{
@@ -220,7 +163,7 @@ class Ko_Dao_DB implements IKo_Dao_DB, IKo_Dao_DBHelp, IKo_Dao_Mysql
 	}
 
 	/**
-	 * @return array
+	 * @return array 返回完整的信息array(data, rownum, insertid, affectedrows)
 	 */
 	public function aInsert($aData, $aUpdate = array(), $aChange = array())
 	{
@@ -243,7 +186,7 @@ class Ko_Dao_DB implements IKo_Dao_DB, IKo_Dao_DBHelp, IKo_Dao_Mysql
 
 	/**
 	 * @param Ko_Tool_SQL|Ko_Tool_MONGO|array $oOption
-	 * @return int
+	 * @return int 返回 affectedrows
 	 */
 	public function iUpdate($vHintId, $vKey, $aUpdate, $aChange=array(), $oOption=null)
 	{
@@ -254,7 +197,7 @@ class Ko_Dao_DB implements IKo_Dao_DB, IKo_Dao_DBHelp, IKo_Dao_Mysql
 
 	/**
 	 * @param Ko_Tool_SQL|Ko_Tool_MONGO|array $oOption
-	 * @return int
+	 * @return int 返回 affectedrows
 	 */
 	public function iUpdateByCond($vHintId, $oOption, $aUpdate, $aChange=array())
 	{
@@ -277,7 +220,7 @@ class Ko_Dao_DB implements IKo_Dao_DB, IKo_Dao_DBHelp, IKo_Dao_Mysql
 
 	/**
 	 * @param Ko_Tool_SQL|Ko_Tool_MONGO|array $oOption
-	 * @return int
+	 * @return int 返回 affectedrows
 	 */
 	public function iDelete($vHintId, $vKey, $oOption=null)
 	{
@@ -288,7 +231,7 @@ class Ko_Dao_DB implements IKo_Dao_DB, IKo_Dao_DBHelp, IKo_Dao_Mysql
 
 	/**
 	 * @param Ko_Tool_SQL|Ko_Tool_MONGO|array $oOption
-	 * @return int
+	 * @return int 返回 affectedrows
 	 */
 	public function iDeleteByCond($vHintId, $oOption)
 	{
@@ -312,7 +255,7 @@ class Ko_Dao_DB implements IKo_Dao_DB, IKo_Dao_DBHelp, IKo_Dao_Mysql
 	//////////////////////////// 读取操作 ////////////////////////////
 
 	/**
-	 * @return array
+	 * @return array 根据 _aKeyField 查询一条数据
 	 */
 	public function aGet($vHintId, $vKey)
 	{
@@ -321,7 +264,9 @@ class Ko_Dao_DB implements IKo_Dao_DB, IKo_Dao_DBHelp, IKo_Dao_Mysql
 	}
 
 	/**
-	 * @return array
+	 * 配置 key 才可用
+	 *
+	 * @return array 根据 _aKeyField 查询多条数据
 	 */
 	public function aGetListByKeys($vHintId, $aKey, $sKeyField = '')
 	{
@@ -352,7 +297,9 @@ class Ko_Dao_DB implements IKo_Dao_DB, IKo_Dao_DBHelp, IKo_Dao_Mysql
 	}
 
 	/**
-	 * @return array
+	 * useuo 为真 才可用
+	 *
+	 * @return array 从 UOBject 查询多条数据
 	 */
 	public function aGetDetails($oObjs, $sSplitField = '', $sKeyField = '', $bRetmap = true)
 	{
@@ -387,7 +334,7 @@ class Ko_Dao_DB implements IKo_Dao_DB, IKo_Dao_DBHelp, IKo_Dao_Mysql
 
 	/**
 	 * @param Ko_Tool_SQL|Ko_Tool_MONGO|array $oOption
-	 * @return array
+	 * @return array 根据 Option 查询
 	 */
 	public function aGetList($vHintId, $oOption, $iCacheTime=0)
 	{

@@ -9,24 +9,9 @@
 //include_once('../ko.class.php');
 
 /**
- * 普通文件操作类接口
+ * 普通文件操作类
  */
-interface IKo_Dao_File
-{
-	/**
-	 * @return bool
-	 */
-	public function bEof();
-	/**
-	 * @return string
-	 */
-	public function sGets($iLength = Ko_Dao_File::FGETS_SIZE);
-}
-
-/**
- * 普通文件操作类实现
- */
-class Ko_Dao_File implements IKo_Dao_File
+class Ko_Dao_File
 {
 	const FGETS_SIZE = 1024;
 

@@ -7,37 +7,9 @@
  */
 
 /**
- * 单表类型(db_single)的适配器接口
+ * 单表类型(db_single)的适配器
  */
-interface IKo_Dao_Config
-{
-	/**
-	 * @param Ko_Tool_SQL|Ko_Tool_MONGO|array $oOption
-	 * @return int
-	 */
-	public function iUpdateByCond($oOption, $aUpdate, $aChange=array());
-	/**
-	 * @param Ko_Tool_SQL|Ko_Tool_MONGO|array $oOption
-	 * @return int
-	 */
-	public function iDeleteByCond($oOption);
-	/**
-	 * 配置 key 才可用
-	 *
-	 * @return array
-	 */
-	public function aGetListByKeys($aKey, $sKeyField = '');
-	/**
-	 * @param Ko_Tool_SQL|Ko_Tool_MONGO|array $oOption
-	 * @return array
-	 */
-	public function aGetList($oOption, $iCacheTime=0);
-}
-
-/**
- * 单表类型(db_single)的适配器实现
- */
-class Ko_Dao_Config extends Ko_Dao_DBHandler implements IKo_Dao_Config
+class Ko_Dao_Config extends Ko_Dao_DBHandler
 {
 	public function __construct($sTable, $vKeyField='', $sIdKey='', $sDBAgentName='', $sMCacheName='', $iMCacheTime=3600)
 	{
@@ -63,6 +35,8 @@ class Ko_Dao_Config extends Ko_Dao_DBHandler implements IKo_Dao_Config
 	}
 
 	/**
+	 * 配置 key 才可用
+	 *
 	 * @return array
 	 */
 	public function aGetListByKeys($aKey, $sKeyField = '')

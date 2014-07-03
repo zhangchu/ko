@@ -9,43 +9,7 @@
 /**
  * Ko_Dao_DB 适配器基类
  */
-interface IKo_Dao_DBHandler
-{
-	/**
-	 * @return int
-	 */
-	public function iInsert($aData, $aUpdate = array(), $aChange = array());
-	/**
-	 * @return array
-	 */
-	public function aInsert($aData, $aUpdate = array(), $aChange = array());
-	/**
-	 * @param Ko_Tool_SQL|Ko_Tool_MONGO|array $oOption
-	 * @return int
-	 */
-	public function iUpdate($vKey, $aUpdate, $aChange=array(), $oOption=null);
-	/**
-	 * @param Ko_Tool_SQL|Ko_Tool_MONGO|array $oOption
-	 * @return int
-	 */
-	public function iDelete($vKey, $oOption=null);
-	/**
-	 * @return array
-	 */
-	public function aGet($vKey);
-	public function vDeleteCache($vKey);
-	/**
-	 * 把数据转换为数组，用字段名做 key
-	 *
-	 * @return array
-	 */
-	public function aKeyToArray($vKey);
-}
-
-/**
- * Ko_Dao_DB 适配器基类
- */
-class Ko_Dao_DBHandler implements IKo_Dao_DBHandler, IKo_Dao_DBHelp, IKo_Dao_Mysql
+class Ko_Dao_DBHandler implements IKo_Dao_DBHelp, IKo_Dao_Mysql
 {
 	/**
 	 * @var Ko_Dao_DB
@@ -195,6 +159,8 @@ class Ko_Dao_DBHandler implements IKo_Dao_DBHandler, IKo_Dao_DBHelp, IKo_Dao_Mys
 	}
 	
 	/**
+	 * 把数据转换为数组，用字段名做 key
+	 *
 	 * @return array
 	 */
 	public function aKeyToArray($vKey)

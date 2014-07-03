@@ -9,24 +9,9 @@
 //include_once('../ko.class.php');
 
 /**
- * 对 IDGenerator 进行封装接口
+ * 对 IDGenerator 进行封装
  */
-interface IKo_Dao_IdGen
-{
-	/**
-	 * @return string
-	 */
-	public function sNewId();
-	/**
-	 * @return int
-	 */
-	public function iNewTimeId();
-}
-
-/**
- * 对 IDGenerator 进行封装实现
- */
-class Ko_Dao_IdGen implements IKo_Dao_IdGen
+class Ko_Dao_IdGen
 {
 	private $_sIdKey;
 

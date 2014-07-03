@@ -7,25 +7,9 @@
  */
 
 /**
- * 创建Dao对象的工厂基类接口
+ * 创建Dao对象的工厂基类
  */
-interface IKo_Dao_Factory
-{
-	/**
-	 * @return object
-	 */
-	public static function OCreateDao($aConfig, $aParam);
-	/**
-	 * @param string $sName 例如 goodsDao,userCafeDao
-	 * @return object
-	 */
-	public function oGetDao($sName);
-}
-
-/**
- * 创建Dao对象的工厂基类实现
- */
-class Ko_Dao_Factory implements IKo_Dao_Factory
+class Ko_Dao_Factory
 {
 	private static $s_aInstance = array();
 	private static $s_aDefaultValue = array(
@@ -205,6 +189,7 @@ class Ko_Dao_Factory implements IKo_Dao_Factory
 	}
 
 	/**
+	 * @param string $sName 例如 goodsDao,userCafeDao
 	 * @return object
 	 */
 	public function oGetDao($sName)

@@ -9,44 +9,9 @@
 //include_once('../ko.class.php');
 
 /**
- * DBA文件封装接口
+ * DBA文件封装
  */
-interface IKo_Dao_Dba
-{
-	/**
-	 * @return bool
-	 */
-	public function bDelete($sKey);
-	/**
-	 * @return bool
-	 */
-	public function bExists($sKey);
-	/**
-	 * @return string
-	 */
-	public function sFetch($sKey);
-	/**
-	 * @return string
-	 */
-	public function sFirstkey();
-	/**
-	 * @return bool
-	 */
-	public function bInsert($sKey, $sValue);
-	/**
-	 * @return string
-	 */
-	public function sNextkey();
-	/**
-	 * @return bool
-	 */
-	public function bReplace($sKey, $sValue);
-}
-
-/**
- * DBA文件封装实现
- */
-class Ko_Dao_Dba implements IKo_Dao_Dba
+class Ko_Dao_Dba
 {
 	private $_hFile;
 
