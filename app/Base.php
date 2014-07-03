@@ -2,26 +2,14 @@
 /**
  * Base
  *
- * @package ko
- * @subpackage app
+ * @package ko\app
  * @author zhangchu
  */
 
 /**
- * 应用程序的基类接口
+ * 应用程序的基类
  */
-interface IKo_App_Base
-{
-	/**
-	 * 应用程序的入口函数
-	 */
-	public function vRun();
-}
-
-/**
- * 应用程序的基类实现
- */
-class Ko_App_Base implements IKo_App_Base
+class Ko_App_Base
 {
 	/**
 	 * 定义 cgi 参数类型
@@ -67,6 +55,9 @@ class Ko_App_Base implements IKo_App_Base
 		return null;
 	}
 
+	/**
+	 * 应用程序的入口函数
+	 */
 	public function vRun()
 	{
 		try

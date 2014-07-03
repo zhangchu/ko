@@ -2,8 +2,7 @@
 /**
  * AutoFacade
  *
- * @package ko
- * @subpackage busi
+ * @package ko\busi
  * @author zhangchu
  */
 

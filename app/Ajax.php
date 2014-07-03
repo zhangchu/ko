@@ -2,8 +2,7 @@
 /**
  * Ajax
  *
- * @package ko
- * @subpackage app
+ * @package ko\app
  * @author zhangchu
  */
 

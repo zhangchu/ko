@@ -7,7 +7,7 @@
  * @author zhangchu
  */
 
-class Ko_Mode_Crontab implements IKo_App_Base
+class Ko_Mode_Crontab
 {
 	/**
 	 * 配置数组
@@ -37,6 +37,9 @@ class Ko_Mode_Crontab implements IKo_App_Base
 	 */
 	protected $_aConf = array();
 	
+	/**
+	 * 应用程序的入口函数
+	 */
 	public function vRun()
 	{
 		$now = time();
