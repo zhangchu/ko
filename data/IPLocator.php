@@ -1,42 +1,34 @@
 <?php
 /**
- * IPLocator ±¾ÎÄ¼þÊ¹ÓÃgb±àÂë±£´æ£¬²»ÄÜÊ¹ÓÃutf-8±àÂë±£´æ
+ * IPLocator
  *
- * @package ko
- * @subpackage data
+ * @package ko\data
  * @author zhangchu
  */
 
 //include_once('../ko.class.php');
 
 /**
- * ·â×° UObject µÄ½Ó¿Ú
+ * å°è£… IPLocator çš„æŽ¥å£
  */
-interface IKo_Data_IPLocator
-{
-	public static function OInstance();
-	public function sGetLocation($sIp);
-	public function aGetLocations($aIp);
-}
-
-class Ko_Data_IPLocator extends Ko_Data_KProxy implements IKo_Data_IPLocator
+class Ko_Data_IPLocator extends Ko_Data_KProxy
 {
 	const PROXY_ARRMAX = 1000;
 	private static $s_OInstance;
 
 	private static $s_aChineseMainlandPrefix = array(
-		'°²»Õ' => 1, '±±¾©' => 1, '¸£½¨' => 1, '¸ÊËà' => 1, '¹ã¶«' => 1,
-		'¹ãÎ÷' => 1, '¹óÖÝ' => 1, 'º£ÄÏ' => 1, 'ºÓ±±' => 1, 'ºÓÄÏ' => 1,
-		'ºÚÁú' => 1, 'ºþ±±' => 1, 'ºþÄÏ' => 1, '¼ªÁÖ' => 1, '½­ËÕ' => 1,
-		'½­Î÷' => 1, 'ÁÉÄþ' => 1, 'ÄÚÃÉ' => 1, 'ÄþÏÄ' => 1, 'Çàº£' => 1,
-		'É½¶«' => 1, 'É½Î÷' => 1, 'ÉÂÎ÷' => 1, 'ÉÏº£' => 1, 'ËÄ´¨' => 1,
-		'Ìì½ò' => 1, 'Î÷²Ø' => 1, 'ÐÂ½®' => 1, 'ÔÆÄÏ' => 1, 'Õã½­' => 1,
-		'ÖØÇì' => 1, 'ÖÐ¹ú' => 1, 'È«¹ú' => 1, '»ª¶«' => 1, '»ª±±' => 1,
-		'ÖÐ¾­' => 1, 'ƒÈÃÉ' => 1, '¾ÛÓÑ' => 1, 'ÖÐ¿Æ' => 1, 'Ææ»¢' => 1,
-		'ÁªÍ¨' => 1, '±¾»ú' => 1, '¾ÖÓò' => 1, 'CNNI' => 1, 'UCWE' => 1,
+		'å®‰å¾½' => 1, 'åŒ—äº¬' => 1, 'ç¦å»º' => 1, 'ç”˜è‚ƒ' => 1, 'å¹¿ä¸œ' => 1,
+		'å¹¿è¥¿' => 1, 'è´µå·ž' => 1, 'æµ·å—' => 1, 'æ²³åŒ—' => 1, 'æ²³å—' => 1,
+		'é»‘é¾™' => 1, 'æ¹–åŒ—' => 1, 'æ¹–å—' => 1, 'å‰æž—' => 1, 'æ±Ÿè‹' => 1,
+		'æ±Ÿè¥¿' => 1, 'è¾½å®' => 1, 'å†…è’™' => 1, 'å®å¤' => 1, 'é’æµ·' => 1,
+		'å±±ä¸œ' => 1, 'å±±è¥¿' => 1, 'é™•è¥¿' => 1, 'ä¸Šæµ·' => 1, 'å››å·' => 1,
+		'å¤©æ´¥' => 1, 'è¥¿è—' => 1, 'æ–°ç–†' => 1, 'äº‘å—' => 1, 'æµ™æ±Ÿ' => 1,
+		'é‡åº†' => 1, 'ä¸­å›½' => 1, 'å…¨å›½' => 1, 'åŽä¸œ' => 1, 'åŽåŒ—' => 1,
+		'ä¸­ç»' => 1, 'å…§è’™' => 1, 'èšå‹' => 1, 'ä¸­ç§‘' => 1, 'å¥‡è™Ž' => 1,
+		'è”é€š' => 1, 'æœ¬æœº' => 1, 'å±€åŸŸ' => 1, 'CNNI' => 1, 'UCWE' => 1,
 	);
 	private static $s_aHkmotwPrefix = array(
-		'°ÄÃÅ' => 1, 'Ïã¸Û' => 1, 'Ì¨Íå' => 1,
+		'æ¾³é—¨' => 1, 'é¦™æ¸¯' => 1, 'å°æ¹¾' => 1,
 	);
 	
 	const RANGE_C1_FOREIGN = 0;
@@ -88,7 +80,7 @@ class Ko_Data_IPLocator extends Ko_Data_KProxy implements IKo_Data_IPLocator
 	public function iGetRangeC1($sIp)
 	{
 		$location = $this->sGetLocation($sIp);
-		$head = substr($location, 0, 4);
+		$head = Ko_Tool_Str::SConvert2UTF8(substr($location, 0, 4));
 		if (isset(self::$s_aChineseMainlandPrefix[$head]))
 		{
 			return self::RANGE_C1_CHINESEMAINLAND;
