@@ -8,54 +8,27 @@
 
 //include_once('../ko.class.php');
 
-interface IKo_Html_Str
+class Ko_Html_Str extends Ko_Tool_StrParser
 {
-	/**
-	 * 获取属性名称字符串，使用空白字符或者 '>' '=' 结束
-	 */
-	public function sGetNameStr();
 	/**
 	 * 获取属性值，使用引号引起来的字符串，也可能没有使用引号，使用空白字符或者 '>' 结束
 	 */
-	public function sGetQuoteStr();
-	/**
-	 * 获取文本字符串，使用 '<' 结束
-	 */
-	public function sGetTextStr();
-	/**
-	 * 获取tag字符串，使用 '<' 开始，使用空白字符或者 '>' 结束
-	 */
-	public function sGetTagStr();
-	/**
-	 * 获取脚本文本
-	 */
-	public function sGetScriptStr();
-	/**
-	 * 获取注释文本
-	 */
-	public function sGetCommentStr();
-	/**
-	 * 当前是否是注释代码
-	 */
-	public function bIsCommentStart();
-	/**
-	 * 当前是否是 tag 完成标记 '/>' 或 '>'
-	 */
-	public function bIsEndTag();
-}
-
-class Ko_Html_Str extends Ko_Tool_StrParser implements IKo_Html_Str
-{
 	public function sGetQuoteStr()
 	{
 		return $this->_sGetQuoteStr('>');
 	}
 
+	/**
+	 * 获取属性名称字符串，使用空白字符或者 '>' '=' 结束
+	 */
 	public function sGetNameStr()
 	{
 		return $this->_sGetNameStr('>');
 	}
 
+	/**
+	 * 获取文本字符串，使用 '<' 结束
+	 */
 	public function sGetTextStr()
 	{
 		return $this->sGetStr(array($this, 'bGetTextStr_Exit'), array());
@@ -65,6 +38,9 @@ class Ko_Html_Str extends Ko_Tool_StrParser implements IKo_Html_Str
 		return '<' === $this->sChar() && !$this->bIsBlank(1) && !$this->bEnd(1) && '>' !== $this->sChar(1);
 	}
 
+	/**
+	 * 获取tag字符串，使用 '<' 开始，使用空白字符或者 '>' 结束
+	 */
 	public function sGetTagStr()
 	{
 		assert('<' === $this->sChar());
@@ -76,6 +52,9 @@ class Ko_Html_Str extends Ko_Tool_StrParser implements IKo_Html_Str
 		return $this->bIsBlank() || $this->bIsEndTag();
 	}
 
+	/**
+	 * 获取脚本文本
+	 */
 	public function sGetScriptStr()
 	{
 		$start = $this->_iOffset;
@@ -86,6 +65,9 @@ class Ko_Html_Str extends Ko_Tool_StrParser implements IKo_Html_Str
 		return substr($this->_sHtml, $start, $end - $start);
 	}
 
+	/**
+	 * 获取注释文本
+	 */
 	public function sGetCommentStr()
 	{
 		assert($this->bIsCommentStart());
@@ -97,11 +79,17 @@ class Ko_Html_Str extends Ko_Tool_StrParser implements IKo_Html_Str
 		return substr($this->_sHtml, $start, $end - $start);
 	}
 
+	/**
+	 * 当前是否是注释代码
+	 */
 	public function bIsCommentStart()
 	{
 		return '<' === $this->sChar() && '!' === $this->sChar(1) && '-' === $this->sChar(2) && '-' === $this->sChar(3);
 	}
 
+	/**
+	 * 当前是否是 tag 完成标记 '/>' 或 '>'
+	 */
 	public function bIsEndTag()
 	{
 		$this->vLTrim();
