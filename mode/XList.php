@@ -56,7 +56,7 @@ class Ko_Mode_XList extends Ko_Busi_Api implements IKo_Mode_XList
 	 *   'gb' => false, 数据库保存的字符集，utf-8 或者其他(latin1, gb等)
 	 *   'pageisgb' => false, 页面使用的字符集，缺省同数据库字符集
 	 *   'titlewidth' => 添加/编辑/删除/详细页面的左侧标题栏的宽度, 单位：px
-	 *   'itemApi' => 使用 IKo_Mode_Item 接口生成的 Api 或 Func
+	 *   'itemApi' => 使用 Ko_Mode_Item 生成的 Api 或 Func
 	 *   'field' => array(
 	 *     'uid' => array(
 	 *       'title' => '用户ID',

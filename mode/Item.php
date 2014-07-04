@@ -46,42 +46,9 @@
  */
 
 /**
- * 观察者模式的接口
+ * 观察者模式
  */
-interface IKo_Mode_Item
-{
-	/**
-	 * @return int
-	 */
-	public function iInsert($aData, $aUpdate = array(), $aChange = array(), $vAdmin='');
-	/**
-	 * @return array
-	 */
-	public function aInsert($aData, $aUpdate = array(), $aChange = array(), $vAdmin='');
-	/**
-	 * @return int
-	 */
-	public function iUpdate($vKey, $aUpdate, $aChange=array(), $oOption=null, $vAdmin='');
-	/**
-	 * @param Ko_Tool_SQL|Ko_Tool_MONGO|array $oOption
-	 * @return int
-	 */
-	public function iUpdateByCond($oOption, $aUpdate, $aChange=array(), $vAdmin='');
-	/**
-	 * @return int
-	 */
-	public function iDelete($vKey, $oOption=null, $vAdmin='');
-	/**
-	 * @param Ko_Tool_SQL|Ko_Tool_MONGO|array $oOption
-	 * @return int
-	 */
-	public function iDeleteByCond($oOption, $vAdmin='');
-}
-
-/**
- * 观察者模式的实现
- */
-class Ko_Mode_Item extends Ko_Busi_Api implements IKo_Mode_Item, IKo_Mode_ItemHelp
+class Ko_Mode_Item extends Ko_Busi_Api
 {
 	/**
 	 * 配置数组
@@ -238,6 +205,7 @@ class Ko_Mode_Item extends Ko_Busi_Api implements IKo_Mode_Item, IKo_Mode_ItemHe
 	}
 
 	/**
+	 * @param Ko_Tool_SQL|Ko_Tool_MONGO|array $oOption
 	 * @return int
 	 */
 	public function iUpdateByCond($oOption, $aUpdate, $aChange=array(), $vAdmin='')
@@ -270,6 +238,7 @@ class Ko_Mode_Item extends Ko_Busi_Api implements IKo_Mode_Item, IKo_Mode_ItemHe
 	}
 
 	/**
+	 * @param Ko_Tool_SQL|Ko_Tool_MONGO|array $oOption
 	 * @return int
 	 */
 	public function iDeleteByCond($oOption, $vAdmin='')

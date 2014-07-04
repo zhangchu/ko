@@ -34,113 +34,9 @@
  */
 
 /**
- * 接口
- */
-interface IKo_Mode_Follow
-{
-	/**
-	 * 用户 A 关注用户 B
-	 *
-	 * @return boolean
-	 */
-	public function bFollow($iUida, $iUidb, $iFollowSort, $sData, $iFollowedSort);
-
-	/**
-	 * 用户 A 取消关注用户 B
-	 *
-	 * @return boolean
-	 */
-	public function bUnFollow($iUida, $iUidb);
-
-	/**
-	 * 设置用户 A 关注用户 B 的数据
-	 *
-	 * @return boolean
-	 */
-	public function bSetFollowData($iUida, $iUidb, $sData);
-	
-	/**
-	 * 设置用户 A 关注用户 B 的排序数据
-	 *
-	 * @return boolean
-	 */
-	public function bSetFollowSort($iUida, $iUidb, $iFollowSort);
-
-	/**
-	 * 设置用户 B 被用户 A 关注的排序数据
-	 *
-	 * @return boolean
-	 */
-	public function bSetFollowedSort($iUidb, $iUida, $iFollowedSort);
-
-	/**
-	 * 用户 A 是否关注用户 B
-	 *
-	 * @return boolean
-	 */
-	public function bIsFollow($iUida, $iUidb);
-
-	/**
-	 * 用户 A 关注了用户列表中的那些用户
-	 *
-	 * @return array
-	 */
-	public function aIsFollow($iUida, $aUidb, $sKeyField = '');
-	
-	/**
-	 * 用户 B 被用户列表中的那些用户关注了
-	 *
-	 * @return array
-	 */
-	public function aIsFollowed($iUidb, $aUida, $sKeyField = '');
-	
-	/**
-	 * 查询用户 A 关注用户 B 信息
-	 *
-	 * @return array
-	 */
-	public function aGetFollowInfo($iUida, $iUidb);
-
-	/**
-	 * 查询用户 A 关注用户列表的信息
-	 *
-	 * @return array
-	 */
-	public function aGetFollowInfos($iUida, $aUidb, $sKeyField = '');
-
-	/**
-	 * 查询用户 A 关注的用户列表
-	 *
-	 * @return array
-	 */
-	public function aGetFollowList($iUida, $iStart, $iNum);
-
-	/**
-	 * 查询用户 A 关注的用户列表
-	 *
-	 * @return array
-	 */
-	public function aGetFollowListWithTotal($iUida, $iStart, $iNum, &$iTotal);
-	
-	/**
-	 * 查询关注用户 B 的用户列表
-	 *
-	 * @return array
-	 */
-	public function aGetFollowedList($iUidb, $iStart, $iNum);
-
-	/**
-	 * 查询关注用户 B 的用户列表
-	 *
-	 * @return array
-	 */
-	public function aGetFollowedListWithTotal($iUidb, $iStart, $iNum, &$iTotal);
-}
-
-/**
  * 实现
  */
-class Ko_Mode_Follow extends Ko_Busi_Api implements IKo_Mode_Follow
+class Ko_Mode_Follow extends Ko_Busi_Api
 {
 	/**
 	 * 配置数组
@@ -157,6 +53,8 @@ class Ko_Mode_Follow extends Ko_Busi_Api implements IKo_Mode_Follow
 	protected $_aConf = array();
 
 	/**
+	 * 用户 A 关注用户 B
+	 *
 	 * @return boolean
 	 */
 	public function bFollow($iUida, $iUidb, $iFollowSort, $sData, $iFollowedSort)
@@ -191,6 +89,8 @@ class Ko_Mode_Follow extends Ko_Busi_Api implements IKo_Mode_Follow
 	}
 
 	/**
+	 * 用户 A 取消关注用户 B
+	 *
 	 * @return boolean
 	 */
 	public function bUnFollow($iUida, $iUidb)
@@ -204,6 +104,8 @@ class Ko_Mode_Follow extends Ko_Busi_Api implements IKo_Mode_Follow
 	}
 
 	/**
+	 * 设置用户 A 关注用户 B 的数据
+	 *
 	 * @return boolean
 	 */
 	public function bSetFollowData($iUida, $iUidb, $sData)
@@ -214,6 +116,8 @@ class Ko_Mode_Follow extends Ko_Busi_Api implements IKo_Mode_Follow
 	}
 
 	/**
+	 * 设置用户 A 关注用户 B 的排序数据
+	 *
 	 * @return boolean
 	 */
 	public function bSetFollowSort($iUida, $iUidb, $iFollowSort)
@@ -224,6 +128,8 @@ class Ko_Mode_Follow extends Ko_Busi_Api implements IKo_Mode_Follow
 	}
 
 	/**
+	 * 设置用户 B 被用户 A 关注的排序数据
+	 *
 	 * @return boolean
 	 */
 	public function bSetFollowedSort($iUidb, $iUida, $iFollowedSort)
@@ -234,6 +140,8 @@ class Ko_Mode_Follow extends Ko_Busi_Api implements IKo_Mode_Follow
 	}
 
 	/**
+	 * 用户 A 是否关注用户 B
+	 *
 	 * @return boolean
 	 */
 	public function bIsFollow($iUida, $iUidb)
@@ -243,6 +151,8 @@ class Ko_Mode_Follow extends Ko_Busi_Api implements IKo_Mode_Follow
 	}
 	
 	/**
+	 * 用户 A 关注了用户列表中的那些用户
+	 *
 	 * @return array
 	 */
 	public function aIsFollow($iUida, $aUidb, $sKeyField = '')
@@ -252,6 +162,8 @@ class Ko_Mode_Follow extends Ko_Busi_Api implements IKo_Mode_Follow
 	}
 	
 	/**
+	 * 用户 B 被用户列表中的那些用户关注了
+	 *
 	 * @return array
 	 */
 	public function aIsFollowed($iUidb, $aUida, $sKeyField = '')
@@ -262,6 +174,8 @@ class Ko_Mode_Follow extends Ko_Busi_Api implements IKo_Mode_Follow
 	}
 	
 	/**
+	 * 查询用户 A 关注用户 B 信息
+	 *
 	 * @return array
 	 */
 	public function aGetFollowInfo($iUida, $iUidb)
@@ -271,6 +185,8 @@ class Ko_Mode_Follow extends Ko_Busi_Api implements IKo_Mode_Follow
 	}
 
 	/**
+	 * 查询用户 A 关注用户列表的信息
+	 *
 	 * @return array
 	 */
 	public function aGetFollowInfos($iUida, $aUidb, $sKeyField = '')
@@ -280,6 +196,8 @@ class Ko_Mode_Follow extends Ko_Busi_Api implements IKo_Mode_Follow
 	}
 
 	/**
+	 * 查询用户 A 关注的用户列表
+	 *
 	 * @return array
 	 */
 	public function aGetFollowList($iUida, $iStart, $iNum)
@@ -290,6 +208,8 @@ class Ko_Mode_Follow extends Ko_Busi_Api implements IKo_Mode_Follow
 	}
 
 	/**
+	 * 查询用户 A 关注的用户列表
+	 *
 	 * @return array
 	 */
 	public function aGetFollowListWithTotal($iUida, $iStart, $iNum, &$iTotal)
@@ -302,6 +222,8 @@ class Ko_Mode_Follow extends Ko_Busi_Api implements IKo_Mode_Follow
 	}
 	
 	/**
+	 * 查询关注用户 B 的用户列表
+	 *
 	 * @return array
 	 */
 	public function aGetFollowedList($iUidb, $iStart, $iNum)
@@ -312,6 +234,8 @@ class Ko_Mode_Follow extends Ko_Busi_Api implements IKo_Mode_Follow
 	}
 	
 	/**
+	 * 查询关注用户 B 的用户列表
+	 *
 	 * @return array
 	 */
 	public function aGetFollowedListWithTotal($iUidb, $iStart, $iNum, &$iTotal)

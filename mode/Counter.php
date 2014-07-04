@@ -33,44 +33,9 @@
  */
 
 /**
- * 计数器接口
+ * 计数器
  */
-interface IKo_Mode_Counter
-{
-	/**
-	 * 增加计数
-	 *
-	 * 增加计数值，为了承担较大规模的并发计数，使用先将数据增加记录在 MC 中。
-	 * 只有 MC 里面的值达到或超过 step 值，才进行同步到数据库。
-	 * 但是，同步到数据库是分为三步，查询 MC 的值 --> 增加数据库值 --> 减少 MC 的值
-	 * 在并发情况下，由于 MC 中的值无法减为负值，可能会导致第三步无法按预期执行，导致计数超过实际的值
-	 * 为了尽量减少上述情况发生的概率，可以在允许的情况下尽量提高 step / value 的大小
-	 *
-	 * @return int
-	 */
-	public function iIncrement($vKey, $iValue = 1, $iStep = 0);
-	/**
-	 * 查询计数（数据库里的值 + memcache 的值）
-	 *
-	 * @return int
-	 */
-	public function iGet($vKey, $bMC2DB = false);
-	/**
-	 * 批量查询，db为单表才可以使用
-	 *
-	 * @return array
-	 */
-	public function aGetMulti($aKey);
-	/**
-	 * 扫描数据库中长期未更新的数据，进行同步
-	 */
-	public function vSyncAll();
-}
-
-/**
- * 计数器实现
- */
-class Ko_Mode_Counter extends Ko_Busi_Api implements IKo_Mode_Counter
+class Ko_Mode_Counter extends Ko_Busi_Api
 {
 	const DEFAULT_STEP = 100;
 	const DEFAULT_SECOND = 3600;
@@ -104,6 +69,14 @@ class Ko_Mode_Counter extends Ko_Busi_Api implements IKo_Mode_Counter
 	}
 
 	/**
+	 * 增加计数
+	 *
+	 * 增加计数值，为了承担较大规模的并发计数，使用先将数据增加记录在 MC 中。
+	 * 只有 MC 里面的值达到或超过 step 值，才进行同步到数据库。
+	 * 但是，同步到数据库是分为三步，查询 MC 的值 --> 增加数据库值 --> 减少 MC 的值
+	 * 在并发情况下，由于 MC 中的值无法减为负值，可能会导致第三步无法按预期执行，导致计数超过实际的值
+	 * 为了尽量减少上述情况发生的概率，可以在允许的情况下尽量提高 step / value 的大小
+	 *
 	 * @return int
 	 */
 	public function iIncrement($vKey, $iValue = 1, $iStep = 0)
@@ -131,6 +104,8 @@ class Ko_Mode_Counter extends Ko_Busi_Api implements IKo_Mode_Counter
 	}
 
 	/**
+	 * 查询计数（数据库里的值 + memcache 的值）
+	 *
 	 * @return int
 	 */
 	public function iGet($vKey, $bMC2DB = false)
@@ -159,6 +134,8 @@ class Ko_Mode_Counter extends Ko_Busi_Api implements IKo_Mode_Counter
 	}
 	
 	/**
+	 * 批量查询，db为单表才可以使用
+	 *
 	 * @return array
 	 */
 	public function aGetMulti($aKey)
@@ -187,6 +164,9 @@ class Ko_Mode_Counter extends Ko_Busi_Api implements IKo_Mode_Counter
 		return $ret;
 	}
 
+	/**
+	 * 扫描数据库中长期未更新的数据，进行同步
+	 */
 	public function vSyncAll()
 	{
 		if ($this->_bForbidMC)
