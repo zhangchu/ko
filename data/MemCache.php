@@ -12,7 +12,7 @@
 /**
  * 封装直连 memcache 的实现
  */
-class Ko_Data_MemCache implements IKo_Data_MCache, IKo_Data_MCAgent
+class Ko_Data_MemCache
 {
 	const PROXY_ARRMAX = 1000;
 	private static $s_aInstances = array();

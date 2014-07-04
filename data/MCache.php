@@ -9,28 +9,9 @@
 //include_once('../ko.class.php');
 
 /**
- * 封装 MCache 的接口
- */
-interface IKo_Data_MCache
-{
-	public function bSet($sKey, $sValue, $iExpire = 0);
-	public function bSetObj($sKey, $oValue, $iExpire = 0);
-	public function bAdd($sKey, $sValue, $iExpire = 0);
-	public function bAddObj($sKey, $oValue, $iExpire = 0);
-	public function bReplace($sKey, $sValue, $iExpire = 0);
-	public function bReplaceObj($sKey, $oValue, $iExpire = 0);
-	public function vGet($vKey);
-	public function vGetObj($vKey);
-	public function bDelete($sKey);
-	public function iIncrement($sKey, $iValue = 1);
-	public function iIncrementEx($sKey, $iValue = 1, $iExpire = 0);
-	public function iDecrement($sKey, $iValue = 1);
-}
-
-/**
  * 封装 KProxy 的 MCache 的实现
  */
-class Ko_Data_MCache extends Ko_Data_KProxy implements IKo_Data_MCache, IKo_Data_MCAgent
+class Ko_Data_MCache extends Ko_Data_KProxy
 {
 	const PROXY_ARRMAX = 500;
 	private static $s_aInstances = array();

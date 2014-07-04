@@ -7,17 +7,9 @@
  */
 
 /**
- * 封装创建 memcache 的借口
- */
-interface IKo_Data_MCAgent
-{
-	public static function OInstance($sName = '', $sExinfo = '');
-}
-
-/**
  * 封装创建 memcache 的实现
  */
-class Ko_Data_MCAgent implements IKo_Data_MCAgent
+class Ko_Data_MCAgent
 {
 	public static function OInstance($sName = '', $sExinfo = '')
 	{

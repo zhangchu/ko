@@ -11,7 +11,7 @@
 /**
  * 封装模块内部的 MCache 的实现
  */
-class Ko_Dao_MCacheEx extends Ko_Dao_ModuleCache implements IKo_Data_MCache
+class Ko_Dao_MCacheEx extends Ko_Dao_ModuleCache
 {
 	private $_oMCache;
 

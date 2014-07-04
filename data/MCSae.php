@@ -9,7 +9,7 @@
 /**
  * 封装 sina app engine memcache 的实现
  */
-class Ko_Data_MCSae extends Ko_Data_MemCache implements IKo_Data_MCAgent
+class Ko_Data_MCSae extends Ko_Data_MemCache
 {
 	private static $s_aInstances = array();
 

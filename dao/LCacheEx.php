@@ -11,7 +11,7 @@
 /**
  * 封装模块内部的 LCache 的实现
  */
-class Ko_Dao_LCacheEx extends Ko_Dao_ModuleCache implements IKo_Data_LCache
+class Ko_Dao_LCacheEx extends Ko_Dao_ModuleCache
 {
 	private $_oLCache;
 

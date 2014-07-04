@@ -9,22 +9,9 @@
 //include_once('../ko.class.php');
 
 /**
- * 封装 LCache 的接口
- */
-interface IKo_Data_LCache
-{
-	public function bSet($sKey, $sValue);
-	public function bSetObj($sKey, $oValue);
-	public function vGet($vKey, $iExpire);
-	public function vGetObj($vKey, $iExpire);
-	public function bRemove($sKey);
-	public function iPlus($sKey, $iValue, $iExpire);
-}
-
-/**
  * 封装 KProxy 的 LCache 的实现
  */
-class Ko_Data_LCache extends Ko_Data_KProxy implements IKo_Data_LCache, IKo_Data_LCAgent
+class Ko_Data_LCache extends Ko_Data_KProxy
 {
 	const PROXY_ARRMAX = 1000;
 	private static $s_oInstance;
