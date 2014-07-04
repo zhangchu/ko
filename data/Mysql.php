@@ -7,64 +7,9 @@
  */
 
 /**
- * Mysql操作类接口
- */
-interface IKo_Data_Mysql
-{
-	/**
-	 * @return Ko_Data_Mysql
-	 */
-	public static function OInstance($sHost, $sUser, $sPasswd, $sDbName);
-	/**
-	 * @return string
-	 */
-	public static function SEscape($sIn);
-	/**
-	 * @return int
-	 */
-	public function iAffectedRows();
-	/**
-	 * @return int
-	 */
-	public function iErrno();
-	/**
-	 * @return string
-	 */
-	public function sError();
-	/**
-	 * @return array
-	 */
-	public function aFetchArray($iType = MYSQL_BOTH);
-	/**
-	 * @return array
-	 */
-	public function aFetchAssoc();
-	/**
-	 * @return array
-	 */
-	public function aFetchRow();
-	/**
-	 * @return int
-	 */
-	public function iInsertId();
-	/**
-	 * @return int
-	 */
-	public function iNumRows();
-	/**
-	 * @return bool
-	 */
-	public function bQuery($sSql);
-	/**
-	 * @return bool
-	 */
-	public function bSelectDb($sDbName);
-}
-
-/**
  * Mysql操作类实现
  */
-class Ko_Data_Mysql implements IKo_Data_Mysql
+class Ko_Data_Mysql
 {
 	const MAX_RECONN = 3;
 	

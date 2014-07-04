@@ -7,28 +7,9 @@
  */
 
 /**
- * 封装 Mongo 连接接口
+ * 封装 Mongo 连接
  */
-interface IKo_Data_Mongo
-{
-	/**
-	 * @return Ko_Data_Mongo
-	 */
-	public static function OInstance($sHost, $sReplicaSet, $sUser, $sPasswd, $sDbName);
-	/**
-	 * @return MongoDB
-	 */
-	public function oSelectDB();
-	/**
-	 * @return MongoCollection
-	 */
-	public function oSelectCollection($sCollection);
-}
-
-/**
- * 封装 Mongo 连接实现
- */
-class Ko_Data_Mongo implements IKo_Data_Mongo
+class Ko_Data_Mongo
 {
 	private static $s_AInstance = array();
 	private $_hLink;

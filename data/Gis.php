@@ -11,13 +11,7 @@
 /**
  * 封装 Gis 的接口
  */
-interface IKo_Data_Gis
-{
-	public static function OInstance();
-	public function aGetRegion($fLat, $fLng, $iHow);
-}
-
-class Ko_Data_Gis extends Ko_Data_KProxy implements IKo_Data_Gis
+class Ko_Data_Gis extends Ko_Data_KProxy
 {
 	const REGION = 0x1;
 	const MDD    = 0x2;

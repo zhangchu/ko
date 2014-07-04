@@ -11,13 +11,7 @@
 /**
  * 封装 UserId 的接口
  */
-interface IKo_Data_UserId
-{
-	public static function OInstance();
-	public function iGetUserId();
-}
-
-class Ko_Data_UserId extends Ko_Data_KProxy implements IKo_Data_UserId
+class Ko_Data_UserId extends Ko_Data_KProxy
 {
 	private static $s_OInstance;
 

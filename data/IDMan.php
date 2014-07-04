@@ -9,19 +9,9 @@
 //include_once('../ko.class.php');
 
 /**
- * 封装 IDMan 的接口
- */
-interface IKo_Data_IDMan
-{
-	public static function OInstance();
-	public function sGetNewStringLongID($sKind);
-	public function iGetNewTimeID($sKind);
-}
-
-/**
  * 封装使用 KProxy 的 IDMan 的实现
  */
-class Ko_Data_IDMan extends Ko_Data_KProxy implements IKo_Data_IDMan
+class Ko_Data_IDMan extends Ko_Data_KProxy
 {
 	private static $s_OInstance;
 
