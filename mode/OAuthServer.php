@@ -55,77 +55,9 @@
  */
 
 /**
- * OAuth 1.0 接口
- */
-interface IKo_Mode_OAuthServer
-{
-	/**
-	 * client 信息管理：注册/设置信息
-	 */
-	public function vSetClientInfo($iCid, &$sSecret);
-
-	/**
-	 * 用户授权
-	 *
-	 * @return boolean|string|exit 返回 true 输出用户确认页，返回 false 输出错误提示页，其他返回 verifier 表示应该显示在页面上，让用户通知 client 授权完成
-	 */
-	public function vMain_Auth(&$iCid, $iUid = 0, $sScope = '');
-	/**
-	 * client请求token
-	 *
-	 * @return exit
-	 */
-	public function vMain_Token($sBaseuri = '', $fnXAuth_CheckUser_Callback = null);
-
-	/**
-	 * client请求用户数据：对请求进行权限验证，如果验证错误，直接输出 400/401 头并退出程序
-	 *
-	 * @return array|exit 返回授权信息 array(uid, scope)
-	 */
-	public function aCheckAuthReq($sBaseuri = '');
-	/**
-	 * 直接获取用户的授权信息
-	 *
-	 * @return array 返回用户授权信息 array(token, secret)
-	 */
-	public function aGetUserTokenDirect($iCid, $iUid, $sScope = '');
-
-	/**
-	 * client Api: 获取 temp token 的接口 uri
-	 *
-	 * @return string
-	 */
-	public static function SGetRequestTokenUri($sMethod, $sUri, $sKey, $sSecret, $sCallback);
-	/**
-	 * client Api: 获取跳转到用户授权的 uri
-	 *
-	 * @return string
-	 */
-	public static function SGetAuthorizeUri($sUri, $sRequestToken);
-	/**
-	 * client Api: 获取 access token 的接口 uri
-	 *
-	 * @return string
-	 */
-	public static function SGetAccessTokenUri($sMethod, $sUri, $sKey, $sSecret, $sRequestToken, $sRequestSecret, $sVerifier);
-	/**
-	 * client Api: 使用 XAuth 获取 access token 的接口 uri
-	 *
-	 * @return string
-	 */
-	public static function SGetXAuthTokenUri($sMethod, $sUri, $sKey, $sSecret, $sUsername, $sPassword);
-	/**
-	 * client Api: 获取 api 的接口 uri
-	 *
-	 * @return string
-	 */
-	public static function SGetApiUri($sMethod, $sUri, $sKey, $sSecret, $sAccessToken, $sAccessSecret, $aPara);
-}
-
-/**
  * OAuth 1.0 实现
  */
-class Ko_Mode_OAuthServer extends Ko_Mode_OAuthServerBase implements IKo_Mode_OAuthServer
+class Ko_Mode_OAuthServer extends Ko_Mode_OAuthServerBase
 {
 	/**
 	 * 配置数组
@@ -169,6 +101,9 @@ class Ko_Mode_OAuthServer extends Ko_Mode_OAuthServerBase implements IKo_Mode_OA
 
 	private $_sBaseuri;
 
+	/**
+	 * client 信息管理：注册/设置信息
+	 */
 	public function vSetClientInfo($iCid, &$sSecret)
 	{
 		$sSecret = $this->_sGenKey();
@@ -184,7 +119,9 @@ class Ko_Mode_OAuthServer extends Ko_Mode_OAuthServerBase implements IKo_Mode_OA
 	}
 
 	/**
-	 * @return boolean|string|exit
+	 * 用户授权
+	 *
+	 * @return boolean|string|exit 返回 true 输出用户确认页，返回 false 输出错误提示页，其他返回 verifier 表示应该显示在页面上，让用户通知 client 授权完成
 	 */
 	public function vMain_Auth(&$iCid, $iUid = 0, $sScope = '')
 	{
@@ -201,6 +138,8 @@ class Ko_Mode_OAuthServer extends Ko_Mode_OAuthServerBase implements IKo_Mode_OA
 	}
 
 	/**
+	 * client请求token
+	 *
 	 * @return exit
 	 */
 	public function vMain_Token($sBaseuri = '', $fnXAuth_CheckUser_Callback = null)
@@ -245,7 +184,9 @@ class Ko_Mode_OAuthServer extends Ko_Mode_OAuthServerBase implements IKo_Mode_OA
 	}
 
 	/**
-	 * @return array|exit
+	 * client请求用户数据：对请求进行权限验证，如果验证错误，直接输出 400/401 头并退出程序
+	 *
+	 * @return array|exit 返回授权信息 array(uid, scope)
 	 */
 	public function aCheckAuthReq($sBaseuri = '')
 	{
@@ -258,7 +199,9 @@ class Ko_Mode_OAuthServer extends Ko_Mode_OAuthServerBase implements IKo_Mode_OA
 	}
 
 	/**
-	 * @return array
+	 * 直接获取用户的授权信息
+	 *
+	 * @return array 返回用户授权信息 array(token, secret)
 	 */
 	public function aGetUserTokenDirect($iCid, $iUid, $sScope = '')
 	{
@@ -290,6 +233,8 @@ class Ko_Mode_OAuthServer extends Ko_Mode_OAuthServerBase implements IKo_Mode_OA
 	}
 
 	/**
+	 * client Api: 获取 temp token 的接口 uri
+	 *
 	 * @return string
 	 */
 	public static function SGetRequestTokenUri($sMethod, $sUri, $sKey, $sSecret, $sCallback)
@@ -306,6 +251,8 @@ class Ko_Mode_OAuthServer extends Ko_Mode_OAuthServerBase implements IKo_Mode_OA
 	}
 
 	/**
+	 * client Api: 获取跳转到用户授权的 uri
+	 *
 	 * @return string
 	 */
 	public static function SGetAuthorizeUri($sUri, $sRequestToken)
@@ -314,6 +261,8 @@ class Ko_Mode_OAuthServer extends Ko_Mode_OAuthServerBase implements IKo_Mode_OA
 	}
 
 	/**
+	 * client Api: 获取 access token 的接口 uri
+	 *
 	 * @return string
 	 */
 	public static function SGetAccessTokenUri($sMethod, $sUri, $sKey, $sSecret, $sRequestToken, $sRequestSecret, $sVerifier)
@@ -331,6 +280,8 @@ class Ko_Mode_OAuthServer extends Ko_Mode_OAuthServerBase implements IKo_Mode_OA
 	}
 	
 	/**
+	 * client Api: 使用 XAuth 获取 access token 的接口 uri
+	 *
 	 * @return string
 	 */
 	public static function SGetXAuthTokenUri($sMethod, $sUri, $sKey, $sSecret, $sUsername, $sPassword)
@@ -349,6 +300,8 @@ class Ko_Mode_OAuthServer extends Ko_Mode_OAuthServerBase implements IKo_Mode_OA
 	}
 	
 	/**
+	 * client Api: 获取 api 的接口 uri
+	 *
 	 * @return string
 	 */
 	public static function SGetApiUri($sMethod, $sUri, $sKey, $sSecret, $sAccessToken, $sAccessSecret, $aPara)

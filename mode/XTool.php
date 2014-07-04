@@ -7,29 +7,9 @@
  */
 
 /**
- * 接口
- */
-interface IKo_Mode_XTool
-{
-	/**
-	 * @return array
-	 */
-	public static function AGetDBTypeInfo($sType);
-	/**
-	 * @return string
-	 */
-	public static function SGetOperatorText($sOperator);
-	public static function VGetOperatorSql($sOperator, $sField, $sValue, $oOption);
-	/**
-	 * @return boolean
-	 */
-	public static function BIsDBIndexTag($sKey);
-}
-
-/**
  * 实现
  */
-class Ko_Mode_XTool implements IKo_Mode_XTool
+class Ko_Mode_XTool
 {
 	private static $s_aMysqlType = array(
 		'tinyint' => array('cellinfo' => array('width' => 50),

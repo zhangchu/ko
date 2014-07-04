@@ -19,34 +19,9 @@
  */
 
 /**
- * 自动生成一个数据库表的管理界面接口
- */
-interface IKo_Mode_XList
-{
-	public function vMain($aReq, $vAdmin='');
-	public function vOutputHttp();
-	/**
-	 * @param boolean $bOutput 输出或者返回页面内容
-	 */
-	public function vOutputHead($bOutput = true);
-	/**
-	 * @param boolean $bOutput 输出或者返回页面内容
-	 */
-	public function vOutputBody($bOutput = true);
-	/**
-	 * @param boolean $bOutput 输出或者返回页面内容
-	 */
-	public function vOutputTail($bOutput = true);
-	public function vAttachAuth($oAuth);
-	public function vAttachUI($oUI);
-	public function vAttachStorage($oStorage);
-	public function vAttachData($oData);
-}
-
-/**
  * 自动生成一个数据库表的管理界面实现
  */
-class Ko_Mode_XList extends Ko_Busi_Api implements IKo_Mode_XList
+class Ko_Mode_XList extends Ko_Busi_Api
 {
 	/**
 	 * 配置数组
@@ -191,6 +166,9 @@ class Ko_Mode_XList extends Ko_Busi_Api implements IKo_Mode_XList
 		Header('Content-Type: text/html; charset='.($this->_bPageIsGb() ? 'GB2312' : 'UTF-8'));
 	}
 
+	/**
+	 * @param boolean $bOutput 输出或者返回页面内容
+	 */
 	public function vOutputHead($bOutput = true)
 	{
 		$html = $this->_sGetPageHead($this->_bPageIsGb());
@@ -201,6 +179,9 @@ class Ko_Mode_XList extends Ko_Busi_Api implements IKo_Mode_XList
 		echo $html;
 	}
 
+	/**
+	 * @param boolean $bOutput 输出或者返回页面内容
+	 */
 	public function vOutputBody($bOutput = true)
 	{
 		$html = $this->_sGetNaviLink().$this->_sHtml;
@@ -222,6 +203,9 @@ class Ko_Mode_XList extends Ko_Busi_Api implements IKo_Mode_XList
 		echo $html;
 	}
 
+	/**
+	 * @param boolean $bOutput 输出或者返回页面内容
+	 */
 	public function vOutputTail($bOutput = true)
 	{
 		$html = $this->_sGetPageTail();

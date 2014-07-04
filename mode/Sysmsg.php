@@ -54,58 +54,9 @@ CREATE TABLE kotest_sysmsg_massqueue(
  */
 
 /**
- * 接口
- */
-interface IKo_Mode_Sysmsg
-{
-	/**
-	 * 发送消息给一个用户
-	 *
-	 * @return int 消息ID
-	 */
-	public function iSendToOne($iUid, $aCond, $sContent, $sExinfo);
-	/**
-	 * 发送消息给所有用户，置顶
-	 *
-	 * @return int 消息ID
-	 */
-	public function iSendToAll($aCond, $sContent, $sExinfo);
-	/**
-	 * 发送消息给多个用户
-	 *
-	 * @return int 消息ID
-	 */
-	public function iSendToMass($aUid, $aCond, $sContent, $sExinfo);
-	/**
-	 * 将群发消息分发到每个用户，可能是一个耗时操作
-	 *
-	 * @return boolean 返回失败表示可能消息已经被分发，或正在被分发
-	 */
-	public function bDeliverMass($iMid);
-	/**
-	 * 删除消息
-	 *
-	 * @return boolean 是否成功
-	 */
-	public function bDelete($iUid, $iMid);
-	/**
-	 * 查询消息列表
-	 *
-	 * @return array
-	 */
-	public function aGetList($iUid, $aCond, $iStart, $iNum);
-	/**
-	 * 查询消息列表
-	 *
-	 * @return array
-	 */
-	public function aGetListWithTotal($iUid, $aCond, &$iTotal, $iStart, $iNum);
-}
-
-/**
  * 实现
  */
-class Ko_Mode_Sysmsg extends Ko_Busi_Api implements IKo_Mode_Sysmsg
+class Ko_Mode_Sysmsg extends Ko_Busi_Api
 {
 	/**
 	 * 配置数组
@@ -129,7 +80,9 @@ class Ko_Mode_Sysmsg extends Ko_Busi_Api implements IKo_Mode_Sysmsg
 	const DEFAULT_MASS_MAX = 2000;
 	
 	/**
-	 * @return int
+	 * 发送消息给一个用户
+	 *
+	 * @return int 消息ID
 	 */
 	public function iSendToOne($iUid, $aCond, $sContent, $sExinfo)
 	{
@@ -142,7 +95,9 @@ class Ko_Mode_Sysmsg extends Ko_Busi_Api implements IKo_Mode_Sysmsg
 	}
 	
 	/**
-	 * @return int
+	 * 发送消息给所有用户，置顶
+	 *
+	 * @return int 消息ID
 	 */
 	public function iSendToAll($aCond, $sContent, $sExinfo)
 	{
@@ -155,7 +110,9 @@ class Ko_Mode_Sysmsg extends Ko_Busi_Api implements IKo_Mode_Sysmsg
 	}
 
 	/**
-	 * @return int
+	 * 发送消息给多个用户
+	 *
+	 * @return int 消息ID
 	 */
 	public function iSendToMass($aUid, $aCond, $sContent, $sExinfo)
 	{
@@ -174,7 +131,9 @@ class Ko_Mode_Sysmsg extends Ko_Busi_Api implements IKo_Mode_Sysmsg
 	}
 	
 	/**
-	 * @return boolean
+	 * 将群发消息分发到每个用户，可能是一个耗时操作
+	 *
+	 * @return boolean 返回失败表示可能消息已经被分发，或正在被分发
 	 */
 	public function bDeliverMass($iMid)
 	{
@@ -194,7 +153,9 @@ class Ko_Mode_Sysmsg extends Ko_Busi_Api implements IKo_Mode_Sysmsg
 	}
 	
 	/**
-	 * @return boolean
+	 * 删除消息
+	 *
+	 * @return boolean 是否成功
 	 */
 	public function bDelete($iUid, $iMid)
 	{
@@ -212,6 +173,8 @@ class Ko_Mode_Sysmsg extends Ko_Busi_Api implements IKo_Mode_Sysmsg
 	}
 	
 	/**
+	 * 查询消息列表
+	 *
 	 * @return array
 	 */
 	public function aGetList($iUid, $aCond, $iStart, $iNum)
@@ -232,6 +195,8 @@ class Ko_Mode_Sysmsg extends Ko_Busi_Api implements IKo_Mode_Sysmsg
 	}
 	
 	/**
+	 * 查询消息列表
+	 *
 	 * @return array
 	 */
 	public function aGetListWithTotal($iUid, $aCond, &$iTotal, $iStart, $iNum)

@@ -7,26 +7,9 @@
  */
 
 /**
- * 自定义界面的接口
- */
-interface IKo_Mode_XIUI
-{
-	public function vAttachStorage($oStorage);
-	public function vSetItemTypeinfo($aTypeinfo);
-	/**
-	 * @return string
-	 */
-	public function sList_CellHtml($sField, $aValue);
-	/**
-	 * @return string
-	 */
-	public function sDetail_LineHtml($sField, $aValue);
-}
-
-/**
  * 自定义界面的缺省实现
  */
-class Ko_Mode_XIUI extends Ko_Busi_Api implements IKo_Mode_XIUI
+class Ko_Mode_XIUI extends Ko_Busi_Api
 {
 	protected $_oStorage;
 	protected $_aTypeinfo = array();

@@ -54,76 +54,9 @@
  */
 
 /**
- * OAuth 2.0 接口
- */
-interface IKo_Mode_OAuth2Server
-{
-	/**
-	 * client 信息管理：注册/设置信息
-	 */
-	public function vSetClientInfo($iCid, $bPublic, $iPasscred, $iClientcred, $sRedirectUris);
-
-	/**
-	 * 用户授权管理：撤销 refresh token 授权
-	 */
-	public function vRevokeRefreshToken($iUid, $iCid, $sToken);
-
-	/**
-	 * 授权请求接口
-	 *
-	 * @return boolean|exit 返回 true 输出用户确认页，返回 false 输出错误提示页
-	 */
-	public function vMain_Auth($iUid = 0, $bAgree = false, $sScope = '');
-	/**
-	 * token 接口
-	 *
-	 * @return exit
-	 */
-	public function vMain_Token($fnCheckClient_Callback, $fnCheckUser_Callback = null);
-
-	/**
-	 * client请求用户数据：对请求进行权限验证，如果验证错误，直接输出 400/401 头并退出程序
-	 *
-	 * @return array 返回授权信息 array($cid, uid, scope)
-	 */
-	public function aCheckAuthReq();
-	
-	/**
-	 * client Api: 获取跳转到用户授权的 uri
-	 *
-	 * @return string
-	 */
-	public static function SGetAuthorizeUri($sUri, $sKey, $sCallback = '', $sScope = '', $sState = '', $bImplicit = false);
-	/**
-	 * client Api: 获取 access token 的接口 uri
-	 *
-	 * @return string
-	 */
-	public static function SGetAccessTokenUri($sMethod, $sUri, $sKey, $sSecret, $sCallback, $sCode);
-	/**
-	 * client Api: 获取 access token 的接口 uri
-	 *
-	 * @return string
-	 */
-	public static function SGetAccessTokenUri_Passcred($sMethod, $sUri, $sKey, $sSecret, $sUsername, $sPassword, $sScope = '');
-	/**
-	 * client Api: 获取 access token 的接口 uri
-	 *
-	 * @return string
-	 */
-	public static function SGetAccessTokenUri_Clientcred($sMethod, $sUri, $sKey, $sSecret, $sScope = '');
-	/**
-	 * client Api: 获取 access token 的接口 uri
-	 *
-	 * @return string
-	 */
-	public static function SGetAccessTokenUri_Refresh($sMethod, $sUri, $sKey, $sSecret, $sRefreshToken, $sScope = '');
-}
-
-/**
  * OAuth 2.0 实现
  */
-class Ko_Mode_OAuth2Server extends Ko_Mode_OAuthServerBase implements IKo_Mode_OAuth2Server
+class Ko_Mode_OAuth2Server extends Ko_Mode_OAuthServerBase
 {
 	/**
 	 * 配置数组
@@ -166,6 +99,9 @@ class Ko_Mode_OAuth2Server extends Ko_Mode_OAuthServerBase implements IKo_Mode_O
 
 	protected $_sClientId = '';		//auth 接口是传入的 client_id，token接口是验证通过的 client_id
 
+	/**
+	 * client 信息管理：注册/设置信息
+	 */
 	public function vSetClientInfo($iCid, $bPublic, $iPasscred, $iClientcred, $sRedirectUris)
 	{
 		//http://tools.ietf.org/html/rfc6749#section-2.1
@@ -188,6 +124,9 @@ class Ko_Mode_OAuth2Server extends Ko_Mode_OAuthServerBase implements IKo_Mode_O
 		$this->$clientDao->aInsert($aData, $aUpdate);
 	}
 
+	/**
+	 * 用户授权管理：撤销 refresh token 授权
+	 */
 	public function vRevokeRefreshToken($iUid, $iCid, $sToken)
 	{
 		$refreshtokenApi = $this->_aConf['refreshtokenApi'];
@@ -197,7 +136,9 @@ class Ko_Mode_OAuth2Server extends Ko_Mode_OAuthServerBase implements IKo_Mode_O
 	}
 
 	/**
-	 * @return boolean|exit
+	 * 授权请求接口
+	 *
+	 * @return boolean|exit 返回 true 输出用户确认页，返回 false 输出错误提示页
 	 */
 	public function vMain_Auth($iUid = 0, $bAgree = false, $sScope = '')
 	{
@@ -214,6 +155,8 @@ class Ko_Mode_OAuth2Server extends Ko_Mode_OAuthServerBase implements IKo_Mode_O
 	}
 
 	/**
+	 * token 接口
+	 *
 	 * @return exit
 	 */
 	public function vMain_Token($fnCheckClient_Callback, $fnCheckUser_Callback = null)
@@ -252,7 +195,9 @@ class Ko_Mode_OAuth2Server extends Ko_Mode_OAuthServerBase implements IKo_Mode_O
 	}
 
 	/**
-	 * @return array
+	 * client请求用户数据：对请求进行权限验证，如果验证错误，直接输出 400/401 头并退出程序
+	 *
+	 * @return array 返回授权信息 array($cid, uid, scope)
 	 */
 	public function aCheckAuthReq()
 	{
@@ -271,6 +216,8 @@ class Ko_Mode_OAuth2Server extends Ko_Mode_OAuthServerBase implements IKo_Mode_O
 	}
 
 	/**
+	 * client Api: 获取跳转到用户授权的 uri
+	 *
 	 * @return string
 	 */
 	public static function SGetAuthorizeUri($sUri, $sKey, $sCallback = '', $sScope = '', $sState = '', $bImplicit = false)
@@ -294,6 +241,8 @@ class Ko_Mode_OAuth2Server extends Ko_Mode_OAuthServerBase implements IKo_Mode_O
 	}
 	
 	/**
+	 * client Api: 获取 access token 的接口 uri
+	 *
 	 * @return string
 	 */
 	public static function SGetAccessTokenUri($sMethod, $sUri, $sKey, $sSecret, $sCallback, $sCode)
@@ -317,6 +266,8 @@ class Ko_Mode_OAuth2Server extends Ko_Mode_OAuthServerBase implements IKo_Mode_O
 	}
 
 	/**
+	 * client Api: 获取 access token 的接口 uri
+	 *
 	 * @return string
 	 */
 	public static function SGetAccessTokenUri_Passcred($sMethod, $sUri, $sKey, $sSecret, $sUsername, $sPassword, $sScope = '')
@@ -340,6 +291,8 @@ class Ko_Mode_OAuth2Server extends Ko_Mode_OAuthServerBase implements IKo_Mode_O
 	}
 
 	/**
+	 * client Api: 获取 access token 的接口 uri
+	 *
 	 * @return string
 	 */
 	public static function SGetAccessTokenUri_Clientcred($sMethod, $sUri, $sKey, $sSecret, $sScope = '')
@@ -363,6 +316,8 @@ class Ko_Mode_OAuth2Server extends Ko_Mode_OAuthServerBase implements IKo_Mode_O
 	}
 
 	/**
+	 * client Api: 获取 access token 的接口 uri
+	 *
 	 * @return string
 	 */
 	public static function SGetAccessTokenUri_Refresh($sMethod, $sUri, $sKey, $sSecret, $sRefreshToken, $sScope = '')

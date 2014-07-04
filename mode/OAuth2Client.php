@@ -37,35 +37,9 @@
  */
 
 /**
- * OAuth 2.0 接口
- */
-interface IKo_Mode_OAuth2Client
-{
-	/**
-	 * 入口接口 / 回调接口
-	 *
-	 * @return array|exit
-	 */
-	public function vMain($sSrc, $fnGetToken);
-	
-	/**
-	 * 分析 token
-	 * 
-	 * @return array
-	 */
-	public static function AParseToken($sResponse);
-	/**
-	 * 用户绑定 token
-	 * 
-	 * @return boolean
-	 */
-	public function bSaveUserToken($sSrc, $iUid, $aTokeninfo);
-}
-
-/**
  * OAuth 2.0 实现
  */
-class Ko_Mode_OAuth2Client extends Ko_Mode_OAuthClientBase implements IKo_Mode_OAuth2Client
+class Ko_Mode_OAuth2Client extends Ko_Mode_OAuthClientBase
 {
 	/**
 	 * 配置数组
@@ -97,6 +71,8 @@ class Ko_Mode_OAuth2Client extends Ko_Mode_OAuthClientBase implements IKo_Mode_O
 		);
 	
 	/**
+	 * 入口接口 / 回调接口
+	 *
 	 * @return array|exit
 	 */
 	public function vMain($sSrc, $fnGetToken)
@@ -123,6 +99,8 @@ class Ko_Mode_OAuth2Client extends Ko_Mode_OAuthClientBase implements IKo_Mode_O
 	}
 
 	/**
+	 * 分析 token
+	 * 
 	 * @return array
 	 */
 	public static function AParseToken($sResponse)
@@ -136,6 +114,8 @@ class Ko_Mode_OAuth2Client extends Ko_Mode_OAuthClientBase implements IKo_Mode_O
 	}
 
 	/**
+	 * 用户绑定 token
+	 * 
 	 * @return boolean
 	 */
 	public function bSaveUserToken($sSrc, $iUid, $aTokeninfo)

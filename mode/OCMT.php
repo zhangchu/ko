@@ -92,87 +92,9 @@
 //include_once('../ko.class.php');
 
 /**
- * 通用的评论数据接口
+ * 通用的评论数据
  */
-interface IKo_Mode_OCMT
-{
-	/**
-	 * 查询单条评论信息
-	 * @return array
-	 */
-	public function aGet($iAid, $iBid, $iCid, $bReply=false);
-	/**
-	 * 查询若干指定 cid 的评论列表，使用这个函数通常是应用在 OCMT 外部进行了一次封装，这样应用可以进行筛选或排序规则的开发
-	 * @return array
-	 */
-	public function aGetListByCid($iAid, $iBid, $aCid, $bReply=false);
-	/**
-	 * 查询评论列表，支持翻页
-	 * @return array
-	 */
-	public function aGetList($iAid, $iBid, $oOption, $bAsc=false, $bReply=false);
-	/**
-	 * 更新所有需要更新的缓存
-	 */
-	public function vRebuildAllCache();
-	/**
-	 * 查询指定对象的审核列表
-	 * @return array
-	 */
-	public function aGetQueueList($iAid, $iBid, $oOption, $bAsc=false);
-	/**
-	 * 查询全部审核列表
-	 * @return array
-	 */
-	public function aGetAllQueueList($oOption, $bAsc=false);
-
-	/**
-	 * 发表评论
-	 * @return int
-	 */
-	public function iComment($iAid, $iBid, $iUid, $sContent, $vAdmin='', $iForceFlag=Ko_Mode_OCMT::FORCE_AUTO);
-	/**
-	 * 发表回复
-	 * @return int
-	 */
-	public function iReply($iAid, $iBid, $iThread, $iUid, $sContent, $vAdmin='', $iForceFlag=Ko_Mode_OCMT::FORCE_AUTO);
-	/**
-	 * 删除评论
-	 */
-	public function vDeleteComment($iAid, $iBid, $iCid, $vAdmin='');
-	/**
-	 * 删除回复
-	 */
-	public function vDeleteReply($iAid, $iBid, $iCid, $vAdmin='');
-
-	/**
-	 * 审核通过评论
-	 */
-	public function vPassComment($iOid, $iCid, $vAdmin='');
-	/**
-	 * 审核通过回复
-	 */
-	public function vPassReply($iOid, $iCid, $iThread, $vAdmin='');
-	/**
-	 * 审核删除评论
-	 */
-	public function vDenyComment($iOid, $iCid, $vAdmin='');
-	/**
-	 * 审核删除回复
-	 */
-	public function vDenyReply($iOid, $iCid, $vAdmin='');
-
-	/**
-	 * 通过 Aid 和 Bid 获取 Oid
-	 * @return int
-	 */
-	public function iGetOid($iAid, $iBid);
-}
-
-/**
- * 通用的评论数据实现
- */
-class Ko_Mode_OCMT extends Ko_Busi_Api implements IKo_Mode_OCMT
+class Ko_Mode_OCMT extends Ko_Busi_Api
 {
 	const ACT_DELETE = -1;
 	const ACT_INSERT = 1;
@@ -210,6 +132,7 @@ class Ko_Mode_OCMT extends Ko_Busi_Api implements IKo_Mode_OCMT
 	protected $_aConf = array();
 
 	/**
+	 * 查询单条评论信息
 	 * @return array
 	 */
 	public function aGet($iAid, $iBid, $iCid, $bReply=false)
@@ -240,6 +163,7 @@ class Ko_Mode_OCMT extends Ko_Busi_Api implements IKo_Mode_OCMT
 	}
 
 	/**
+	 * 查询若干指定 cid 的评论列表，使用这个函数通常是应用在 OCMT 外部进行了一次封装，这样应用可以进行筛选或排序规则的开发
 	 * @return array
 	 */
 	public function aGetListByCid($iAid, $iBid, $aCid, $bReply=false)
@@ -249,6 +173,7 @@ class Ko_Mode_OCMT extends Ko_Busi_Api implements IKo_Mode_OCMT
 	}
 
 	/**
+	 * 查询评论列表，支持翻页
 	 * @return array
 	 */
 	public function aGetList($iAid, $iBid, $oOption, $bAsc=false, $bReply=false)
@@ -266,6 +191,9 @@ class Ko_Mode_OCMT extends Ko_Busi_Api implements IKo_Mode_OCMT
 		return $this->_aGetList($oid, $oOption, $bAsc, $bReply);
 	}
 
+	/**
+	 * 更新所有需要更新的缓存
+	 */
 	public function vRebuildAllCache()
 	{
 		$cacheflagDao = $this->_aConf['cacheflag'].'Dao';
@@ -289,6 +217,7 @@ class Ko_Mode_OCMT extends Ko_Busi_Api implements IKo_Mode_OCMT
 	}
 
 	/**
+	 * 查询指定对象的审核列表
 	 * @return array
 	 */
 	public function aGetQueueList($iAid, $iBid, $oOption, $bAsc=false)
@@ -301,6 +230,7 @@ class Ko_Mode_OCMT extends Ko_Busi_Api implements IKo_Mode_OCMT
 	}
 
 	/**
+	 * 查询全部审核列表
 	 * @return array
 	 */
 	public function aGetAllQueueList($oOption, $bAsc=false)
@@ -311,6 +241,7 @@ class Ko_Mode_OCMT extends Ko_Busi_Api implements IKo_Mode_OCMT
 	}
 
 	/**
+	 * 发表评论
 	 * @return int
 	 */
 	public function iComment($iAid, $iBid, $iUid, $sContent, $vAdmin='', $iForceFlag=Ko_Mode_OCMT::FORCE_AUTO)
@@ -319,6 +250,7 @@ class Ko_Mode_OCMT extends Ko_Busi_Api implements IKo_Mode_OCMT
 	}
 
 	/**
+	 * 发表回复
 	 * @return int
 	 */
 	public function iReply($iAid, $iBid, $iThread, $iUid, $sContent, $vAdmin='', $iForceFlag=Ko_Mode_OCMT::FORCE_AUTO)
@@ -326,36 +258,54 @@ class Ko_Mode_OCMT extends Ko_Busi_Api implements IKo_Mode_OCMT
 		return $this->_iInsertContentEx($iAid, $iBid, $iThread, $iUid, $sContent, $vAdmin, $iForceFlag);
 	}
 
+	/**
+	 * 删除评论
+	 */
 	public function vDeleteComment($iAid, $iBid, $iCid, $vAdmin='')
 	{
 		$oid = $this->_iGetOid($iAid, $iBid);
 		$this->vDenyComment($oid, $iCid, $vAdmin);
 	}
 
+	/**
+	 * 删除回复
+	 */
 	public function vDeleteReply($iAid, $iBid, $iCid, $vAdmin='')
 	{
 		$oid = $this->_iGetOid($iAid, $iBid);
 		$this->vDenyReply($oid, $iCid, $vAdmin);
 	}
 
+	/**
+	 * 审核通过评论
+	 */
 	public function vPassComment($iOid, $iCid, $vAdmin='')
 	{
 		$this->_vInsertIndex($iOid, $iCid, $vAdmin);
 		$this->_iDeleteIndexEx($iOid, $iCid, 'queue');
 	}
 
+	/**
+	 * 审核通过回复
+	 */
 	public function vPassReply($iOid, $iCid, $iThread, $vAdmin='')
 	{
 		$this->_vInsertReply($iOid, $iCid, $iThread, $vAdmin);
 		$this->_iDeleteIndexEx($iOid, $iCid, 'queue');
 	}
 
+	/**
+	 * 审核删除评论
+	 */
 	public function vDenyComment($iOid, $iCid, $vAdmin='')
 	{
 		$this->_vDeleteIndex($iOid, $iCid, $vAdmin);
 		$this->_iDeleteIndexEx($iOid, $iCid, 'queue');
 	}
 
+	/**
+	 * 审核删除回复
+	 */
 	public function vDenyReply($iOid, $iCid, $vAdmin='')
 	{
 		$this->_vDeleteReply($iOid, $iCid, $vAdmin);
@@ -363,6 +313,7 @@ class Ko_Mode_OCMT extends Ko_Busi_Api implements IKo_Mode_OCMT
 	}
 
 	/**
+	 * 通过 Aid 和 Bid 获取 Oid
 	 * @return int
 	 */
 	public function iGetOid($iAid, $iBid)

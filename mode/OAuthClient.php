@@ -41,49 +41,10 @@
  * @author zhangchu
  */
 
- /**
- * OAuth 1.0 接口
- */
-interface IKo_Mode_OAuthClient
-{
-	/**
-	 * 保存 request token
-	 * 
-	 * @return array
-	 */
-	public function aSaveTempToken($sSrc, $sResponse);
-	/**
-	 * 查询 token 信息
-	 * 
-	 * @return array
-	 */
-	public function aGetTempToken($sSrc, $sToken);
-
-	/**
-	 * 入口接口 / 回调接口
-	 *
-	 * @return array|exit
-	 */
-	public function vMain($sSrc, $fnGetRequestToken, $fnGetAccessToken);
-	
-	/**
-	 * 分析 token
-	 * 
-	 * @return array
-	 */
-	public static function AParseToken($sResponse);
-	/**
-	 * 用户绑定 token
-	 * 
-	 * @return boolean
-	 */
-	public function bSaveUserToken($sSrc, $iUid, $aTokeninfo);
-}
-
 /**
  * OAuth 1.0 实现
  */
-class Ko_Mode_OAuthClient extends Ko_Mode_OAuthClientBase implements IKo_Mode_OAuthClient
+class Ko_Mode_OAuthClient extends Ko_Mode_OAuthClientBase
 {
 	/**
 	 * 配置数组
@@ -118,6 +79,8 @@ class Ko_Mode_OAuthClient extends Ko_Mode_OAuthClientBase implements IKo_Mode_OA
 		);
 	
 	/**
+	 * 保存 request token
+	 * 
 	 * @return array
 	 */
 	public function aSaveTempToken($sSrc, $sResponse)
@@ -144,6 +107,8 @@ class Ko_Mode_OAuthClient extends Ko_Mode_OAuthClientBase implements IKo_Mode_OA
 	}
 	
 	/**
+	 * 查询 token 信息
+	 * 
 	 * @return array
 	 */
 	public function aGetTempToken($sSrc, $sToken)
@@ -153,6 +118,8 @@ class Ko_Mode_OAuthClient extends Ko_Mode_OAuthClientBase implements IKo_Mode_OA
 	}
 	
 	/**
+	 * 入口接口 / 回调接口
+	 *
 	 * @return array|exit
 	 */
 	public function vMain($sSrc, $fnGetRequestToken, $fnGetAccessToken)
@@ -186,6 +153,8 @@ class Ko_Mode_OAuthClient extends Ko_Mode_OAuthClientBase implements IKo_Mode_OA
 	}
 	
 	/**
+	 * 分析 token
+	 * 
 	 * @return array
 	 */
 	public static function AParseToken($sResponse)
@@ -199,6 +168,8 @@ class Ko_Mode_OAuthClient extends Ko_Mode_OAuthClientBase implements IKo_Mode_OA
 	}
 
 	/**
+	 * 用户绑定 token
+	 * 
 	 * @return boolean
 	 */
 	public function bSaveUserToken($sSrc, $iUid, $aTokeninfo)

@@ -69,151 +69,9 @@
  */
 
 /**
- * 通用的用户身份验证系统接口
- */
-interface IKo_Mode_User
-{
-	/**
-	 * 获取一个新的用户ID，必须配置了 idgen 属性，或者用户ID使用 username 表的自增长字段
-	 *
-	 * @return int
-	 */
-	public function iGetNewUserId();
-	/**
-	 * 判断用户名是否注册
-	 *
-	 * @return int 未注册返回0，否则返回 uid
-	 */
-	public function iIsRegister($sUsername, $sSrc = '');
-	/**
-	 * 注册用户，必须配置了 idgen 属性，或者用户ID使用 username 表的自增长字段
-	 *
-	 * @return int 注册失败返回0，否则返回 uid
-	 */
-	public function iRegister($sUsername, $sPassword, &$iErrno);
-	/**
-	 * 注册外站用户，必须配置了 idgen 属性，或者用户ID使用 username 表的自增长字段
-	 *
-	 * @return int 注册失败返回0，否则返回 uid
-	 */
-	public function iRegisterExternal($sUsername, $sSrc, &$iErrno);
-	/**
-	 * 注册用户，用户ID由应用生成
-	 *
-	 * @return boolean 返回注册是否成功
-	 */
-	public function bRegisterUid($iUid, $sUsername, $sPassword, &$iErrno);
-	/**
-	 * 注册外站用户，用户ID由应用生成
-	 *
-	 * @return boolean 返回注册是否成功
-	 */
-	public function bRegisterUidExternal($iUid, $sUsername, $sSrc, &$iErrno);
-	/**
-	 * 将用户名和用户ID绑定，这样允许一个用户使用多个账号（一个密码）登录
-	 *
-	 * @return boolean 返回绑定是否成功
-	 */
-	public function bBindUsername($iUid, $sUsername, $sSrc = '');
-	/**
-	 * 解除用户名和用户ID的绑定
-	 *
-	 * @return boolean 返回解除绑定是否成功
-	 */
-	public function bUnbindUsername($iUid, $sUsername, $sSrc = '');
-	/**
-	 * 找回密码
-	 *
-	 * @param string sPassword 返回密码
-	 * @return int 未注册返回0，否则返回 uid
-	 */
-	public function iRecallPassword($sUsername, &$sPassword, &$iErrno);
-	/**
-	 * 使用明文密码进行登录验证
-	 *
-	 * @return int 登录失败返回0，否则返回 uid
-	 */
-	public function iLogin($sUsername, $sPassword, &$iErrno);
-	/**
-	 * 使用hash密码进行登录验证的第一步，获取临时随机串
-	 *
-	 * @return string 返回一个临时随机串，空串表示用户不存在
-	 */
-	public function sLogin_GetTmpSalt($sUsername);
-	/**
-	 * 使用hash密码进行登录验证的第二步，校验hash密码
-	 *
-	 * @return int 登录失败返回0，否则返回 uid
-	 */
-	public function iLogin_CheckHashPass($sUsername, $sTmpSalt, $sHashpass, &$iErrno);
-	/**
-	 * 使用明文密码进行验证
-	 *
-	 * @return boolean 返回密码是否正确
-	 */
-	public function bCheckPassword($iUid, $sPassword);
-	/**
-	 * 使用hash密码进行验证的第一步，获取临时随机串
-	 *
-	 * @return string 返回一个临时随机串，空串表示用户不存在
-	 */
-	public function sCheckPassword_GetTmpSalt($iUid);
-	/**
-	 * 使用hash密码进行验证的第二步，校验hash密码
-	 *
-	 * @return boolean 登录失败返回0，否则返回 uid
-	 */
-	public function bCheckPassword_CheckHashPass($iUid, $sTmpSalt, $sHashpass, &$iErrno);
-	/**
-	 * 修改密码，需要验证旧密码
-	 *
-	 * @return boolean 返回是否成功修改密码
-	 */
-	public function bChangePassword($iUid, $sOldPass, $sNewPass, &$iErrno);
-	/**
-	 * 重置密码
-	 */
-	public function vResetPassword($iUid, $sNewPass);
-	/**
-	 * 获取 session_token
-	 *
-	 * @return string 返回 session_token
-	 */
-	public function sGetSessionToken($iUid, $sExinfo);
-	/**
-	 * 验证 session_token
-	 *
-	 * @param string sExinfo 返回扩展信息
-	 * @return int 失败返回 0，成功返回 uid
-	 */
-	public function iCheckSessionToken($sSessionToken, &$sExinfo, &$iErrno);
-	/**
-	 * 获取 persistent_token
-	 *
-	 * @return string 返回 persistent_token
-	 */
-	public function sGetPersistentToken($iUid);
-	/**
-	 * 验证 persistent_token，生成新的 persistent_token
-	 *
-	 * @param string sNewPersistentToken 返回新的 persistent_token
-	 * @return int 失败返回 0，成功返回 uid
-	 */
-	public function iCheckPersistentToken($sPersistentToken, &$sNewPersistentToken, &$iErrno);
-	/**
-	 * 清理过期的 tmpsalt 数据
-	 */
-	public function vClearTmpSalt();
-	/**
-	 * 清理过期的 persistent_token 数据
-	 */
-	public function vClearPersistentToken();
-}
-
-/**
  * 通用的用户身份验证系统实现
  */
-class Ko_Mode_User extends Ko_Busi_Api implements IKo_Mode_User
+class Ko_Mode_User extends Ko_Busi_Api
 {
 	/**
 	 * 配置数组
@@ -256,6 +114,8 @@ class Ko_Mode_User extends Ko_Busi_Api implements IKo_Mode_User
 	const E_PERSISTENT_TOKEN			= 54;		// persistent_token 已经被验证过了，可能是 cookie 失窃，或者重复提交了数据请求，这个时候会清除用户所有的 persistent_token
 
 	/**
+	 * 获取一个新的用户ID，必须配置了 idgen 属性，或者用户ID使用 username 表的自增长字段
+	 *
 	 * @return int
 	 */
 	public function iGetNewUserId()
@@ -269,7 +129,9 @@ class Ko_Mode_User extends Ko_Busi_Api implements IKo_Mode_User
 	}
 
 	/**
-	 * @return int
+	 * 判断用户名是否注册
+	 *
+	 * @return int 未注册返回0，否则返回 uid
 	 */
 	public function iIsRegister($sUsername, $sSrc = '')
 	{
@@ -279,7 +141,9 @@ class Ko_Mode_User extends Ko_Busi_Api implements IKo_Mode_User
 	}
 
 	/**
-	 * @return int
+	 * 注册用户，必须配置了 idgen 属性，或者用户ID使用 username 表的自增长字段
+	 *
+	 * @return int 注册失败返回0，否则返回 uid
 	 */
 	public function iRegister($sUsername, $sPassword, &$iErrno)
 	{
@@ -288,7 +152,9 @@ class Ko_Mode_User extends Ko_Busi_Api implements IKo_Mode_User
 	}
 	
 	/**
-	 * @return int
+	 * 注册外站用户，必须配置了 idgen 属性，或者用户ID使用 username 表的自增长字段
+	 *
+	 * @return int 注册失败返回0，否则返回 uid
 	 */
 	public function iRegisterExternal($sUsername, $sSrc, &$iErrno)
 	{
@@ -297,7 +163,9 @@ class Ko_Mode_User extends Ko_Busi_Api implements IKo_Mode_User
 	}
 
 	/**
-	 * @return boolean
+	 * 注册用户，用户ID由应用生成
+	 *
+	 * @return boolean 返回注册是否成功
 	 */
 	public function bRegisterUid($iUid, $sUsername, $sPassword, &$iErrno)
 	{
@@ -306,7 +174,9 @@ class Ko_Mode_User extends Ko_Busi_Api implements IKo_Mode_User
 	}
 
 	/**
-	 * @return boolean
+	 * 注册外站用户，用户ID由应用生成
+	 *
+	 * @return boolean 返回注册是否成功
 	 */
 	public function bRegisterUidExternal($iUid, $sUsername, $sSrc, &$iErrno)
 	{
@@ -315,7 +185,9 @@ class Ko_Mode_User extends Ko_Busi_Api implements IKo_Mode_User
 	}
 
 	/**
-	 * @return boolean
+	 * 将用户名和用户ID绑定，这样允许一个用户使用多个账号（一个密码）登录
+	 *
+	 * @return boolean 返回绑定是否成功
 	 */
 	public function bBindUsername($iUid, $sUsername, $sSrc = '')
 	{
@@ -324,7 +196,9 @@ class Ko_Mode_User extends Ko_Busi_Api implements IKo_Mode_User
 	}
 	
 	/**
-	 * @return boolean
+	 * 解除用户名和用户ID的绑定
+	 *
+	 * @return boolean 返回解除绑定是否成功
 	 */
 	public function bUnbindUsername($iUid, $sUsername, $sSrc = '')
 	{
@@ -353,7 +227,10 @@ class Ko_Mode_User extends Ko_Busi_Api implements IKo_Mode_User
 	}
 	
 	/**
-	 * @return int
+	 * 找回密码
+	 *
+	 * @param string sPassword 返回密码
+	 * @return int 未注册返回0，否则返回 uid
 	 */
 	public function iRecallPassword($sUsername, &$sPassword, &$iErrno)
 	{
@@ -372,7 +249,9 @@ class Ko_Mode_User extends Ko_Busi_Api implements IKo_Mode_User
 	}
 
 	/**
-	 * @return int
+	 * 使用明文密码进行登录验证
+	 *
+	 * @return int 登录失败返回0，否则返回 uid
 	 */
 	public function iLogin($sUsername, $sPassword, &$iErrno)
 	{
@@ -391,7 +270,9 @@ class Ko_Mode_User extends Ko_Busi_Api implements IKo_Mode_User
 	}
 
 	/**
-	 * @return string
+	 * 使用hash密码进行登录验证的第一步，获取临时随机串
+	 *
+	 * @return string 返回一个临时随机串，空串表示用户不存在
 	 */
 	public function sLogin_GetTmpSalt($sUsername)
 	{
@@ -404,7 +285,9 @@ class Ko_Mode_User extends Ko_Busi_Api implements IKo_Mode_User
 	}
 
 	/**
-	 * @return int
+	 * 使用hash密码进行登录验证的第二步，校验hash密码
+	 *
+	 * @return int 登录失败返回0，否则返回 uid
 	 */
 	public function iLogin_CheckHashPass($sUsername, $sTmpSalt, $sHashpass, &$iErrno)
 	{
@@ -422,7 +305,9 @@ class Ko_Mode_User extends Ko_Busi_Api implements IKo_Mode_User
 	}
 
 	/**
-	 * @return boolean
+	 * 使用明文密码进行验证
+	 *
+	 * @return boolean 返回密码是否正确
 	 */
 	public function bCheckPassword($iUid, $sPassword)
 	{
@@ -442,7 +327,9 @@ class Ko_Mode_User extends Ko_Busi_Api implements IKo_Mode_User
 	}
 
 	/**
-	 * @return string
+	 * 使用hash密码进行验证的第一步，获取临时随机串
+	 *
+	 * @return string 返回一个临时随机串，空串表示用户不存在
 	 */
 	public function sCheckPassword_GetTmpSalt($iUid)
 	{
@@ -454,7 +341,9 @@ class Ko_Mode_User extends Ko_Busi_Api implements IKo_Mode_User
 	}
 
 	/**
-	 * @return boolean
+	 * 使用hash密码进行验证的第二步，校验hash密码
+	 *
+	 * @return boolean 登录失败返回0，否则返回 uid
 	 */
 	public function bCheckPassword_CheckHashPass($iUid, $sTmpSalt, $sHashpass, &$iErrno)
 	{
@@ -476,7 +365,9 @@ class Ko_Mode_User extends Ko_Busi_Api implements IKo_Mode_User
 	}
 
 	/**
-	 * @return boolean
+	 * 修改密码，需要验证旧密码
+	 *
+	 * @return boolean 返回是否成功修改密码
 	 */
 	public function bChangePassword($iUid, $sOldPass, $sNewPass, &$iErrno)
 	{
@@ -489,6 +380,9 @@ class Ko_Mode_User extends Ko_Busi_Api implements IKo_Mode_User
 		return true;
 	}
 
+	/**
+	 * 重置密码
+	 */
 	public function vResetPassword($iUid, $sNewPass)
 	{
 		assert(strlen($sNewPass));
@@ -509,7 +403,9 @@ class Ko_Mode_User extends Ko_Busi_Api implements IKo_Mode_User
 	}
 
 	/**
-	 * @return string
+	 * 获取 session_token
+	 *
+	 * @return string 返回 session_token
 	 */
 	public function sGetSessionToken($iUid, $sExinfo)
 	{
@@ -517,7 +413,10 @@ class Ko_Mode_User extends Ko_Busi_Api implements IKo_Mode_User
 	}
 
 	/**
-	 * @return int
+	 * 验证 session_token
+	 *
+	 * @param string sExinfo 返回扩展信息
+	 * @return int 失败返回 0，成功返回 uid
 	 */
 	public function iCheckSessionToken($sSessionToken, &$sExinfo, &$iErrno)
 	{
@@ -536,7 +435,9 @@ class Ko_Mode_User extends Ko_Busi_Api implements IKo_Mode_User
 	}
 
 	/**
-	 * @return string
+	 * 获取 persistent_token
+	 *
+	 * @return string 返回 persistent_token
 	 */
 	public function sGetPersistentToken($iUid)
 	{
@@ -549,7 +450,10 @@ class Ko_Mode_User extends Ko_Busi_Api implements IKo_Mode_User
 	}
 
 	/**
-	 * @return int
+	 * 验证 persistent_token，生成新的 persistent_token
+	 *
+	 * @param string sNewPersistentToken 返回新的 persistent_token
+	 * @return int 失败返回 0，成功返回 uid
 	 */
 	public function iCheckPersistentToken($sPersistentToken, &$sNewPersistentToken, &$iErrno)
 	{
@@ -586,6 +490,9 @@ class Ko_Mode_User extends Ko_Busi_Api implements IKo_Mode_User
 		return $uid;
 	}
 
+	/**
+	 * 清理过期的 tmpsalt 数据
+	 */
 	public function vClearTmpSalt()
 	{
 		$tmpsaltDao = $this->_aConf['tmpsalt'].'Dao';
@@ -600,6 +507,9 @@ class Ko_Mode_User extends Ko_Busi_Api implements IKo_Mode_User
 		$this->$tmpsaltDao->iDelete($key);
 	}
 
+	/**
+	 * 清理过期的 persistent_token 数据
+	 */
 	public function vClearPersistentToken()
 	{
 		$persistentDao = $this->_aConf['persistent'].'Dao';
