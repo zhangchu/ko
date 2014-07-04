@@ -7,7 +7,7 @@
  */
 
 /**
- * 数据表操作类接口
+ * 鏁版嵁琛ㄦ搷浣滅被鎺ュ彛
  */
 interface IKo_Dao_Table
 {
