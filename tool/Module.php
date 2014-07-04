@@ -9,77 +9,13 @@
 //include_once('../ko.class.php');
 
 /**
- * 命名规则函数接口
+ * 命名规则函数实现
  */
-interface IKo_Tool_Module
+class Ko_Tool_Module
 {
 	/**
 	 * 获取脚本程序名称全路经
 	 *
-	 * @return string
-	 */
-	public static function SGetScriptFullName();
-	/**
-	 * 获取对象或者类的模块名
-	 *
-	 * <pre>
-	 * eg1:
-	 *     $classname = 'KO2o_User_AddCreditApi',  return 'O2o_User'
-	 * eg2:
-	 *     $classname = 'Ko_Dao_File',  return 'Ko_Dao'
-	 * </pre>
-	 *
-	 * @return string
-	 */
-	public static function SGetObjectModuleName($vClass);
-
-	/**
-	 * 将模块名规范化，每部分的首字母大写
-	 *
-	 * <pre>
-	 * eg1:
-	 *     $sModuleName = 'o2o_user',  return 'O2o_User'
-	 * eg1:
-	 *     $sModuleName = 'O2O_UsEr',  return 'O2o_User'
-	 * </pre>
-	 *
-	 * @return string
-	 */
-	public static function SGetRegularModuleName($sModuleName);
-
-	/**
-	 * 获取模块的根模块名
-	 *
-	 * <pre>
-	 * eg1:
-	 *     $sModuleName = 'O2o_User_AddCreditApi',  return 'O2o'
-	 * </pre>
-	 *
-	 * @return string
-	 */
-	public static function SGetRootModuleName($sModuleName);
-
-	/**
-	 * 获取变量名中的子模块名和文件名
-	 *
-	 * <pre>
-	 * eg1:
-	 *     $sVarName = 'xxx_yyy_zZz',  return array('xxx_yyy', 'zZz');
-	 * eg2:
-	 *     $sVarName = 'zZz',  return array('', 'zZz');
-	 * </pre>
-	 *
-	 * @return array
-	 */
-	public static function AGetSubModule($sVarName);
-}
-
-/**
- * 命名规则函数实现
- */
-class Ko_Tool_Module implements IKo_Tool_Module
-{
-	/**
 	 * @return string
 	 */
 	public static function SGetScriptFullName()
@@ -93,6 +29,15 @@ class Ko_Tool_Module implements IKo_Tool_Module
 	}
 
 	/**
+	 * 获取对象或者类的模块名
+	 *
+	 * <pre>
+	 * eg1:
+	 *     $classname = 'KO2o_User_AddCreditApi',  return 'O2o_User'
+	 * eg2:
+	 *     $classname = 'Ko_Dao_File',  return 'Ko_Dao'
+	 * </pre>
+	 *
 	 * @return string
 	 */
 	public static function SGetObjectModuleName($vClass)
@@ -115,6 +60,15 @@ class Ko_Tool_Module implements IKo_Tool_Module
 	}
 
 	/**
+	 * 将模块名规范化，每部分的首字母大写
+	 *
+	 * <pre>
+	 * eg1:
+	 *     $sModuleName = 'o2o_user',  return 'O2o_User'
+	 * eg1:
+	 *     $sModuleName = 'O2O_UsEr',  return 'O2o_User'
+	 * </pre>
+	 *
 	 * @return string
 	 */
 	public static function SGetRegularModuleName($sModuleName)
@@ -129,6 +83,13 @@ class Ko_Tool_Module implements IKo_Tool_Module
 	}
 
 	/**
+	 * 获取模块的根模块名
+	 *
+	 * <pre>
+	 * eg1:
+	 *     $sModuleName = 'O2o_User_AddCreditApi',  return 'O2o'
+	 * </pre>
+	 *
 	 * @return string
 	 */
 	public static function SGetRootModuleName($sModuleName)
@@ -138,6 +99,15 @@ class Ko_Tool_Module implements IKo_Tool_Module
 	}
 
 	/**
+	 * 获取变量名中的子模块名和文件名
+	 *
+	 * <pre>
+	 * eg1:
+	 *     $sVarName = 'xxx_yyy_zZz',  return array('xxx_yyy', 'zZz');
+	 * eg2:
+	 *     $sVarName = 'zZz',  return array('', 'zZz');
+	 * </pre>
+	 *
 	 * @return array
 	 */
 	public static function AGetSubModule($sVarName)

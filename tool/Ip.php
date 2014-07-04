@@ -9,16 +9,25 @@
 //include_once('../ko.class.php');
 
 /**
- * IP 相关函数接口
+ * IP 相关函数实现
  */
-interface IKo_Tool_Ip
+class Ko_Tool_Ip
 {
 	/**
 	 * 判断一个 ip 是否是内网 ip
 	 *
 	 * @return bool
 	 */
-	public static function BIsInnerIP($sIp);
+	public static function BIsInnerIP($sIp)
+	{
+		if ('127.0.0.1' === $sIp)
+		{
+			return true;
+		}
+		list($i1, $i2, $i3, $i4) = explode('.', $sIp, 4);
+		return ($i1 == 10 || ($i1 == 172 && 16 <= $i2 && $i2 < 32) || ($i1 == 192 && $i2 == 168));
+	}
+
 	/**
 	 * 输入一堆ip，找出其中第一个外网 ip，如果没有外网ip，返回最后一个合法ip，否则返回 unknown
 	 *
@@ -32,7 +41,26 @@ interface IKo_Tool_Ip
 	 *
 	 * @return string
 	 */
-	public static function SGetOuterIP($sIp);
+	public static function SGetOuterIP($sIp)
+	{
+		$ips = preg_split('/;|,|\s/', $sIp);
+		$sIp = 'unknown';
+		foreach ($ips as $ip)
+		{
+			$ip = trim($ip);
+			if (false === ip2long($ip))
+			{
+				continue;
+			}
+			$sIp = $ip;
+			if (!self::BIsInnerIP($ip))
+			{
+				break;
+			}
+		}
+		return $sIp;
+	}
+
 	/**
 	 * 根据下面规则，尽量返回距离用户端最近的外网IP
 	 *
@@ -66,65 +94,6 @@ interface IKo_Tool_Ip
 	 *
 	 * @return string
 	 */
-	public static function SGetClientIP();
-	/**
-	 * 从环境变量获取服务器Ip，如果获取不到有意义的ip，返回 unknown
-	 *
-	 * @return string
-	 */
-	public static function SGetServerIp();
-	/**
-	 * 获取子网掩码可用的ip数量
-	 *
-	 * @return int
-	 */
-	public static function IGetIpCountInMask($iMask);
-}
-
-/**
- * IP 相关函数实现
- */
-class Ko_Tool_Ip implements IKo_Tool_Ip
-{
-	/**
-	 * @return bool
-	 */
-	public static function BIsInnerIP($sIp)
-	{
-		if ('127.0.0.1' === $sIp)
-		{
-			return true;
-		}
-		list($i1, $i2, $i3, $i4) = explode('.', $sIp, 4);
-		return ($i1 == 10 || ($i1 == 172 && 16 <= $i2 && $i2 < 32) || ($i1 == 192 && $i2 == 168));
-	}
-
-	/**
-	 * @return string
-	 */
-	public static function SGetOuterIP($sIp)
-	{
-		$ips = preg_split('/;|,|\s/', $sIp);
-		$sIp = 'unknown';
-		foreach ($ips as $ip)
-		{
-			$ip = trim($ip);
-			if (false === ip2long($ip))
-			{
-				continue;
-			}
-			$sIp = $ip;
-			if (!self::BIsInnerIP($ip))
-			{
-				break;
-			}
-		}
-		return $sIp;
-	}
-
-	/**
-	 * @return string
-	 */
 	public static function SGetClientIP()
 	{
 		$fip = getenv('HTTP_X_FORWARDED_FOR').' '.getenv('HTTP_VIA').' '.getenv('REMOTE_ADDR');
@@ -132,6 +101,8 @@ class Ko_Tool_Ip implements IKo_Tool_Ip
 	}
 
 	/**
+	 * 从环境变量获取服务器Ip，如果获取不到有意义的ip，返回 unknown
+	 *
 	 * @return string
 	 */
 	public static function SGetServerIp()
@@ -145,6 +116,8 @@ class Ko_Tool_Ip implements IKo_Tool_Ip
 	}
 
 	/**
+	 * 获取子网掩码可用的ip数量
+	 *
 	 * @return int
 	 */
 	public static function IGetIpCountInMask($iMask)

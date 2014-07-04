@@ -7,26 +7,9 @@
  */
 
 /**
- * 编码相关函数接口
- */
-interface IKo_Tool_Enc
-{
-	/**
-	 * 编码函数
-	 * @return string
-	 */
-	public static function SEncode($aData);
-	/**
-	 * 解码函数
-	 * @return array
-	 */
-	public static function ADecode($sData);
-}
-
-/**
  * 编码相关函数实现
  */
-class Ko_Tool_Enc implements IKo_Tool_Enc
+class Ko_Tool_Enc
 {
 	/**
 	 * @return string

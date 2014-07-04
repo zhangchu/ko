@@ -7,107 +7,9 @@
  */
 
 /**
- * 封装 MONGODB 查询接口
- */
-interface IKo_Tool_MONGO
-{
-	/**
-	 * @return Ko_Tool_MONGO
-	 */
-	public function oClone();
-	/**
-	 * @return Ko_Tool_MONGO 返回 $this
-	 */
-	public function oSelect($aFields);
-	/**
-	 * @return Ko_Tool_MONGO 返回 $this
-	 */
-	public function oWhere($aWhere);
-	/**
-	 * @return Ko_Tool_MONGO 返回 $this
-	 */
-	public function oAnd($aWhere);
-	/**
-	 * @return Ko_Tool_MONGO 返回 $this
-	 */
-	public function oOr($aWhere);
-	/**
-	 * @return Ko_Tool_MONGO 返回 $this
-	 */
-	public function oOrderBy($aOrderBy);
-	/**
-	 * @return Ko_Tool_MONGO 返回 $this
-	 */
-	public function oOffset($iOffset);
-	/**
-	 * @return Ko_Tool_MONGO 返回 $this
-	 */
-	public function oLimit($iLimit);
-	/**
-	 * @return Ko_Tool_MONGO 返回 $this
-	 */
-	public function oCalcFoundRows($bCalcFoundRows);
-	/**
-	 * @return Ko_Tool_MONGO 返回 $this
-	 */
-	public function oForceMaster($bForceMaster);
-	/**
-	 * @return Ko_Tool_MONGO 返回 $this
-	 */
-	public function oUpsert($bUpsert);
-	/**
-	 * @return Ko_Tool_MONGO 返回 $this
-	 */
-	public function oCommand($aCommand);
-
-	/**
-	 * @return array
-	 */
-	public function aFields();
-	/**
-	 * @return array
-	 */
-	public function aWhere();
-	/**
-	 * @return array
-	 */
-	public function aOrderBy();
-	/**
-	 * @return int
-	 */
-	public function iOffset();
-	/**
-	 * @return int
-	 */
-	public function iLimit();
-	/**
-	 * @return boolean
-	 */
-	public function bCalcFoundRows();
-	/**
-	 * @return boolean
-	 */
-	public function bForceMaster();
-	/**
-	 * @return boolean
-	 */
-	public function bUpsert();
-	/**
-	 * @return array
-	 */
-	public function aCommand();
-
-	public function vSetFoundRows($iFoundRows);
-	/**
-	 * @return int
-	 */
-	public function iGetFoundRows();
-}
-
-/**
  * 封装 MONGODB 查询实现
  */
-class Ko_Tool_MONGO implements IKo_Tool_MONGO
+class Ko_Tool_MONGO
 {
 	private $_aFields = array();
 	private $_aWhere = array();
@@ -141,7 +43,7 @@ class Ko_Tool_MONGO implements IKo_Tool_MONGO
 	}
 	
 	/**
-	 * @return Ko_Tool_MONGO
+	 * @return Ko_Tool_MONGO 返回 $this
 	 */
 	public function oSelect($aFields)
 	{
@@ -150,7 +52,7 @@ class Ko_Tool_MONGO implements IKo_Tool_MONGO
 	}
 
 	/**
-	 * @return Ko_Tool_MONGO
+	 * @return Ko_Tool_MONGO 返回 $this
 	 */
 	public function oWhere($aWhere)
 	{
@@ -159,7 +61,7 @@ class Ko_Tool_MONGO implements IKo_Tool_MONGO
 	}
 
 	/**
-	 * @return Ko_Tool_MONGO
+	 * @return Ko_Tool_MONGO 返回 $this
 	 */
 	public function oAnd($aWhere)
 	{
@@ -175,7 +77,7 @@ class Ko_Tool_MONGO implements IKo_Tool_MONGO
 	}
 
 	/**
-	 * @return Ko_Tool_MONGO
+	 * @return Ko_Tool_MONGO 返回 $this
 	 */
 	public function oOr($aWhere)
 	{
@@ -191,7 +93,7 @@ class Ko_Tool_MONGO implements IKo_Tool_MONGO
 	}
 
 	/**
-	 * @return Ko_Tool_MONGO
+	 * @return Ko_Tool_MONGO 返回 $this
 	 */
 	public function oOrderBy($aOrderBy)
 	{
@@ -200,7 +102,7 @@ class Ko_Tool_MONGO implements IKo_Tool_MONGO
 	}
 
 	/**
-	 * @return Ko_Tool_MONGO
+	 * @return Ko_Tool_MONGO 返回 $this
 	 */
 	public function oOffset($iOffset)
 	{
@@ -209,7 +111,7 @@ class Ko_Tool_MONGO implements IKo_Tool_MONGO
 	}
 
 	/**
-	 * @return Ko_Tool_MONGO
+	 * @return Ko_Tool_MONGO 返回 $this
 	 */
 	public function oLimit($iLimit)
 	{
@@ -218,7 +120,7 @@ class Ko_Tool_MONGO implements IKo_Tool_MONGO
 	}
 
 	/**
-	 * @return Ko_Tool_MONGO
+	 * @return Ko_Tool_MONGO 返回 $this
 	 */
 	public function oCalcFoundRows($bCalcFoundRows)
 	{
@@ -227,7 +129,7 @@ class Ko_Tool_MONGO implements IKo_Tool_MONGO
 	}
 
 	/**
-	 * @return Ko_Tool_MONGO
+	 * @return Ko_Tool_MONGO 返回 $this
 	 */
 	public function oForceMaster($bForceMaster)
 	{
@@ -236,7 +138,7 @@ class Ko_Tool_MONGO implements IKo_Tool_MONGO
 	}
 
 	/**
-	 * @return Ko_Tool_MONGO
+	 * @return Ko_Tool_MONGO 返回 $this
 	 */
 	public function oUpsert($bUpsert)
 	{
@@ -245,7 +147,7 @@ class Ko_Tool_MONGO implements IKo_Tool_MONGO
 	}
 
 	/**
-	 * @return Ko_Tool_MONGO
+	 * @return Ko_Tool_MONGO 返回 $this
 	 */
 	public function oCommand($aCommand)
 	{

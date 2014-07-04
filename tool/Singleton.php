@@ -9,20 +9,9 @@
 //include_once('../ko.class.php');
 
 /**
- * 对象单例模式接口
- */
-interface IKo_Tool_Singleton
-{
-	/**
-	 * @return object
-	 */
-	public static function OInstance($sClassName);
-}
-
-/**
  * 对象单例模式实现
  */
-class Ko_Tool_Singleton implements IKo_Tool_Singleton
+class Ko_Tool_Singleton
 {
 	private static $s_aInstance = array();
 

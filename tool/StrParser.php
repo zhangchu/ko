@@ -7,52 +7,9 @@
  */
 
 /**
- * 字符串分析基类接口
- */
-interface IKo_Tool_StrParser
-{
-	/**
-	 * 判断当前是否空白字符
-	 *
-	 * @return bool
-	 */
-	public function bIsBlank($iOffset = 0);
-	/**
-	 * 查询当前字符
-	 *
-	 * @return string
-	 */
-	public function sChar($iOffset = 0);
-	/**
-	 * 定位到下一个字符
-	 */
-	public function vNext($iOffset = 1);
-	/**
-	 * 定位到指定的字符串下一个开始位置
-	 */
-	public function vFind($sNeedle);
-	/**
-	 * 定位到下一个非空白字符
-	 */
-	public function vLTrim();
-	/**
-	 * 是否已经到了字符串末尾
-	 *
-	 * @return bool
-	 */
-	public function bEnd($iOffset = 0);
-	/**
-	 * 从当前位置获取一个字符串，直到结尾或者回调函数返回 true
-	 *
-	 * @return string
-	 */
-	public function sGetStr($fnExitFunc, $aPara);
-}
-
-/**
  * 字符串分析基类实现
  */
-class Ko_Tool_StrParser implements IKo_Tool_StrParser
+class Ko_Tool_StrParser
 {
 	/**
 	 * @var string
@@ -69,6 +26,8 @@ class Ko_Tool_StrParser implements IKo_Tool_StrParser
 	}
 
 	/**
+	 * 判断当前是否空白字符
+	 *
 	 * @return bool
 	 */
 	public function bIsBlank($iOffset = 0)
@@ -78,6 +37,8 @@ class Ko_Tool_StrParser implements IKo_Tool_StrParser
 	}
 
 	/**
+	 * 查询当前字符
+	 *
 	 * @return string
 	 */
 	public function sChar($iOffset = 0)
@@ -85,11 +46,17 @@ class Ko_Tool_StrParser implements IKo_Tool_StrParser
 		return $this->_sHtml[$this->_iOffset + $iOffset];
 	}
 
+	/**
+	 * 定位到下一个字符
+	 */
 	public function vNext($iOffset = 1)
 	{
 		$this->_iOffset += $iOffset;
 	}
 
+	/**
+	 * 定位到指定的字符串下一个开始位置
+	 */
 	public function vFind($sNeedle)
 	{
 		$pos = stripos($this->_sHtml, $sNeedle, $this->_iOffset);
@@ -103,6 +70,9 @@ class Ko_Tool_StrParser implements IKo_Tool_StrParser
 		}
 	}
 
+	/**
+	 * 定位到下一个非空白字符
+	 */
 	public function vLTrim()
 	{
 		while (!$this->bEnd() && $this->bIsBlank())
@@ -112,6 +82,8 @@ class Ko_Tool_StrParser implements IKo_Tool_StrParser
 	}
 
 	/**
+	 * 是否已经到了字符串末尾
+	 *
 	 * @return bool
 	 */
 	public function bEnd($iOffset = 0)
@@ -120,6 +92,8 @@ class Ko_Tool_StrParser implements IKo_Tool_StrParser
 	}
 
 	/**
+	 * 从当前位置获取一个字符串，直到结尾或者回调函数返回 true
+	 *
 	 * @return string
 	 */
 	public function sGetStr($fnExitFunc, $aPara)

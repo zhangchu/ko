@@ -9,120 +9,15 @@
 //include_once('../ko.class.php');
 
 /**
- * 字符编码的一些函数接口
- */
-interface IKo_Tool_Str
-{
-	/**
-	 * 从 GB18030 转化为 UTF-8 编码
-	 */
-	public static function VConvert2UTF8(&$aIn);
-	/**
-	 * 从 GB18030 转化为 UTF-8 编码
-	 *
-	 * @return string
-	 */
-	public static function SConvert2UTF8($sIn);
-
-	/**
-	 * 从 UTF-8 转化为 GB18030 编码
-	 */
-	public static function VConvert2GB18030(&$aIn);
-	/**
-	 * 从 UTF-8 转化为 GB18030 编码
-	 *
-	 * @return string
-	 */
-	public static function SConvert2GB18030($sIn);
-
-	/**
-	 * 过滤掉不符合 utf-8/gb18030 规范的字符
-	 */
-	public static function VFilterErrorCode(&$aIn, $sCharset = '');
-	/**
-	 * 过滤掉不符合 utf-8/gb18030 规范的字符
-	 *
-	 * @return string
-	 */
-	public static function SFilterErrorCode($sIn, $sCharset = '');
-	/**
-	 * 过滤掉不符合 utf-8/gb18030 规范的字符
-	 *
-	 * @return string
-	 */
-	public static function SFilterErrorCode_UTF8($sIn);
-	/**
-	 * 过滤掉不符合 utf-8/gb18030 规范的字符
-	 *
-	 * @return string
-	 */
-	public static function SFilterErrorCode_GB18030($sIn);
-
-	/**
-	 * 截取字符串，保证返回数据字节数不超过 $iMaxLength
-	 *
-	 * @return string
-	 */
-	public static function SSubStr($sIn, $iMaxLength, $sExt = '', $sCharset = '');
-	/**
-	 * 截取字符串，保证返回数据字节数不超过 $iMaxLength
-	 *
-	 * @return string
-	 */
-	public static function SSubStr_UTF8($sIn, $iMaxLength, $sExt = '');
-	/**
-	 * 截取字符串，保证返回数据字节数不超过 $iMaxLength
-	 *
-	 * @return string
-	 */
-	public static function SSubStr_GB18030($sIn, $iMaxLength, $sExt = '');
-
-	/**
-	 * 截取字符串，保证返回数据页面显示长度不超过 $iShowLength，按照单字节字符占1位，多字节占2位计算
-	 *
-	 * @return string
-	 */
-	public static function SShowStr($sIn, $iShowLength, $sExt = '', $sCharset = '');
-	/**
-	 * 截取字符串，保证返回数据页面显示长度不超过 $iShowLength，按照单字节字符占1位，多字节占2位计算
-	 *
-	 * @return string
-	 */
-	public static function SShowStr_UTF8($sIn, $iShowLength, $sExt = '');
-	/**
-	 * 截取字符串，保证返回数据页面显示长度不超过 $iShowLength，按照单字节字符占1位，多字节占2位计算
-	 *
-	 * @return string
-	 */
-	public static function SShowStr_GB18030($sIn, $iShowLength, $sExt = '');
-
-	/**
-	 * 将字符串拆分到数组
-	 *
-	 * @return array
-	 */
-	public static function AStr2Arr($sIn, $sCharset = '');
-	/**
-	 * 将字符串拆分到数组
-	 *
-	 * @return array
-	 */
-	public static function AStr2Arr_UTF8($sIn);
-	/**
-	 * 将字符串拆分到数组
-	 *
-	 * @return array
-	 */
-	public static function AStr2Arr_GB18030($sIn);
-}
-
-/**
  * 字符编码的一些函数实现
  */
-class Ko_Tool_Str implements IKo_Tool_Str
+class Ko_Tool_Str
 {
 	private static $s_aGB = array('gb18030', 'gb2312', 'gbk');
 
+	/**
+	 * 从 GB18030 转化为 UTF-8 编码
+	 */
 	public static function VConvert2UTF8(&$aIn)
 	{
 		if (is_array($aIn))
@@ -142,6 +37,8 @@ class Ko_Tool_Str implements IKo_Tool_Str
 	}
 
 	/**
+	 * 从 GB18030 转化为 UTF-8 编码
+	 *
 	 * @return string
 	 */
 	public static function SConvert2UTF8($sIn)
@@ -154,6 +51,9 @@ class Ko_Tool_Str implements IKo_Tool_Str
 		return $sRet;
 	}
 
+	/**
+	 * 从 UTF-8 转化为 GB18030 编码
+	 */
 	public static function VConvert2GB18030(&$aIn)
 	{
 		if (is_array($aIn))
@@ -173,6 +73,8 @@ class Ko_Tool_Str implements IKo_Tool_Str
 	}
 
 	/**
+	 * 从 UTF-8 转化为 GB18030 编码
+	 *
 	 * @return string
 	 */
 	public static function SConvert2GB18030($sIn)
@@ -185,6 +87,9 @@ class Ko_Tool_Str implements IKo_Tool_Str
 		return $sRet;
 	}
 
+	/**
+	 * 过滤掉不符合 utf-8/gb18030 规范的字符
+	 */
 	public static function VFilterErrorCode(&$aIn, $sCharset = '')
 	{
 		if (is_array($aIn))
@@ -204,6 +109,8 @@ class Ko_Tool_Str implements IKo_Tool_Str
 	}
 
 	/**
+	 * 过滤掉不符合 utf-8/gb18030 规范的字符
+	 *
 	 * @return string
 	 */
 	public static function SFilterErrorCode($sIn, $sCharset = '')
@@ -213,6 +120,8 @@ class Ko_Tool_Str implements IKo_Tool_Str
 	}
 
 	/**
+	 * 过滤掉不符合 utf-8/gb18030 规范的字符
+	 *
 	 * @return string
 	 */
 	public static function SFilterErrorCode_UTF8($sIn)
@@ -226,6 +135,8 @@ class Ko_Tool_Str implements IKo_Tool_Str
 	}
 
 	/**
+	 * 过滤掉不符合 utf-8/gb18030 规范的字符
+	 *
 	 * @return string
 	 */
 	public static function SFilterErrorCode_GB18030($sIn)
@@ -239,6 +150,8 @@ class Ko_Tool_Str implements IKo_Tool_Str
 	}
 
 	/**
+	 * 截取字符串，保证返回数据字节数不超过 $iMaxLength
+	 *
 	 * @return string
 	 */
 	public static function SSubStr($sIn, $iMaxLength, $sExt = '', $sCharset = '')
@@ -248,6 +161,8 @@ class Ko_Tool_Str implements IKo_Tool_Str
 	}
 
 	/**
+	 * 截取字符串，保证返回数据字节数不超过 $iMaxLength
+	 *
 	 * @return string
 	 */
 	public static function SSubStr_UTF8($sIn, $iMaxLength, $sExt = '')
@@ -256,6 +171,8 @@ class Ko_Tool_Str implements IKo_Tool_Str
 	}
 
 	/**
+	 * 截取字符串，保证返回数据字节数不超过 $iMaxLength
+	 *
 	 * @return string
 	 */
 	public static function SSubStr_GB18030($sIn, $iMaxLength, $sExt = '')
@@ -264,6 +181,8 @@ class Ko_Tool_Str implements IKo_Tool_Str
 	}
 
 	/**
+	 * 截取字符串，保证返回数据页面显示长度不超过 $iShowLength，按照单字节字符占1位，多字节占2位计算
+	 *
 	 * @return string
 	 */
 	public static function SShowStr($sIn, $iShowLength, $sExt = '', $sCharset = '')
@@ -273,6 +192,8 @@ class Ko_Tool_Str implements IKo_Tool_Str
 	}
 
 	/**
+	 * 截取字符串，保证返回数据页面显示长度不超过 $iShowLength，按照单字节字符占1位，多字节占2位计算
+	 *
 	 * @return string
 	 */
 	public static function SShowStr_UTF8($sIn, $iShowLength, $sExt = '')
@@ -281,6 +202,8 @@ class Ko_Tool_Str implements IKo_Tool_Str
 	}
 
 	/**
+	 * 截取字符串，保证返回数据页面显示长度不超过 $iShowLength，按照单字节字符占1位，多字节占2位计算
+	 *
 	 * @return string
 	 */
 	public static function SShowStr_GB18030($sIn, $iShowLength, $sExt = '')
@@ -289,6 +212,8 @@ class Ko_Tool_Str implements IKo_Tool_Str
 	}
 
 	/**
+	 * 将字符串拆分到数组
+	 *
 	 * @return array
 	 */
 	public static function AStr2Arr($sIn, $sCharset = '')
@@ -298,6 +223,8 @@ class Ko_Tool_Str implements IKo_Tool_Str
 	}
 
 	/**
+	 * 将字符串拆分到数组
+	 *
 	 * @return array
 	 */
 	public static function AStr2Arr_UTF8($sIn)
@@ -308,6 +235,8 @@ class Ko_Tool_Str implements IKo_Tool_Str
 	}
 
 	/**
+	 * 将字符串拆分到数组
+	 *
 	 * @return array
 	 */
 	public static function AStr2Arr_GB18030($sIn)

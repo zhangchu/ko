@@ -9,42 +9,13 @@
 //include_once('../ko.class.php');
 
 /**
- * 对象自动创建接口
+ * 对象自动创建实现
  */
-interface IKo_Tool_Object
+class Ko_Tool_Object
 {
 	/**
 	 * 创建对象，只能创建同模块下的
 	 *
-	 * @return object
-	 */
-	public static function OCreateInThisModule($vClass, $sName);
-	/**
-	 * 创建对象，可以创建同模块下的，也可以创建子模块下的
-	 *
-	 * @return object
-	 */
-	public static function OCreate($vClass, $sName);
-	/**
-	 * 创建对象，可以创建根模块下的任意对象
-	 *
-	 * @return object
-	 */
-	public static function OCreateFromRoot($vClass, $sName);
-	/**
-	 * 创建对象，可以创建 $sFromModule 下的任意对象
-	 *
-	 * @return object
-	 */
-	public static function OCreateFromModule($sFromModule, $sName);
-}
-
-/**
- * 对象自动创建实现
- */
-class Ko_Tool_Object implements IKo_Tool_Object
-{
-	/**
 	 * @return object
 	 */
 	public static function OCreateInThisModule($vClass, $sName)
@@ -64,6 +35,8 @@ class Ko_Tool_Object implements IKo_Tool_Object
 	}
 
 	/**
+	 * 创建对象，可以创建同模块下的，也可以创建子模块下的
+	 *
 	 * @return object
 	 */
 	public static function OCreate($vClass, $sName)
@@ -75,6 +48,8 @@ class Ko_Tool_Object implements IKo_Tool_Object
 	}
 
 	/**
+	 * 创建对象，可以创建根模块下的任意对象
+	 *
 	 * @return object
 	 */
 	public static function OCreateFromRoot($vClass, $sName)
@@ -89,6 +64,8 @@ class Ko_Tool_Object implements IKo_Tool_Object
 	}
 
 	/**
+	 * 创建对象，可以创建 $sFromModule 下的任意对象
+	 *
 	 * @return object
 	 */
 	public static function OCreateFromModule($sFromModule, $sName)

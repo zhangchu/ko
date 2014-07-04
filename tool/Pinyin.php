@@ -7,40 +7,9 @@
  */
 
 /**
- * 拼音相关的函数接口，所有输入输出按照 UTF-8 处理
- */
-interface IKo_Tool_Pinyin
-{
-	/**
-	 * 获取字符串的拼音或拼音缩写，优先选择每个字的第一个拼音
-	 *
-	 * @return string
-	 */
-	public static function SHZ2PY($sHz, $sDbFile, $iFlag = Ko_Tool_Pinyin::FULL, $sHandler = 'cdb');
-	/**
-	 * 获取字符串可能的拼音列表
-	 *
-	 * @return array
-	 */
-	public static function AHZ2PY($sHz, $sDbFile, $iFlag = Ko_Tool_Pinyin::FULL, $sHandler = 'cdb', $iMaxLen = 0);
-	/**
-	 * 将音调与拼音分开，并将带音调的符号转换为 ascii 字符
-	 *
-	 * @return array
-	 */
-	public static function ASplitTone($sPyWithTone);
-	/**
-	 * 将拼音的声母和韵母分开
-	 *
-	 * @return array|boolean 返回 false 表示拼音错误
-	 */
-	public static function VSplitOnsetRime($sPy);
-}
-
-/**
  * 拼音相关的函数实现，所有输入输出按照 UTF-8 处理
  */
-class Ko_Tool_Pinyin implements IKo_Tool_Pinyin
+class Ko_Tool_Pinyin
 {
 	const DEFAULT_MAX_HZ2PYLEN = 10;
 
@@ -76,6 +45,8 @@ class Ko_Tool_Pinyin implements IKo_Tool_Pinyin
 	private static $s_aDBHandler = array();
 	
 	/**
+	 * 获取字符串的拼音或拼音缩写，优先选择每个字的第一个拼音
+	 *
 	 * @return string
 	 */
 	public static function SHZ2PY($sHz, $sDbFile, $iFlag = Ko_Tool_Pinyin::FULL, $sHandler = 'cdb')
@@ -107,6 +78,8 @@ class Ko_Tool_Pinyin implements IKo_Tool_Pinyin
 	}
 	
 	/**
+	 * 获取字符串可能的拼音列表
+	 *
 	 * @return array
 	 */
 	public static function AHZ2PY($sHz, $sDbFile, $iFlag = self::FULL, $sHandler = 'cdb', $iMaxLen = 0)
@@ -149,6 +122,8 @@ class Ko_Tool_Pinyin implements IKo_Tool_Pinyin
 	}
 	
 	/**
+	 * 将音调与拼音分开，并将带音调的符号转换为 ascii 字符
+	 *
 	 * @return array
 	 */
 	public static function ASplitTone($sPyWithTone)
@@ -177,7 +152,9 @@ class Ko_Tool_Pinyin implements IKo_Tool_Pinyin
 	}
 	
 	/**
-	 * @return array|boolean
+	 * 将拼音的声母和韵母分开
+	 *
+	 * @return array|boolean 返回 false 表示拼音错误
 	 */
 	public static function VSplitOnsetRime($sPy)
 	{

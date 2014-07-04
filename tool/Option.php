@@ -9,18 +9,10 @@
 /**
  * 封装 Ko_Tool_SQL | Ko_Tool_MONGO 的一些辅助接口
  */
-interface IKo_Tool_Option
+class Ko_Tool_Option
 {
 	/**
 	 * @param Ko_Tool_SQL|Ko_Tool_MONGO|array $oOption
-	 * @return boolean
-	 */
-	public static function BIsWhereEmpty($oOption, $bIsMongoDB);
-}
-
-class Ko_Tool_Option implements IKo_Tool_Option
-{
-	/**
 	 * @return boolean
 	 */
 	public static function BIsWhereEmpty($oOption, $bIsMongoDB)

@@ -6,7 +6,7 @@
  * @author zhangchu
  */
 
-class Ko_Tool_Enc_Vbs implements IKo_Tool_Enc
+class Ko_Tool_Enc_Vbs
 {
 	/**
 	 * @return string

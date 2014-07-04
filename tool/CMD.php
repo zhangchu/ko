@@ -7,52 +7,13 @@
  */
 
 /**
- * 硬件相关函数接口
+ * 硬件相关函数
  */
-interface IKo_Tool_CMD
+class Ko_Tool_CMD
 {
 	/**
 	 * 获取本机IP列表
 	 *
-	 * @return array
-	 */
-	public static function AFindIpInfo();
-	/**
-	 * 获取 ping 某个服务器的信息
-	 *
-	 * @return boolean
-	 */
-	public static function BPingIpInfo($sIp);
-	/**
-	 * 获取netstat信息
-	 *
-	 * @return array
-	 */
-	public static function ANetstatInfo();
-	/**
-	 * 获取crontab信息
-	 *
-	 * @return array
-	 */
-	public static function AGetCrontab();
-	/**
-	 * 设置crontab信息
-	 */
-	public static function VSetCrontab($aData);
-	/**
-	 * rsync 同步文件
-	 *
-	 * @return boolean
-	 */
-	public static function BRsync($sSrc, $sDest);
-}
-
-/**
- * 硬件相关函数实现
- */
-class Ko_Tool_CMD implements IKo_Tool_CMD
-{
-	/**
 	 * @return array
 	 */
 	public static function AFindIpInfo()
@@ -90,6 +51,8 @@ class Ko_Tool_CMD implements IKo_Tool_CMD
 	}
 	
 	/**
+	 * 获取 ping 某个服务器的信息
+	 *
 	 * @return boolean
 	 */
 	public static function BPingIpInfo($sIp)
@@ -99,6 +62,8 @@ class Ko_Tool_CMD implements IKo_Tool_CMD
 	}
 	
 	/**
+	 * 获取netstat信息
+	 *
 	 * @return array
 	 */
 	public static function ANetstatInfo()
@@ -126,6 +91,8 @@ class Ko_Tool_CMD implements IKo_Tool_CMD
 	}
 
 	/**
+	 * 获取crontab信息
+	 *
 	 * @return array
 	 */
 	public static function AGetCrontab()
@@ -134,6 +101,9 @@ class Ko_Tool_CMD implements IKo_Tool_CMD
 		return $output;
 	}
 
+	/**
+	 * 设置crontab信息
+	 */
 	public static function VSetCrontab($aData)
 	{
 		$h = popen('/usr/bin/crontab', 'w');
@@ -142,6 +112,8 @@ class Ko_Tool_CMD implements IKo_Tool_CMD
 	}
 	
 	/**
+	 * rsync 同步文件
+	 *
 	 * @return boolean
 	 */
 	public static function BRsync($sSrc, $sDest)

@@ -7,107 +7,9 @@
  */
 
 /**
- * 封装 SQL 语句接口
- */
-interface IKo_Tool_SQL
-{
-	/**
-	 * @return Ko_Tool_SQL
-	 */
-	public function oClone();
-	/**
-	 * @return Ko_Tool_SQL 返回 $this
-	 */
-	public function oSelect($sFields);
-	/**
-	 * @return Ko_Tool_SQL 返回 $this
-	 */
-	public function oWhere();
-	/**
-	 * @return Ko_Tool_SQL 返回 $this
-	 */
-	public function oAnd();
-	/**
-	 * @return Ko_Tool_SQL 返回 $this
-	 */
-	public function oOr();
-	/**
-	 * @return Ko_Tool_SQL 返回 $this
-	 */
-	public function oGroupBy($sGroupBy);
-	/**
-	 * @return Ko_Tool_SQL 返回 $this
-	 */
-	public function oHaving();
-	/**
-	 * @return Ko_Tool_SQL 返回 $this
-	 */
-	public function oOrderBy($sOrderBy);
-	/**
-	 * @return Ko_Tool_SQL 返回 $this
-	 */
-	public function oOffset($iOffset);
-	/**
-	 * @return Ko_Tool_SQL 返回 $this
-	 */
-	public function oLimit($iLimit);
-	/**
-	 * @return Ko_Tool_SQL 返回 $this
-	 */
-	public function oCalcFoundRows($bCalcFoundRows);
-	/**
-	 * @return Ko_Tool_SQL 返回 $this
-	 */
-	public function oForceMaster($bForceMaster);
-
-	/**
-	 * @return string
-	 */
-	public function sFields();
-	/**
-	 * @return string
-	 */
-	public function sWhere();
-	/**
-	 * @return string
-	 */
-	public function sGroupBy();
-	/**
-	 * @return string
-	 */
-	public function sHaving();
-	/**
-	 * @return string
-	 */
-	public function sOrderBy();
-	/**
-	 * @return int
-	 */
-	public function iOffset();
-	/**
-	 * @return int
-	 */
-	public function iLimit();
-	/**
-	 * @return boolean
-	 */
-	public function bCalcFoundRows();
-	/**
-	 * @return boolean
-	 */
-	public function bForceMaster();
-
-	public function vSetFoundRows($iFoundRows);
-	/**
-	 * @return int
-	 */
-	public function iGetFoundRows();
-}
-
-/**
  * 封装 SQL 语句实现
  */
-class Ko_Tool_SQL implements IKo_Tool_SQL
+class Ko_Tool_SQL
 {
 	private $_sFields = '*';
 	private $_sWhere = '';
@@ -141,7 +43,7 @@ class Ko_Tool_SQL implements IKo_Tool_SQL
 	}
 	
 	/**
-	 * @return Ko_Tool_SQL
+	 * @return Ko_Tool_SQL 返回 $this
 	 */
 	public function oSelect($sFields)
 	{
@@ -150,7 +52,7 @@ class Ko_Tool_SQL implements IKo_Tool_SQL
 	}
 
 	/**
-	 * @return Ko_Tool_SQL
+	 * @return Ko_Tool_SQL 返回 $this
 	 */
 	public function oWhere()
 	{
@@ -159,7 +61,7 @@ class Ko_Tool_SQL implements IKo_Tool_SQL
 	}
 
 	/**
-	 * @return Ko_Tool_SQL
+	 * @return Ko_Tool_SQL 返回 $this
 	 */
 	public function oAnd()
 	{
@@ -176,7 +78,7 @@ class Ko_Tool_SQL implements IKo_Tool_SQL
 	}
 
 	/**
-	 * @return Ko_Tool_SQL
+	 * @return Ko_Tool_SQL 返回 $this
 	 */
 	public function oOr()
 	{
@@ -193,7 +95,7 @@ class Ko_Tool_SQL implements IKo_Tool_SQL
 	}
 
 	/**
-	 * @return Ko_Tool_SQL
+	 * @return Ko_Tool_SQL 返回 $this
 	 */
 	public function oGroupBy($sGroupBy)
 	{
@@ -202,7 +104,7 @@ class Ko_Tool_SQL implements IKo_Tool_SQL
 	}
 
 	/**
-	 * @return Ko_Tool_SQL
+	 * @return Ko_Tool_SQL 返回 $this
 	 */
 	public function oHaving()
 	{
@@ -211,7 +113,7 @@ class Ko_Tool_SQL implements IKo_Tool_SQL
 	}
 
 	/**
-	 * @return Ko_Tool_SQL
+	 * @return Ko_Tool_SQL 返回 $this
 	 */
 	public function oOrderBy($sOrderBy)
 	{
@@ -220,7 +122,7 @@ class Ko_Tool_SQL implements IKo_Tool_SQL
 	}
 
 	/**
-	 * @return Ko_Tool_SQL
+	 * @return Ko_Tool_SQL 返回 $this
 	 */
 	public function oOffset($iOffset)
 	{
@@ -229,7 +131,7 @@ class Ko_Tool_SQL implements IKo_Tool_SQL
 	}
 
 	/**
-	 * @return Ko_Tool_SQL
+	 * @return Ko_Tool_SQL 返回 $this
 	 */
 	public function oLimit($iLimit)
 	{
@@ -238,7 +140,7 @@ class Ko_Tool_SQL implements IKo_Tool_SQL
 	}
 
 	/**
-	 * @return Ko_Tool_SQL
+	 * @return Ko_Tool_SQL 返回 $this
 	 */
 	public function oCalcFoundRows($bCalcFoundRows)
 	{
@@ -247,7 +149,7 @@ class Ko_Tool_SQL implements IKo_Tool_SQL
 	}
 
 	/**
-	 * @return Ko_Tool_SQL
+	 * @return Ko_Tool_SQL 返回 $this
 	 */
 	public function oForceMaster($bForceMaster)
 	{

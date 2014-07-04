@@ -9,21 +9,13 @@
 //include_once('../ko.class.php');
 
 /**
- * 调试工具接口
+ * 调试工具实现
  */
-interface IKo_Tool_Debug
+class Ko_Tool_Debug
 {
 	/**
 	 * 增加一条调试记录
 	 */
-	public static function VAddTmpLog($sTag, $sLog);
-}
-
-/**
- * 调试工具实现
- */
-class Ko_Tool_Debug implements IKo_Tool_Debug
-{
 	public static function VAddTmpLog($sTag, $sLog)
 	{
 		if (KO_DEBUG)
