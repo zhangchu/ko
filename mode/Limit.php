@@ -15,81 +15,9 @@
  */
 
 /**
- * 限制某对象在某段时间发生某事若干次接口
+ * 限制某对象在某段时间发生某事若干次
  */
-interface IKo_Mode_Limit
-{
-	/**
-	 * @return bool
-	 */
-	public function bPreCheck($vObj, $sAction, $iSecond, $iMaxTimes, $iTimes = 1, $bAlign = false, $iOffset = 0);
-	/**
-	 * @return int
-	 */
-	public function iPreCheck($vObj, $sAction, $iSecond, $iMaxTimes, $bAlign = false, $iOffset = 0);
-	/**
-	 * @return bool
-	 */
-	public function bCheck($vObj, $sAction, $iSecond, $iMaxTimes, $iTimes = 1, $bAlign = false, $iOffset = 0);
-	public function vFree($vObj, $sAction);
-
-	/**
-	 * @return bool
-	 */
-	public function bPreCheckMinute($vObj, $sAction, $iMinute, $iMaxTimes, $iTimes = 1, $iOffset = 0);
-	/**
-	 * @return int
-	 */
-	public function iPreCheckMinute($vObj, $sAction, $iMinute, $iMaxTimes, $iOffset = 0);
-	/**
-	 * @return bool
-	 */
-	public function bCheckMinute($vObj, $sAction, $iMinute, $iMaxTimes, $iTimes = 1, $iOffset = 0);
-
-	/**
-	 * @return bool
-	 */
-	public function bPreCheckHour($vObj, $sAction, $iHour, $iMaxTimes, $iTimes = 1, $iOffset = 0);
-	/**
-	 * @return int
-	 */
-	public function iPreCheckHour($vObj, $sAction, $iHour, $iMaxTimes, $iOffset = 0);
-	/**
-	 * @return bool
-	 */
-	public function bCheckHour($vObj, $sAction, $iHour, $iMaxTimes, $iTimes = 1, $iOffset = 0);
-
-	/**
-	 * @return bool
-	 */
-	public function bPreCheckDay($vObj, $sAction, $iDay, $iMaxTimes, $iTimes = 1, $iOffset = 57600);
-	/**
-	 * @return int
-	 */
-	public function iPreCheckDay($vObj, $sAction, $iDay, $iMaxTimes, $iOffset = 57600);
-	/**
-	 * @return bool
-	 */
-	public function bCheckDay($vObj, $sAction, $iDay, $iMaxTimes, $iTimes = 1, $iOffset = 57600);		//缺省零点对齐
-
-	/**
-	 * @return bool
-	 */
-	public function bPreCheckWeek($vObj, $sAction, $iWeek, $iMaxTimes, $iTimes = 1, $iOffset = 316800);
-	/**
-	 * @return int
-	 */
-	public function iPreCheckWeek($vObj, $sAction, $iWeek, $iMaxTimes, $iOffset = 316800);
-	/**
-	 * @return bool
-	 */
-	public function bCheckWeek($vObj, $sAction, $iWeek, $iMaxTimes, $iTimes = 1, $iOffset = 316800);	//缺省周一零点对齐
-}
-
-/**
- * 限制某对象在某段时间发生某事若干次实现
- */
-class Ko_Mode_Limit extends Ko_Busi_Api implements IKo_Mode_Limit
+class Ko_Mode_Limit extends Ko_Busi_Api
 {
 	/**
 	 * 配置数组
@@ -218,6 +146,8 @@ class Ko_Mode_Limit extends Ko_Busi_Api implements IKo_Mode_Limit
 	}
 
 	/**
+	 * 缺省零点对齐
+	 *
 	 * @return bool
 	 */
 	public function bCheckDay($vObj, $sAction, $iDay, $iMaxTimes, $iTimes = 1, $iOffset = 57600)
@@ -242,6 +172,8 @@ class Ko_Mode_Limit extends Ko_Busi_Api implements IKo_Mode_Limit
 	}
 
 	/**
+	 * 缺省周一零点对齐
+	 *
 	 * @return bool
 	 */
 	public function bCheckWeek($vObj, $sAction, $iWeek, $iMaxTimes, $iTimes = 1, $iOffset = 316800)

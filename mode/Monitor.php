@@ -56,40 +56,9 @@
  */
 
 /**
- * 接口
- */
-interface IKo_Mode_Monitor
-{
-	/**
-	 * 检查所有服务器状况
-	 */
-	public function vCheck();
-	/**
-	 * 汇报当前服务器服务状况
-	 */
-	public function vReport($bImmediately = false);
-	/**
-	 * 获取当前服务器扮演的角色
-	 */
-	public function vFindRole($bImmediately = false);
-	/**
-	 * 查找当前服务器所在网段的所有可以 ping 的 IP
-	 */
-	public function vFindIp($sMask = '');
-	/**
-	 * 同步监控代码到当前所有服务器列表
-	 */
-	public function vSyncAllIp();
-	/**
-	 * 同步监控代码到指定服务器，通常应用应重新实现该函数
-	 */
-	public function vSyncOneIp($sIp);
-}
-
-/**
  * 实现
  */
-class Ko_Mode_Monitor extends Ko_Busi_Api implements IKo_Mode_Monitor
+class Ko_Mode_Monitor extends Ko_Busi_Api
 {
 	/**
 	 * 配置数组
@@ -117,6 +86,9 @@ class Ko_Mode_Monitor extends Ko_Busi_Api implements IKo_Mode_Monitor
 	 */
 	protected $_aConf = array();
 	
+	/**
+	 * 检查所有服务器状况
+	 */
 	public function vCheck()
 	{
 		$ipApi = $this->_aConf['ipApi'];
@@ -138,6 +110,9 @@ class Ko_Mode_Monitor extends Ko_Busi_Api implements IKo_Mode_Monitor
 		}
 	}
 	
+	/**
+	 * 汇报当前服务器服务状况
+	 */
 	public function vReport($bImmediately = false)
 	{
 		$ipinfo = $this->_aGetInnerIpInfo();
@@ -161,6 +136,9 @@ class Ko_Mode_Monitor extends Ko_Busi_Api implements IKo_Mode_Monitor
 		unset($v);
 	}
 	
+	/**
+	 * 获取当前服务器扮演的角色
+	 */
 	public function vFindRole($bImmediately = false)
 	{
 		$ipinfo = $this->_aGetInnerIpInfo();
@@ -222,6 +200,9 @@ class Ko_Mode_Monitor extends Ko_Busi_Api implements IKo_Mode_Monitor
 		$this->_vInsertIpRoles($ip, $aConfig, $aUnknown);
 	}
 	
+	/**
+	 * 查找当前服务器所在网段的所有可以 ping 的 IP
+	 */
 	public function vFindIp($sMask = '')
 	{
 		$ipinfo = $this->_aGetInnerIpInfo();
@@ -247,6 +228,9 @@ class Ko_Mode_Monitor extends Ko_Busi_Api implements IKo_Mode_Monitor
 		}
 	}
 	
+	/**
+	 * 同步监控代码到当前所有服务器列表
+	 */
 	public function vSyncAllIp()
 	{
 		$ipApi = $this->_aConf['ipApi'];
@@ -259,6 +243,9 @@ class Ko_Mode_Monitor extends Ko_Busi_Api implements IKo_Mode_Monitor
 		}
 	}
 	
+	/**
+	 * 同步监控代码到指定服务器，通常应用应重新实现该函数
+	 */
 	public function vSyncOneIp($sIp)
 	{
 		foreach ($this->_aConf['codelist'] as $code)

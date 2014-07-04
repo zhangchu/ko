@@ -73,120 +73,9 @@
  */
 
 /**
- * 接口
- */
-interface IKo_Mode_Message
-{
-	/**
-	 * 发起会话
-	 *
-	 * @return int 消息线id，返回0表示失败
-	 */
-	public function iCreateThread($iUid, $aTo, $sContent, $sExinfo, $sLastinfo);
-
-	/**
-	 * 回复会话
-	 *
-	 * @return int 消息id，返回0表示失败
-	 */
-	public function iReplyThread($iUid, $iThread, $sContent, $sExinfo, $sLastinfo);
-	
-	/**
-	 * 获取用户之间的历史消息线id
-	 *
-	 * @return int 消息线id，返回0表示无历史记录
-	 */
-	public function iGetThread($iUid, $aTo);
-	
-	/**
-	 * 判断用户是否在某个消息线里面
-	 *
-	 * @return boolean
-	 */
-	public function bIsUserInThread($iUid, $iThread);
-	
-	/**
-	 * 用户加入会话
-	 *
-	 * @return array 真正添加进去的用户列表，有些用户可能已经在消息里面，或者人数达到上限
-	 */
-	public function aJoinThread($aTo, $iThread);
-
-	/**
-	 * 用户删除会话，与离开会话不同，删除会话后，有新消息会导致回话重新出现
-	 *
-	 * @return boolean
-	 */
-	public function bDeleteThread($iUid, $iThread);
-	
-	/**
-	 * 用户离开会话
-	 *
-	 * @return boolean
-	 */
-	public function bQuitThread($iUid, $iThread);
-	
-	/**
-	 * 用户删除消息，用户看不见了，但是其他参与人还可见
-	 *
-	 * @return boolean
-	 */
-	public function bDeleteMessage($iUid, $iMid);
-	
-	/**
-	 * 用户查看会话列表
-	 *
-	 * @return array
-	 */
-	public function aGetThreadList($iUid, $iStart, $iNum);
-
-	/**
-	 * 用户查看会话列表
-	 *
-	 * @return array
-	 */
-	public function aGetThreadListWithTotal($iUid, &$iTotal, $iStart, $iNum);
-	
-	/**
-	 * 用户查看会话详情
-	 *
-	 * @return array
-	 */
-	public function aGetThreadInfo($iUid, $iThread);
-	
-	/**
-	 * 用户查看会话消息列表详情，根据消息线id查询
-	 *
-	 * @return array
-	 */
-	public function aGetMessageList($iUid, $iThread, $iStart, $iNum);
-
-	/**
-	 * 用户查看会话消息列表详情，根据消息线id查询
-	 *
-	 * @return array
-	 */
-	public function aGetMessageListWithTotal($iUid, $iThread, &$iTotal, $iStart, $iNum);
-	
-	/**
-	 * 用户查看会话消息列表详情，根据参与者查询
-	 *
-	 * @return array
-	 */
-	public function aGetMessageListByUsers($iUid, $aTo, $iStart, $iNum);
-	
-	/**
-	 * 用户查看会话消息列表详情，根据参与者查询
-	 *
-	 * @return array
-	 */
-	public function aGetMessageListByUsersWithTotal($iUid, $aTo, &$iTotal, $iStart, $iNum);
-}
-
-/**
  * 实现
  */
-class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
+class Ko_Mode_Message extends Ko_Busi_Api
 {
 	/**
 	 * 配置数组
@@ -213,7 +102,9 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	const DEFAULT_MAXUSERCOUNTFORMERGE = 5;
 	
 	/**
-	 * @return int
+	 * 发起会话
+	 *
+	 * @return int 消息线id，返回0表示失败
 	 */
 	public function iCreateThread($iUid, $aTo, $sContent, $sExinfo, $sLastinfo)
 	{
@@ -252,7 +143,9 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	}
 	
 	/**
-	 * @return int
+	 * 回复会话
+	 *
+	 * @return int 消息id，返回0表示失败
 	 */
 	public function iReplyThread($iUid, $iThread, $sContent, $sExinfo, $sLastinfo)
 	{
@@ -285,7 +178,9 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	}
 	
 	/**
-	 * @return int
+	 * 获取用户之间的历史消息线id
+	 *
+	 * @return int 消息线id，返回0表示无历史记录
 	 */
 	public function iGetThread($iUid, $aTo)
 	{
@@ -301,6 +196,8 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	}
 
 	/**
+	 * 判断用户是否在某个消息线里面
+	 *
 	 * @return boolean
 	 */
 	public function bIsUserInThread($iUid, $iThread)
@@ -314,7 +211,9 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	}
 	
 	/**
-	 * @return array
+	 * 用户加入会话
+	 *
+	 * @return array 真正添加进去的用户列表，有些用户可能已经在消息里面，或者人数达到上限
 	 */
 	public function aJoinThread($aTo, $iThread)
 	{
@@ -346,6 +245,8 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	}
 	
 	/**
+	 * 用户删除会话，与离开会话不同，删除会话后，有新消息会导致回话重新出现
+	 *
 	 * @return boolean
 	 */
 	public function bDeleteThread($iUid, $iThread)
@@ -355,6 +256,8 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	}
 	
 	/**
+	 * 用户离开会话
+	 *
 	 * @return boolean
 	 */
 	public function bQuitThread($iUid, $iThread)
@@ -374,6 +277,8 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	}
 
 	/**
+	 * 用户删除消息，用户看不见了，但是其他参与人还可见
+	 *
 	 * @return boolean
 	 */
 	public function bDeleteMessage($iUid, $iMid)
@@ -386,6 +291,8 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	}
 	
 	/**
+	 * 用户查看会话列表
+	 *
 	 * @return array
 	 */
 	public function aGetThreadList($iUid, $iStart, $iNum)
@@ -396,6 +303,8 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	}
 
 	/**
+	 * 用户查看会话列表
+	 *
 	 * @return array
 	 */
 	public function aGetThreadListWithTotal($iUid, &$iTotal, $iStart, $iNum)
@@ -408,6 +317,8 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	}
 	
 	/**
+	 * 用户查看会话详情
+	 *
 	 * @return array
 	 */
 	public function aGetThreadInfo($iUid, $iThread)
@@ -428,6 +339,8 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	}
 	
 	/**
+	 * 用户查看会话消息列表详情，根据消息线id查询
+	 *
 	 * @return array
 	 */
 	public function aGetMessageList($iUid, $iThread, $iStart, $iNum)
@@ -456,6 +369,8 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	}
 
 	/**
+	 * 用户查看会话消息列表详情，根据消息线id查询
+	 *
 	 * @return array
 	 */
 	public function aGetMessageListWithTotal($iUid, $iThread, &$iTotal, $iStart, $iNum)
@@ -486,6 +401,8 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	}
 	
 	/**
+	 * 用户查看会话消息列表详情，根据参与者查询
+	 *
 	 * @return array
 	 */
 	public function aGetMessageListByUsers($iUid, $aTo, $iStart, $iNum)
@@ -499,6 +416,8 @@ class Ko_Mode_Message extends Ko_Busi_Api implements IKo_Mode_Message
 	}
 	
 	/**
+	 * 用户查看会话消息列表详情，根据参与者查询
+	 *
 	 * @return array
 	 */
 	public function aGetMessageListByUsersWithTotal($iUid, $aTo, &$iTotal, $iStart, $iNum)

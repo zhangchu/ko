@@ -6,7 +6,7 @@
  * @author zhangchu
  */
 
-class Ko_Mode_LimitBase extends Ko_Busi_Api implements IKo_Mode_Limit
+class Ko_Mode_LimitBase extends Ko_Busi_Api
 {
 	/**
 	 * @return int
@@ -132,6 +132,8 @@ class Ko_Mode_LimitBase extends Ko_Busi_Api implements IKo_Mode_Limit
 	}
 
 	/**
+	 * 缺省零点对齐
+	 *
 	 * @return bool
 	 */
 	public function bCheckDay($vObj, $sAction, $iDay, $iMaxTimes, $iTimes = 1, $iOffset = 57600)
@@ -156,6 +158,8 @@ class Ko_Mode_LimitBase extends Ko_Busi_Api implements IKo_Mode_Limit
 	}
 
 	/**
+	 * 缺省周一零点对齐
+	 *
 	 * @return bool
 	 */
 	public function bCheckWeek($vObj, $sAction, $iWeek, $iMaxTimes, $iTimes = 1, $iOffset = 316800)
