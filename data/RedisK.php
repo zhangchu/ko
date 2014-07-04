@@ -9,7 +9,7 @@
 /**
  * 封装 KProxy 的 Redis 的实现
  */
-class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_RedisAgent
+class Ko_Data_RedisK extends Ko_Data_KProxy
 {
 	const REDIS_NOT_FOUND = 0;
 	const REDIS_STRING = 1;
@@ -146,6 +146,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return self::REDIS_NOT_FOUND;
 	}
 	
+	/**
+	 * @return int|boolean the length of the string after the append operation.
+	 *                     false if key holds a value that is not a string
+	 */
 	public function vAppend($sKey, $sValue)
 	{
 		$aPara = array(
@@ -156,6 +160,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vRes2IntBool($res);
 	}
 	
+	/**
+	 * @return int|boolean the value of key after the increment/decrement
+	 *                     false if the key contains a value of the wrong type or contains a string that can not be represented as integer.
+	 */
 	public function vIncr($sKey, $iValue = 1)
 	{
 		$aPara = array(
@@ -166,6 +174,9 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vRes2IntBool($res);
 	}
 	
+	/**
+	 * @return boolean always true
+	 */
 	public function bSet($sKey, $sValue)
 	{
 		$aPara = array(
@@ -196,6 +207,9 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_bResInt2Bool($res);
 	}
 	
+	/**
+	 * @return boolean always true
+	 */
 	public function bMSet($aData)
 	{
 		foreach ($aData as $k => $v)
@@ -210,6 +224,11 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		assert(0);
 	}
 	
+	/**
+	 * @return string|boolean the value of key
+	 *                        false if key does not exist
+	 *                        false if key holds a value that is not a string
+	 */
 	public function vGet($sKey)
 	{
 		$aPara = array(
@@ -220,6 +239,11 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vResBlob2StrBool($res);
 	}
 	
+	/**
+	 * @return string|boolean the value of key
+	 *                        false if key does not exist
+	 *                        false if key holds a value that is not a string
+	 */
 	public function vGetSet($sKey, $sValue)
 	{
 		$aPara = array(
@@ -253,6 +277,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $ret;
 	}
 	
+	/**
+	 * @return int|boolean the length of the string at key, or 0 when key does not exist.
+	 *                     false if key holds a value that is not a string
+	 */
 	public function vStrlen($sKey)
 	{
 		$aPara = array(
@@ -263,6 +291,9 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vRes2IntBool($res);
 	}
 	
+	/**
+	 * @return string|boolean false if key holds a value that is not a string
+	 */
 	public function vGetRange($sKey, $iStart, $iEnd)
 	{
 		$aPara = array(
@@ -273,6 +304,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vResBlob2StrBool($res);
 	}
 	
+	/**
+	 * @return int|boolean the length of the string after it was modified by the command.
+	 *                     false if key holds a value that is not a string
+	 */
 	public function vSetRange($sKey, $iOffset, $sValue)
 	{
 		$aPara = array(
@@ -283,6 +318,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vRes2IntBool($res);
 	}
 
+	/**
+	 * @return int|boolean the number of fields that were removed from the hash, not including specified but non existing fields.
+	 *                     false if key holds a value that is not a hash
+	 */
 	public function vHDel($sKey, $sField)
 	{
 		$aPara = array(
@@ -303,6 +342,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_bResInt2Bool($res);
 	}
 	
+	/**
+	 * @return string|boolean the value associated with field
+	 *                        false if field is not present in the hash or key does not exist
+	 */
 	public function vHGet($sKey, $sField)
 	{
 		$aPara = array(
@@ -313,6 +356,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vResBlob2StrBool($res);
 	}
 	
+	/**
+	 * @return array|boolean list of values associated with the given fields, in the same order as they are requested.
+	 *                       false if key holds a value that is not a hash
+	 */
 	public function vHMGet($sKey, $aField)
 	{
 		$cmd = array_merge(array('HMGET', $sKey), $aField);
@@ -329,6 +376,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_aGetHashArr($aField, $ret);
 	}
 	
+	/**
+	 * @return array|boolean list of fields and their values stored in the hash
+	 *                       false if key holds a value that is not a hash
+	 */
 	public function vHGetAll($sKey)
 	{
 		$aPara = array(
@@ -339,6 +390,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vRes2HashBool($res);
 	}
 	
+	/**
+	 * @return array|boolean list of fields in the hash, or an empty list when key does not exist.
+	 *                       false if key holds a value that is not a hash
+	 */
 	public function vHKeys($sKey)
 	{
 		$aPara = array(
@@ -349,6 +404,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vRes2ListBool($res);
 	}
 	
+	/**
+	 * @return array|boolean list of values in the hash, or an empty list when key does not exist.
+	 *                       false if key holds a value that is not a hash
+	 */
 	public function vHVals($sKey)
 	{
 		$aPara = array(
@@ -359,6 +418,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vRes2ListBool($res);
 	}
 	
+	/**
+	 * @return int|boolean number of fields in the hash, or 0 when key does not exist.
+	 *                     false if key holds a value that is not a hash
+	 */
 	public function vHLen($sKey)
 	{
 		$aPara = array(
@@ -369,6 +432,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vRes2IntBool($res);
 	}
 	
+	/**
+	 * @return int|boolean the value at field after the increment operation.
+	 *                     false if key holds a value that is not a hash
+	 */
 	public function vHIncr($sKey, $sField, $iValue = 1)
 	{
 		$aPara = array(
@@ -379,6 +446,11 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vRes2IntBool($res);
 	}
 	
+	/**
+	 * @return int|boolean 1 if field is a new field in the hash and value was set. 
+	 *                     0 if field already exists in the hash and the value was updated.
+	 *                     false if key holds a value that is not a hash
+	 */
 	public function vHSet($sKey, $sField, $sValue)
 	{
 		$aPara = array(
@@ -415,16 +487,28 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_bResStr2Bool($res);
 	}
 	
+	/**
+	 * @return array|boolean a two-element array with key and value.
+	 *                       false if no element could be popped and the timeout expired.
+	 */
 	public function vBLPop($aKey, $iTimeout)
 	{
 		assert(0);
 	}
 	
+	/**
+	 * @return array|boolean a two-element array with key and value.
+	 *                       false if no element could be popped and the timeout expired.
+	 */
 	public function vBRPop($aKey, $iTimeout)
 	{
 		assert(0);
 	}
 	
+	/**
+	 * @return string|boolean the requested element
+	 *                        false if index is out of range or key holds a value that is not a list
+	 */
 	public function vLIndex($sKey, $iIndex)
 	{
 		$aPara = array(
@@ -435,6 +519,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vResBlob2StrBool($res);
 	}
 	
+	/**
+	 * @return int|boolean the length of the list at key.
+	 *                     false if key holds a value that is not a list
+	 */
 	public function vLLen($sKey)
 	{
 		$aPara = array(
@@ -445,6 +533,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vRes2IntBool($res);
 	}
 	
+	/**
+	 * @return int|boolean the length of the list after the insert operation, or -1 when the value pivot was not found.
+	 *                     false if key holds a value that is not a list
+	 */
 	public function vLInsert($sKey, $sPostion, $sPivot, $sValue)
 	{
 		$aPara = array(
@@ -455,6 +547,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vRes2IntBool($res);
 	}
 	
+	/**
+	 * @return string|boolean the value of the first element
+	 *                        false if key does not exist or key holds a value that is not a list
+	 */
 	public function vLPop($sKey)
 	{
 		$aPara = array(
@@ -465,6 +561,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vResBlob2StrBool($res);
 	}
 	
+	/**
+	 * @return string|boolean the value of the last element
+	 *                        false if key does not exist or key holds a value that is not a list
+	 */
 	public function vRPop($sKey)
 	{
 		$aPara = array(
@@ -475,6 +575,11 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vResBlob2StrBool($res);
 	}
 	
+	/**
+	 * @return string|boolean the element being popped and pushed.
+	 *                        false if src does not exist or src holds a value that is not a list
+	 *                        false if des holds a value that is not a list
+	 */
 	public function vRPopLPush($sSrc, $sDes)
 	{
 		assert($sSrc === $sDes);
@@ -486,6 +591,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vResBlob2StrBool($res);
 	}
 	
+	/**
+	 * @return int|boolean the length of the list after the push operations.
+	 *                     false if key holds a value that is not a list
+	 */
 	public function vLPush($sKey, $sValue)
 	{
 		$aPara = array(
@@ -496,6 +605,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vRes2IntBool($res);
 	}
 	
+	/**
+	 * @return int|boolean the length of the list after the push operations.
+	 *                     false if key holds a value that is not a list
+	 */
 	public function vRPush($sKey, $sValue)
 	{
 		$aPara = array(
@@ -506,6 +619,11 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vRes2IntBool($res);
 	}
 	
+	/**
+	 * @return int|boolean the length of the list after the push operations.
+	 *                     0 if key does not exist
+	 *                     false if key holds a value that is not a list
+	 */
 	public function vLPushX($sKey, $sValue)
 	{
 		$aPara = array(
@@ -516,6 +634,11 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vRes2IntBool($res);
 	}
 	
+	/**
+	 * @return int|boolean the length of the list after the push operations.
+	 *                     0 if key does not exist
+	 *                     false if key holds a value that is not a list
+	 */
 	public function vRPushX($sKey, $sValue)
 	{
 		$aPara = array(
@@ -526,6 +649,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vRes2IntBool($res);
 	}
 	
+	/**
+	 * @return array|boolean list of elements in the specified range.
+	 *                       false if key holds a value that is not a list
+	 */
 	public function vLRange($sKey, $iStart, $iStop)
 	{
 		$aPara = array(
@@ -536,6 +663,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vRes2ListBool($res);
 	}
 	
+	/**
+	 * @return int|boolean the number of removed elements.
+	 *                     false if key holds a value that is not a list
+	 */
 	public function vLRem($sKey, $iCount, $sValue)
 	{
 		$aPara = array(
@@ -566,6 +697,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_bResStr2Bool($res);
 	}
 	
+	/**
+	 * @return int|boolean the number of elements that were added to the set, not including all the elements already present into the set.
+	 *                     false if key holds a value that is not a set
+	 */
 	public function vSAdd($sKey, $sMember)
 	{
 		$aPara = array(
@@ -576,6 +711,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vRes2IntBool($res);
 	}
 	
+	/**
+	 * @return int|boolean the cardinality (number of elements) of the set, or 0 if key does not exist.
+	 *                     false if key holds a value that is not a set
+	 */
 	public function vSCard($sKey)
 	{
 		$aPara = array(
@@ -586,31 +725,55 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vRes2IntBool($res);
 	}
 	
+	/**
+	 * @return array|boolean list with members of the resulting set.
+	 *                       false if key holds a value that is not a set
+	 */
 	public function vSDiff($aKey)
 	{
 		assert(0);
 	}
 	
+	/**
+	 * @return int|boolean the number of elements in the resulting set.
+	 *                     false if key holds a value that is not a set
+	 */
 	public function vSDiffStore($sKey, $aKey)
 	{
 		assert(0);
 	}
 	
+	/**
+	 * @return array|boolean list with members of the resulting set.
+	 *                       false if key holds a value that is not a set
+	 */
 	public function vSInter($aKey)
 	{
 		assert(0);
 	}
 	
+	/**
+	 * @return int|boolean the number of elements in the resulting set.
+	 *                     false if key holds a value that is not a set
+	 */
 	public function vSInterStore($sKey, $aKey)
 	{
 		assert(0);
 	}
 	
+	/**
+	 * @return array|boolean list with members of the resulting set.
+	 *                       false if key holds a value that is not a set
+	 */
 	public function vSUnion($aKey)
 	{
 		assert(0);
 	}
 	
+	/**
+	 * @return int|boolean the number of elements in the resulting set.
+	 *                     false if key holds a value that is not a set
+	 */
 	public function vSUnionStore($sKey, $aKey)
 	{
 		assert(0);
@@ -626,6 +789,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_bResInt2Bool($res);
 	}
 	
+	/**
+	 * @return array|boolean all elements of the set.
+	 *                       false if key holds a value that is not a set
+	 */
 	public function vSMembers($sKey)
 	{
 		$aPara = array(
@@ -641,6 +808,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		assert(0);
 	}
 	
+	/**
+	 * @return string|boolean the removed element
+	 *                        false if key does not exist or key holds a value that is not a set
+	 */
 	public function vSPop($sKey)
 	{
 		$aPara = array(
@@ -651,6 +822,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vResBlob2StrBool($res);
 	}
 	
+	/**
+	 * @return string|boolean the randomly selected element
+	 *                        false if key does not exist or key holds a value that is not a set
+	 */
 	public function vSRandMember($sKey)
 	{
 		$aPara = array(
@@ -661,6 +836,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vResBlob2StrBool($res);
 	}
 	
+	/**
+	 * @return int|boolean the number of members that were removed from the set, not including non existing members.
+	 *                     false if key holds a value that is not a set
+	 */
 	public function vSRem($sKey, $sMember)
 	{
 		$aPara = array(
@@ -671,6 +850,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vRes2IntBool($res);
 	}
 	
+	/**
+	 * @return int|boolean The number of elements added to the sorted sets, not including elements already existing for which the score was updated.
+	 *                     false if key holds a value that is not a sorted set
+	 */
 	public function vZAdd($sKey, $fScore, $sMember)
 	{
 		$aPara = array(
@@ -681,6 +864,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vRes2IntBool($res);
 	}
 	
+	/**
+	 * @return int|boolean the cardinality (number of elements) of the sorted set, or 0 if key does not exist.
+	 *                     false if key holds a value that is not a sorted set
+	 */
 	public function vZCard($sKey)
 	{
 		$aPara = array(
@@ -691,6 +878,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vRes2IntBool($res);
 	}
 	
+	/**
+	 * @return int|boolean the number of elements in the specified score range.
+	 *                     false if key holds a value that is not a sorted set
+	 */
 	public function vZCount($sKey, $sMin, $sMax)
 	{
 		$aPara = array(
@@ -701,6 +892,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vRes2IntBool($res);
 	}
 	
+	/**
+	 * @return array|boolean list of elements in the specified range (optionally with their scores).
+	 *                       false if key holds a value that is not a sorted set
+	 */
 	public function vZRange($sKey, $iStart, $iStop, $bWithScores = false)
 	{
 		$cmd = array('ZRANGE', $sKey, $iStart, $iStop);
@@ -716,6 +911,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $bWithScores ? $this->_vRes2HashBool($res) : $this->_vRes2ListBool($res);
 	}
 	
+	/**
+	 * @return array|boolean list of elements in the specified score range (optionally with their scores).
+	 *                       false if key holds a value that is not a sorted set
+	 */
 	public function vZRangeByScore($sKey, $sMin, $sMax, $aOption = array())
 	{
 		$bWithScores = isset($aOption['withscores']) && $aOption['withscores'];
@@ -738,6 +937,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $bWithScores ? $this->_vRes2HashBool($res) : $this->_vRes2ListBool($res);
 	}
 	
+	/**
+	 * @return array|boolean list of elements in the specified range (optionally with their scores).
+	 *                       false if key holds a value that is not a sorted set
+	 */
 	public function vZRevRange($sKey, $iStart, $iStop, $bWithScores = false)
 	{
 		$cmd = array('ZREVRANGE', $sKey, $iStart, $iStop);
@@ -753,6 +956,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $bWithScores ? $this->_vRes2HashBool($res) : $this->_vRes2ListBool($res);
 	}
 	
+	/**
+	 * @return array|boolean list of elements in the specified score range (optionally with their scores).
+	 *                       false if key holds a value that is not a sorted set
+	 */
 	public function vZRevRangeByScore($sKey, $sMin, $sMax, $aOption = array())
 	{
 		$bWithScores = isset($aOption['withscores']) && $aOption['withscores'];
@@ -775,6 +982,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $bWithScores ? $this->_vRes2HashBool($res) : $this->_vRes2ListBool($res);
 	}
 	
+	/**
+	 * @return int|boolean the number of elements removed.
+	 *                     false if key holds a value that is not a sorted set
+	 */
 	public function vZRemRangeByRank($sKey, $iStart, $iStop)
 	{
 		$aPara = array(
@@ -785,6 +996,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vRes2IntBool($res);
 	}
 	
+	/**
+	 * @return int|boolean the number of elements removed.
+	 *                     false if key holds a value that is not a sorted set
+	 */
 	public function vZRemRangeByScore($sKey, $sMin, $sMax)
 	{
 		$aPara = array(
@@ -795,6 +1010,11 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vRes2IntBool($res);
 	}
 	
+	/**
+	 * @return int|boolean the rank of member.
+	 *                     false If member does not exist in the sorted set or key does not exist
+	 *                     false if key holds a value that is not a sorted set
+	 */
 	public function vZRank($sKey, $sMember)
 	{
 		$aPara = array(
@@ -805,6 +1025,11 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vRes2IntBool($res);
 	}
 	
+	/**
+	 * @return int|boolean the rank of member.
+	 *                     false If member does not exist in the sorted set or key does not exist
+	 *                     false if key holds a value that is not a sorted set
+	 */
 	public function vZRevRank($sKey, $sMember)
 	{
 		$aPara = array(
@@ -815,6 +1040,11 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vRes2IntBool($res);
 	}
 	
+	/**
+	 * @return double|boolean the score of member (a double precision floating point number), represented as string.
+	 *                        false If member does not exist in the sorted set or key does not exist
+	 *                        false if key holds a value that is not a sorted set
+	 */
 	public function vZScore($sKey, $sMember)
 	{
 		$aPara = array(
@@ -830,6 +1060,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return floatval($ret);
 	}
 	
+	/**
+	 * @return int|boolean The number of members removed from the sorted set, not including non existing members.
+	 *                     false if key holds a value that is not a sorted set
+	 */
 	public function vZRem($sKey, $sMember)
 	{
 		$aPara = array(
@@ -840,6 +1074,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return $this->_vRes2IntBool($res);
 	}
 	
+	/**
+	 * @return double|boolean the new score of member (a double precision floating point number), represented as string.
+	 *                        false if key holds a value that is not a sorted set
+	 */
 	public function vZIncr($sKey, $fValue, $sMember)
 	{
 		$aPara = array(
@@ -855,14 +1093,56 @@ class Ko_Data_RedisK extends Ko_Data_KProxy implements IKo_Data_Redis, IKo_Data_
 		return floatval($ret);
 	}
 	
+	/**
+	 * @return int|boolean the number of elements in the resulting sorted set at destination.
+	 *                     false if key holds a value that is not a sorted set
+	 */
 	public function vZInterStore($sKey, $aKey, $aWeight, $sAggregate = 'SUM')
 	{
-		assert(0);
+		$cmd = array('ZINTERSTORE', $sKey, count($aKey));
+		foreach($aKey as $sName)
+		{
+			$cmd[] = $sName;
+		}
+		$cmd[] = 'WEIGHTS';
+		foreach($aWeight as $iWeight)
+		{
+			$cmd[] = $iWeight;
+		}
+		$cmd[] = 'AGGREGATE';
+		$cmd[] = $sAggregate;
+		$aPara = array(
+			'key' => $sKey,
+			'cmd' => $cmd,
+		);
+		$res = $this->_oProxy->invoke('_1CALL', $aPara);
+		return $this->_vRes2IntBool($res);
 	}
 	
+	/**
+	 * @return int|boolean the number of elements in the resulting sorted set at destination.
+	 *                     false if key holds a value that is not a sorted set
+	 */
 	public function vZUnionStore($sKey, $aKey, $aWeight, $sAggregate = 'SUM')
 	{
-		assert(0);
+		$cmd = array('ZUNIONSTORE', $sKey, count($aKey));
+		foreach($aKey as $sName)
+		{
+			$cmd[] = $sName;
+		}
+		$cmd[] = 'WEIGHTS';
+		foreach($aWeight as $iWeight)
+		{
+			$cmd[] = $iWeight;
+		}
+		$cmd[] = 'AGGREGATE';
+		$cmd[] = $sAggregate;
+		$aPara = array(
+			'key' => $sKey,
+			'cmd' => $cmd,
+		);
+		$res = $this->_oProxy->invoke('_1CALL', $aPara);
+		return $this->_vRes2IntBool($res);
 	}
 
 	private function _iRes2Int($aRes)
