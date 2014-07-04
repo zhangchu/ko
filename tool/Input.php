@@ -9,59 +9,9 @@
 //include_once('../ko.class.php');
 
 /**
- * 检测和规范输入数据接口
- */
-interface IKo_Tool_Input
-{
-	/**
-	 * 直接对一个变量进行参数校验
-	 * $param mixed $vValue 可以是一个值，也可以是一个数组
-	 * $param mixed $vVarType 可以是一个类型，也可以是一个类型数组，与 $vValue 对应
-	 * @return mixed
-	 */
-	public static function VCleanVar($vValue, $vVarType, $sCharset = KO_CHARSET);
-	/**
-	 * 解析指定名称的 cgi 参数
-	 * @param string $sSource 参数的来源，取值为 'g' 'p' 'c' 'r' 'f'，分别代表 $_GET $_POST $_COOKIE $_REQUEST $_FILES
-	 * @param string $sVarName 参数的名称
-	 * @param int $iVarType 指定参数的类型
-	 * @return mixed 类型检查后的参数
-	 */
-	public static function VClean($sSource, $sVarName, $iVarType = false, $sCharset = KO_CHARSET);
-	/**
-	 * 解析所有 $_REQUEST $_FILES 数据
-	 * @param array $aValTypes 自定义数据类型。
-	 * 如：
-	 * <code>
-	 * array(
-	 *   'uid' => Ko_Tool_Input::T_UINT,
-	 *   'key' => Ko_Tool_Input::T_STR,
-	 * )
-	 * </code>
-	 * @return array 返回数据中包括 $aValTypes 中定义的数据，也包括符合命名规范的参数(首字母在self::$s_aTypeMap中已定义)
-	 */
-	public static function ACleanAll($aValTypes = array(), $sCharset = KO_CHARSET);
-	/**
-	 * 单独解析所有 $_GET 数据
-	 * @return array 返回数据中包括 $aValTypes 中定义的数据，也包括符合命名规范的参数(首字母在self::$s_aTypeMap中已定义)
-	 */
-	public static function ACleanAllGet($aValTypes = array(), $sCharset = KO_CHARSET);
-	/**
-	 * 单独解析所有 $_POST 数据
-	 * @return array 返回数据中包括 $aValTypes 中定义的数据，也包括符合命名规范的参数(首字母在self::$s_aTypeMap中已定义)
-	 */
-	public static function ACleanAllPost($aValTypes = array(), $sCharset = KO_CHARSET);
-	/**
-	 * 判断邮件地址是否合法
-	 * @return bool
-	 */
-	public static function BIsEmail($sEmail);
-}
-
-/**
  * 检测和规范输入数据实现
  */
-class Ko_Tool_Input implements IKo_Tool_Input
+class Ko_Tool_Input
 {
 	const T_NOCLEAN     = 0;            // 不做处理
 	const T_INT         = 1;            // 转换成integer
@@ -91,6 +41,9 @@ class Ko_Tool_Input implements IKo_Tool_Input
 	private static $s_aSuperGlobal = array ('g' => '_GET', 'p' => '_POST', 'c' => '_COOKIE', 'r' => '_REQUEST', 'f' => '_FILES');
 
 	/**
+	 * 直接对一个变量进行参数校验
+	 * $param mixed $vValue 可以是一个值，也可以是一个数组
+	 * $param mixed $vVarType 可以是一个类型，也可以是一个类型数组，与 $vValue 对应
 	 * @return mixed
 	 */
 	public static function VCleanVar($vValue, $vVarType, $sCharset = KO_CHARSET)
@@ -110,7 +63,11 @@ class Ko_Tool_Input implements IKo_Tool_Input
 	}
 
 	/**
-	 * @return mixed
+	 * 解析指定名称的 cgi 参数
+	 * @param string $sSource 参数的来源，取值为 'g' 'p' 'c' 'r' 'f'，分别代表 $_GET $_POST $_COOKIE $_REQUEST $_FILES
+	 * @param string $sVarName 参数的名称
+	 * @param int $iVarType 指定参数的类型
+	 * @return mixed 类型检查后的参数
 	 */
 	public static function VClean($sSource, $sVarName, $iVarType = false, $sCharset = KO_CHARSET)
 	{
@@ -134,7 +91,16 @@ class Ko_Tool_Input implements IKo_Tool_Input
 	}
 
 	/**
-	 * @return array
+	 * 解析所有 $_REQUEST $_FILES 数据
+	 * @param array $aValTypes 自定义数据类型。
+	 * 如：
+	 * <code>
+	 * array(
+	 *   'uid' => Ko_Tool_Input::T_UINT,
+	 *   'key' => Ko_Tool_Input::T_STR,
+	 * )
+	 * </code>
+	 * @return array 返回数据中包括 $aValTypes 中定义的数据，也包括符合命名规范的参数(首字母在self::$s_aTypeMap中已定义)
 	 */
 	public static function ACleanAll($aValTypes = array(), $sCharset = KO_CHARSET)
 	{
@@ -153,7 +119,8 @@ class Ko_Tool_Input implements IKo_Tool_Input
 	}
 
 	/**
-	 * @return array
+	 * 单独解析所有 $_GET 数据
+	 * @return array 返回数据中包括 $aValTypes 中定义的数据，也包括符合命名规范的参数(首字母在self::$s_aTypeMap中已定义)
 	 */
 	public static function ACleanAllGet($aValTypes = array(), $sCharset = KO_CHARSET)
 	{
@@ -168,7 +135,8 @@ class Ko_Tool_Input implements IKo_Tool_Input
 	}
 
 	/**
-	 * @return array
+	 * 单独解析所有 $_POST 数据
+	 * @return array 返回数据中包括 $aValTypes 中定义的数据，也包括符合命名规范的参数(首字母在self::$s_aTypeMap中已定义)
 	 */
 	public static function ACleanAllPost($aValTypes = array(), $sCharset = KO_CHARSET)
 	{
@@ -183,6 +151,7 @@ class Ko_Tool_Input implements IKo_Tool_Input
 	}
 
 	/**
+	 * 判断邮件地址是否合法
 	 * @return bool
 	 */
 	public static function BIsEmail($sEmail)

@@ -9,45 +9,13 @@
 //include_once('../ko.class.php');
 
 /**
- * 常用工具接口
+ * 常用工具实现
  */
-interface IKo_Tool_Utils
+class Ko_Tool_Utils
 {
 	/**
 	 * 将一个数组中的数据的某一项提出来作为一个数组
 	 *
-	 * @return array
-	 */
-	public static function AObjs2ids($vObjs, $sKey);
-	/**
-	 * @static 用数组的值将数组的索引改变
-	 * @abstract
-	 * @param $vObjs
-	 * @param $sKey
-	 * @return array
-	 */
-	public static function AObjs2map($vObjs, $sKey);
-	/**
-	 * 数组按照某个field进行排序
-	 * @param $aArr 待排数组
-	 * @param $sField 按照该字段排序
-	 * @param $bDesc 是否倒排（web上多数情况下desc = true, 故默认为true）
-	 * @param $bPreserveKey 是否保留键值
-	 * @return array
-	 */
-	public static function ASortByField(array $aArr, $sField, $bDesc = true, $bPreserveKey = false);
-	/**
-	 * @return array
-	 */
-	public static function AXml2arr($sXml, $sAttrKey = '@attributes', $sValueKey = '@value');
-}
-
-/**
- * 常用工具实现
- */
-class Ko_Tool_Utils implements IKo_Tool_Utils
-{
-	/**
 	 * @return array
 	 */
 	public static function AObjs2ids($vObjs, $sKey)
@@ -75,9 +43,13 @@ class Ko_Tool_Utils implements IKo_Tool_Utils
 	}
 	
 	/**
+	 * @static 用数组的值将数组的索引改变
+	 * @abstract
+	 * @param $vObjs
+	 * @param $sKey
 	 * @return array
 	 */
-	public static function AObjs2map($vObjs, $sKey)
+	public static function AObjs2map($vObjs, $sKey, $sValue = null)
 	{
 		$map = array();
 		if (is_array($vObjs))
@@ -86,11 +58,11 @@ class Ko_Tool_Utils implements IKo_Tool_Utils
 			{
 				if (is_array($obj))
 				{
-					$map[$obj[$sKey]] = $obj;
+					$map[$obj[$sKey]] = is_null($sValue) ? $obj : $obj[$sValue];
 				}
 				else if (is_object($obj))
 				{
-					$map[$obj->$sKey] = $obj;
+					$map[$obj[$sKey]] = is_null($sValue) ? $obj : $obj->$sValue;
 				}
 			}
 		}
@@ -98,6 +70,11 @@ class Ko_Tool_Utils implements IKo_Tool_Utils
 	}
 
 	/**
+	 * 数组按照某个field进行排序
+	 * @param $aArr 待排数组
+	 * @param $sField 按照该字段排序
+	 * @param $bDesc 是否倒排（web上多数情况下desc = true, 故默认为true）
+	 * @param $bPreserveKey 是否保留键值
 	 * @return array
 	 */
 	public static function ASortByField(array $aArr, $sField, $bDesc = true, $bPreserveKey = false)
