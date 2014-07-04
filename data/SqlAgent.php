@@ -7,21 +7,9 @@
  */
 
 /**
- * 封装常用的 SQL 语句接口，insert/update/delete/select
- */
-interface IKo_Data_SqlAgent
-{
-	public static function OInstance($sTag);
-	public function aInsert($sKind, $iHintId, $aData, $aUpdate, $aChange);
-	public function iUpdate($sKind, $iHintId, $aUpdate, $aChange, $oOption);
-	public function iDelete($sKind, $iHintId, $oOption);
-	public function aSelect($sKind, $iHintId, $oOption, $iCacheTime, $bMaster);
-}
-
-/**
  * 封装常用的 SQL 语句实现，insert/update/delete/select
  */
-class Ko_Data_SqlAgent implements IKo_Data_SqlAgent
+class Ko_Data_SqlAgent
 {
 	private static $s_aInstance = array();
 

@@ -9,7 +9,7 @@
 /**
  * 封装 MongoDB 实现
  */
-class Ko_Data_MongoDB implements IKo_Data_SqlAgent
+class Ko_Data_MongoDB
 {
 	const SAFE = KO_MONGO_SAFE;
 
@@ -155,6 +155,11 @@ class Ko_Data_MongoDB implements IKo_Data_SqlAgent
 		{
 			$ret[] = $doc;
 		}
+		$len = strlen(serialize($ret));
+
+		if($len>50*1024)
+			//error_log($len." ".serialize($_SERVER)."\n",3,'/tmp/mongo.txt');
+			CLogFunc::addSysLog(CLogFunc::$user_op_log['web_debug_log'], LOG_LOCAL3, 'mongo '.$sKind.' '.$_SERVER['SCRIPT_FILENAME'].' '.$len, LOG_NOTICE);
 		return $ret;
 	}
 	

@@ -7,19 +7,9 @@
  */
 
 /**
- * 封装 UObject 的接口
+ * 使用 KProxy 方式调用 UObject
  */
-interface IKo_Data_UObjectMan
-{
-	public function aGetUObjectDetailLong($aIds, $aFields);
-	public function vInvalidate($iUid, $id);
-	public function oCreateLOID($iUid, $id);
-}
-
-/**
- * 使用 KProxy 方式调用 UObject 的实现
- */
-class Ko_Data_UObjectMan extends Ko_Data_KProxy implements IKo_Data_UObjectMan, IKo_Data_UObjectAgent
+class Ko_Data_UObjectMan extends Ko_Data_KProxy
 {
 	private static $s_aInstance = array();	//UObject对象数组
 

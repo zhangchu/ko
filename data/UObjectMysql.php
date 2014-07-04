@@ -9,7 +9,7 @@
 /**
  * 使用直连 Mysql 方式调用 UObject 的替代实现
  */
-class Ko_Data_UObjectMysql implements IKo_Data_UObjectMan, IKo_Data_UObjectAgent
+class Ko_Data_UObjectMysql
 {
 	private static $s_aInstance = array();	//UObject对象数组
 

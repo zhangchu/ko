@@ -7,17 +7,9 @@
  */
 
 /**
- * 封装创建 UObject 的接口
- */
-interface IKo_Data_UObjectAgent
-{
-	public static function OInstance($sKind, $sSplitField, $sKeyField, $sUoName='');
-}
-
-/**
  * 封装创建 UObject 的实现
  */
-class Ko_Data_UObjectAgent implements IKo_Data_UObjectAgent
+class Ko_Data_UObjectAgent
 {
 	public static function OInstance($sKind, $sSplitField, $sKeyField, $sUoName='')
 	{
