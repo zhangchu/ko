@@ -158,6 +158,15 @@ class Ko_Data_MongoDB
 		return $ret;
 	}
 	
+	/**
+	 * @return array
+	 */
+	public function aGetIndexes($sKind)
+	{
+		$col = $this->_oGetEngine()->oSelectCollection($sKind);
+		return $col->getIndexInfo();
+	}
+	
 	private function _oGetEngine()
 	{
 		if (is_null($this->_oEngine))
