@@ -26,17 +26,35 @@ class Ko_Tool_Time
 		{
 			if (is_array($aCron[$sUnit]))
 			{
-				if (!in_array($iUnit, $aCron[$sUnit]))
-				{
-					return false;
-				}
+				$arr = $aCron[$sUnit];
 			}
 			else
 			{
-				if ($aCron[$sUnit] != $iUnit)
+				if (false !== strpos($aCron[$sUnit], ','))
 				{
-					return false;
+					$arr = explode(',', $aCron[$sUnit]);
 				}
+				else if (('hour' === $sUnit || 'minute' === $sUnit) && '*/' === substr($aCron[$sUnit], 0, 2))
+				{
+					$mod = substr($aCron[$sUnit], 2);
+					$total = ('hour' === $sUnit) ? 24 : 60;
+					$arr = array();
+					for ($i=0; $i<$total; ++$i)
+					{
+						if (0 == $i % $mod)
+						{
+							$arr[] = $i;
+						}
+					}
+				}
+				else
+				{
+					$arr = array($aCron[$sUnit]);
+				}
+			}
+			if (!in_array($iUnit, $arr))
+			{
+				return false;
 			}
 		}
 		return true;
