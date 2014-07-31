@@ -120,6 +120,21 @@ class Ko_Tool_Str
 	}
 
 	/**
+	 * 过滤掉不符合 xml 规范的字符
+	 *
+	 * @return string
+	 */
+	public static function SFilterErrorCode_Xml($sIn)
+	{
+		$aOut = array(
+			'start' => -1,
+			'del' => array(),
+			);
+		self::_VCheckStr_Xml($sIn, '_VFilterErrorCode_OnChar', '_VFilterErrorCode_OnFail', '_VFilterErrorCode_OnComplete', $aOut);
+		return self::_SFilterStr($sIn, $aOut['del']);
+	}
+
+	/**
 	 * 过滤掉不符合 utf-8/gb18030 规范的字符
 	 *
 	 * @return string
@@ -296,6 +311,73 @@ class Ko_Tool_Str
 		}
 	}
 
+	private static function _VCheckStr_Xml($sIn, $fnChar, $fnFail, $fnComplete, &$aOut)
+	{
+		$iLen = strlen($sIn);
+		for($i=0; $i<$iLen; $i++)
+		{
+			$c0 = ord($sIn[$i]);
+			if ($c0 < 0x80)
+			{
+				if ($c0 == 0x9 || $c0 == 0xA || $c0 == 0xD || $c0 >=0x20)
+				{
+					self::$fnChar($sIn, $i, 1, $aOut);
+					continue;
+				}
+			}
+			else if (0xC0 <= $c0 && $c0 <= 0xFD)
+			{
+				if ($c0 >= 0xFC)       $j = 6;
+				else if ($c0 >= 0xF8)  $j = 5;
+				else if ($c0 >= 0xF0)  $j = 4;
+				else if ($c0 >= 0xE0)  $j = 3;
+				else                   $j = 2;
+				if ($i + $j <= $iLen && $j <= 4)
+				{
+					$c1 = $c2 = $c3 = 0;
+					for ($k=1; $k<$j; $k++)
+					{
+						$ck = 'c'.$k;
+						$$ck = ord($sIn[$i + $k]);
+						if (0x80 <= $$ck && $$ck <= 0xBF)
+						{
+							continue;
+						}
+						break;
+					}
+					if ($k === $j)
+					{
+						$invalid = false;
+						if (3 == $j)
+						{
+							if (($c0 == 0xED && $c1 >= 0xA0)                     // D800-DFFF
+								|| ($c0 == 0xEF && $c1 == 0xBF && $c2 >= 0xBE))  // FFFE-FFFF
+							{
+								$invalid = true;
+							}
+						}
+						else if (4 == $j)
+						{
+							if ($c0 > 0xF4
+								|| ($c0 == 0xF4 && $c1 > 0x8F))
+							{
+								$invalid = true;
+							}
+						}
+						if (!$invalid)
+						{
+							self::$fnChar($sIn, $i, $j, $aOut);
+							$i += $j - 1;
+							continue;
+						}
+					}
+				}
+			}
+			self::$fnFail($sIn, $i, $aOut);
+		}
+		self::$fnComplete($sIn, $iLen, $aOut);
+	}
+	
 	private static function _VCheckStr_UTF8($sIn, $fnChar, $fnFail, $fnComplete, &$aOut)
 	{
 		$iLen = strlen($sIn);
