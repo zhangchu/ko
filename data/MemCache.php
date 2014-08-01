@@ -14,7 +14,7 @@
  */
 class Ko_Data_MemCache
 {
-	const PROXY_ARRMAX = 1000;
+	const PROXY_ARRMAX = 500;
 	private static $s_aInstances = array();
 	
 	private $_oMemcache = null;

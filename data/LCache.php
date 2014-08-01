@@ -13,7 +13,7 @@
  */
 class Ko_Data_LCache extends Ko_Data_KProxy
 {
-	const PROXY_ARRMAX = 1000;
+	const PROXY_ARRMAX = 500;
 	private static $s_oInstance;
 
 	protected function __construct ()

@@ -13,7 +13,7 @@
  */
 class Ko_Data_IPLocator extends Ko_Data_KProxy
 {
-	const PROXY_ARRMAX = 1000;
+	const PROXY_ARRMAX = 500;
 	private static $s_OInstance;
 
 	private static $s_aChineseMainlandPrefix = array(

@@ -11,7 +11,7 @@
  */
 class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 {
-	const SPLIT_COUNT = 1000;		//数据量太大的情况下，切分为多个小块数据进行获取，防止返回数据超过ICE定义的最大尺寸
+	const SPLIT_COUNT = 500;		//数据量太大的情况下，切分为多个小块数据进行获取，防止返回数据超过ICE定义的最大尺寸
 
 	//数据表配置
 	private $_sTable;
