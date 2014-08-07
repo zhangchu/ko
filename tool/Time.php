@@ -13,9 +13,10 @@ class Ko_Tool_Time
 	 *
 	 * @return boolean
 	 */
-	public static function BCheckTime($iWeek, $iHour, $iMinute, $aCron)
+	public static function BCheckTime($aCron, $iMinute, $iHour, $iWeek, $iDay)
 	{
-		return self::_BCheckTimeArr('week', $iWeek, $aCron)
+		return self::_BCheckTimeArr('day', $iDay, $aCron)
+			&& self::_BCheckTimeArr('week', $iWeek, $aCron)
 			&& self::_BCheckTimeArr('hour', $iHour, $aCron)
 			&& self::_BCheckTimeArr('minute', $iMinute, $aCron);
 	}

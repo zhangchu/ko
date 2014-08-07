@@ -14,7 +14,8 @@ class Ko_Mode_Crontab
 	 * <pre>
 	 * array(
 	 *   'crontab' => array(
-	 *     array('week' => array(1, 4),               0（表示星期天）到 6（表示星期六）
+	 *     array('day' => 1,                          每月1号
+	 *           'week' => array(1, 4),               0（表示星期天）到 6（表示星期六）
 	 *           'hour' => 1,
 	 *           'minute' => 0,
 	 *           'path' => 'subdir',
@@ -45,6 +46,7 @@ class Ko_Mode_Crontab
 		$ymd = date('Y-m-d', $now);
 		$time = date('H:i', $now);
 		$week = date('w', $now);
+		$day = date('j', $now);
 		list($hour, $minute) = explode(':', $time);
 		$hour = intval($hour);
 		$minute = intval($minute);
@@ -52,7 +54,7 @@ class Ko_Mode_Crontab
 		$curdir = getcwd();
 		foreach ($this->_aConf['crontab'] as $v)
 		{
-			if (!Ko_Tool_Time::BCheckTime($week, $hour, $minute, $v))
+			if (!Ko_Tool_Time::BCheckTime($v, $minute, $hour, $week, $day))
 			{
 				continue;
 			}
