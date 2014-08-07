@@ -34,14 +34,14 @@ class Ko_Tool_Ip
 	 * <pre>
 	 * eg1
 	 *    $sIp = '202.105.1.3'  返回  '202.105.1.3'
-	 *    $sIp = '192.168.0.1 192.168.10.3; 10.102.2.1, 202.105.1.3 192.168.10.3'  返回  '202.105.1.3'
+	 *    $sIp = '192.168.0.1, 202.105.1.3 202.105.1.1 192.168.10.3'  返回  '202.105.1.3'
 	 *    $sIp = ''  返回  'unknown'
 	 *    $sIp = '192.168.0.1 192.168.10.3; 10.102.2.1, 192.168.10.3'  返回  '192.168.10.3'
 	 * </pre>
 	 *
 	 * @return string
 	 */
-	public static function SGetOuterIP($sIp)
+	public static function SGetFirstOuterIP($sIp)
 	{
 		$ips = preg_split('/;|,|\s/', $sIp);
 		$sIp = 'unknown';
@@ -60,6 +60,44 @@ class Ko_Tool_Ip
 		}
 		return $sIp;
 	}
+	
+	/**
+	 * 输入一堆ip，找出其中最后一个外网 ip，如果没有外网ip，返回最后一个合法ip，否则返回 unknown
+	 *
+	 * <pre>
+	 * eg1
+	 *    $sIp = '202.105.1.3'  返回  '202.105.1.3'
+	 *    $sIp = '192.168.0.1, 202.105.1.3 202.105.1.1 192.168.10.3'  返回  '202.105.1.1'
+	 *    $sIp = ''  返回  'unknown'
+	 *    $sIp = '192.168.0.1 192.168.10.3; 10.102.2.1, 192.168.10.3'  返回  '192.168.10.3'
+	 * </pre>
+	 *
+	 * @return string
+	 */
+	public static function SGetLastOuterIP($sIp)
+	{
+		$ips = preg_split('/;|,|\s/', $sIp);
+		$sIp = 'unknown';
+		$sLast = 'unknown';
+		foreach ($ips as $ip)
+		{
+			$ip = trim($ip);
+			if (false === ip2long($ip))
+			{
+				continue;
+			}
+			$sLast = $ip;
+			if (!self::BIsInnerIP($ip))
+			{
+				$sIp = $ip;
+			}
+		}
+		if ('unknown' == $sIp)
+		{
+			$sIp = $sLast;
+		}
+		return $sIp;
+	}
 
 	/**
 	 * 根据下面规则，尽量返回距离用户端最近的外网IP
@@ -73,22 +111,22 @@ class Ko_Tool_Ip
 	 * 二、使用透明代理服务器的情况：Transparent Proxies
 	 *    REMOTE_ADDR = 最后一个代理服务器 IP
 	 *    HTTP_VIA = 代理服务器 IP
-	 *    HTTP_X_FORWARDED_FOR = 您的真实 IP ，经过多个代理服务器时，这个值类似如下：203.98.182.163, 203.98.182.163, 203.129.72.215。
+	 *    HTTP_X_FORWARDED_FOR = 您的真实 IP ，经过多个代理服务器时，这个值类似如下：203.98.182.163, 203.129.72.215。
 	 *    这类代理服务器还是将您的信息转发给您的访问对象，无法达到隐藏真实身份的目的。
 	 * 三、使用普通匿名代理服务器的情况：Anonymous Proxies
 	 *    REMOTE_ADDR = 最后一个代理服务器 IP
 	 *    HTTP_VIA = 代理服务器 IP
-	 *    HTTP_X_FORWARDED_FOR = 代理服务器 IP ，经过多个代理服务器时，这个值类似如下：203.98.182.163, 203.98.182.163, 203.129.72.215。
+	 *    HTTP_X_FORWARDED_FOR = 代理服务器 IP ，经过多个代理服务器时，这个值类似如下：203.98.182.163, 203.129.72.215。
 	 *    隐藏了您的真实IP，但是向访问对象透露了您是使用代理服务器访问他们的。
 	 * 四、使用欺骗性代理服务器的情况：Distorting Proxies
 	 *    REMOTE_ADDR = 代理服务器 IP
 	 *    HTTP_VIA = 代理服务器 IP
-	 *    HTTP_X_FORWARDED_FOR = 随机的 IP ，经过多个代理服务器时，这个值类似如下：203.98.182.163, 203.98.182.163, 203.129.72.215。
+	 *    HTTP_X_FORWARDED_FOR = 随机的 IP ，经过多个代理服务器时，这个值类似如下：203.98.182.163, 203.129.72.215。
 	 *    告诉了访问对象您使用了代理服务器，但编造了一个虚假的随机IP代替您的真实IP欺骗它。
 	 * 五、使用高匿名代理服务器的情况：High Anonymity Proxies (Elite proxies)
 	 *    REMOTE_ADDR = 代理服务器 IP
 	 *    HTTP_VIA = 没数值或不显示
-	 *    HTTP_X_FORWARDED_FOR = 没数值或不显示 ，经过多个代理服务器时，这个值类似如下：203.98.182.163, 203.98.182.163, 203.129.72.215。
+	 *    HTTP_X_FORWARDED_FOR = 没数值或不显示 ，经过多个代理服务器时，这个值类似如下：203.98.182.163, 203.129.72.215。
 	 *    完全用代理服务器的信息替代了您的所有信息，就象您就是完全使用那台代理服务器直接访问对象。
 	 * </pre>
 	 *
@@ -97,9 +135,20 @@ class Ko_Tool_Ip
 	public static function SGetClientIP()
 	{
 		$fip = getenv('HTTP_X_FORWARDED_FOR').' '.getenv('HTTP_VIA').' '.getenv('REMOTE_ADDR');
-		return self::SGetOuterIP($fip);
+		return self::SGetFirstOuterIP($fip);
 	}
 
+	/**
+	 * 尽量返回距离服务器最近的外网IP
+	 *
+	 * @return string
+	 */
+	public static function SGetProxyIP()
+	{
+		$fip = getenv('HTTP_X_FORWARDED_FOR').' '.getenv('HTTP_VIA').' '.getenv('REMOTE_ADDR');
+		return self::SGetLastOuterIP($fip);
+	}
+	
 	/**
 	 * 从环境变量获取服务器Ip，如果获取不到有意义的ip，返回 unknown
 	 *
@@ -133,67 +182,3 @@ class Ko_Tool_Ip
 		return 0;
 	}
 }
-
-/*
-
-$ret = Ko_Tool_Ip::SGetServerIp();
-var_dump($ret);
-
-$ret = Ko_Tool_Ip::SGetClientIP();
-var_dump($ret);
-
-$ret = Ko_Tool_Ip::SGetOuterIP('202.105.1.3');
-var_dump($ret);
-
-$ret = Ko_Tool_Ip::SGetOuterIP('192.168.0.1 192.168.10.3; 10.102.2.1, 202.105.1.3 192.168.10.3');
-var_dump($ret);
-
-$ret = Ko_Tool_Ip::SGetOuterIP('');
-var_dump($ret);
-
-$ret = Ko_Tool_Ip::SGetOuterIP('192.168.0.1 192.168.10.3; 10.102.2.1, 192.168.10.3');
-var_dump($ret);
-
-
-$ip = '192.167.0.1';
-$ret = Ko_Tool_Ip::BIsInnerIP($ip);
-echo $ip.' '.($ret ? 'inner' : 'outer')."\n";
-
-$ip = '192.168.0.1';
-$ret = Ko_Tool_Ip::BIsInnerIP($ip);
-echo $ip.' '.($ret ? 'inner' : 'outer')."\n";
-
-$ip = '192.169.0.1';
-$ret = Ko_Tool_Ip::BIsInnerIP($ip);
-echo $ip.' '.($ret ? 'inner' : 'outer')."\n";
-
-$ip = '9.169.0.1';
-$ret = Ko_Tool_Ip::BIsInnerIP($ip);
-echo $ip.' '.($ret ? 'inner' : 'outer')."\n";
-
-$ip = '10.169.0.1';
-$ret = Ko_Tool_Ip::BIsInnerIP($ip);
-echo $ip.' '.($ret ? 'inner' : 'outer')."\n";
-
-$ip = '11.169.0.1';
-$ret = Ko_Tool_Ip::BIsInnerIP($ip);
-echo $ip.' '.($ret ? 'inner' : 'outer')."\n";
-
-$ip = '172.15.0.1';
-$ret = Ko_Tool_Ip::BIsInnerIP($ip);
-echo $ip.' '.($ret ? 'inner' : 'outer')."\n";
-
-$ip = '172.16.0.1';
-$ret = Ko_Tool_Ip::BIsInnerIP($ip);
-echo $ip.' '.($ret ? 'inner' : 'outer')."\n";
-
-$ip = '172.31.0.1';
-$ret = Ko_Tool_Ip::BIsInnerIP($ip);
-echo $ip.' '.($ret ? 'inner' : 'outer')."\n";
-
-$ip = '172.32.0.1';
-$ret = Ko_Tool_Ip::BIsInnerIP($ip);
-echo $ip.' '.($ret ? 'inner' : 'outer')."\n";
-
-*/
-?>
