@@ -62,7 +62,7 @@ class Ko_Tool_Utils
 				}
 				else if (is_object($obj))
 				{
-					$map[$obj[$sKey]] = is_null($sValue) ? $obj : $obj->$sValue;
+					$map[$obj->$sKey] = is_null($sValue) ? $obj : $obj->$sValue;
 				}
 			}
 		}
