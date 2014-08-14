@@ -389,7 +389,7 @@ class Ko_Tool_Str
 				self::$fnChar($sIn, $i, 1, $aOut);
 				continue;
 			}
-			if (0xC0 <= $c0 && $c0 <= 0xFD)
+			else if (0xC0 <= $c0 && $c0 <= 0xFD)
 			{
 				if ($c0 >= 0xFC)       $j = 6;
 				else if ($c0 >= 0xF8)  $j = 5;
@@ -431,7 +431,7 @@ class Ko_Tool_Str
 				self::$fnChar($sIn, $i, 1, $aOut);
 				continue;
 			}
-			if (0x81 <= $c0 && $c0 <= 0xFE)
+			else if (0x81 <= $c0 && $c0 <= 0xFE)
 			{
 				$j = 2;
 				if ($i + $j <= $iLen)
