@@ -41,6 +41,17 @@ class Ko_Tool_Input
 	private static $s_aSuperGlobal = array ('g' => '_GET', 'p' => '_POST', 'c' => '_COOKIE', 'r' => '_REQUEST', 'f' => '_FILES');
 
 	/**
+	 * 从变量名的第一个字母获取类型，获取不到返回 Ko_Tool_Input::T_STR
+	 * @param string $sVarName 变量名称
+	 * @return int
+	 */
+	public static function IGetType($sVarName)
+	{
+		$first = substr($sVarName, 0, 1);
+		return self::$s_aTypeMap[$first] ?: self::T_STR;
+	}
+	
+	/**
 	 * 直接对一个变量进行参数校验
 	 * $param mixed $vValue 可以是一个值，也可以是一个数组
 	 * $param mixed $vVarType 可以是一个类型，也可以是一个类型数组，与 $vValue 对应
