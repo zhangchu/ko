@@ -85,7 +85,7 @@ class Ko_Mode_User extends Ko_Busi_Api
 	 *   'password' => 明文密码表，可选
 	 *   'varsalt' => 用于生成 session_token 的 salt 表
 	 *   'tmpsalt' => 使用 hash 密码登录使用的临时 salt 表，可选，对于过期的数据，应定期清理
-	 *   'persistent' => 长期登陆的 token 表，可选，对于过期的数据，应定期清理
+	 *   'persistent' => 长期登陆的 token 表，要求db_split类型，可选，对于过期的数据，应定期清理
 	 *   'session_timeout' => session_token 过期时间，可选
 	 *   'persistent_timeout' => persistent_token 过期时间，可选
 	 * )
