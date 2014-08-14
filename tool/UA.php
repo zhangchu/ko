@@ -11,7 +11,7 @@ class Ko_Tool_UA
 	private static $s_aSpiderKeys = array('spider', 'bot', 'slurp');
 	
 	/**
-	 * ÅĞ¶ÏUser-AgentÊÇ·ñÊÇÅÀ³æ
+	 * åˆ¤æ–­User-Agentæ˜¯å¦æ˜¯çˆ¬è™«
 	 *
 	 * @return boolean
 	 */
