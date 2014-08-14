@@ -120,6 +120,21 @@ class Ko_View_Smarty
 		return $sRet;
 	}
 
+	public function vAddPluginsDir($vDir)
+	{
+		$this->_oSmarty->addPluginsDir($vDir);
+	}
+	
+	public function vSetPluginsDir($vDir)
+	{
+		$this->_oSmarty->setPluginsDir($vDir);
+	}
+	
+	public function aGetPluginsDir()
+	{
+		$this->_oSmarty->getPluginsDir();
+	}
+
 	/**
 	 * @return boolean
 	 */
