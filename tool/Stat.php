@@ -6,7 +6,7 @@
  * @author zhangchu
  */
 
-include_once(dirname(__FILE__).'/../ko.class.php');
+//include_once(dirname(__FILE__).'/../ko.class.php');
 
 /**
  * 统计工具实现
@@ -54,6 +54,6 @@ class Ko_Tool_Stat
 	}
 }
 
-Ko_Tool_Stat::VStatCache($argv[1]);
+//Ko_Tool_Stat::VStatCache($argv[1]);
 
 ?>
