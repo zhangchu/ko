@@ -41,14 +41,6 @@ class Ko_Dao_DBHandler implements IKo_Dao_DBHelp, IKo_Dao_Table
 	}
 
 	/**
-	 * @return string
-	 */
-	public function sGetAutoIdField()
-	{
-		return $this->_oDB->sGetAutoIdField();
-	}
-	
-	/**
 	 * @return array
 	 */
 	public function aGetIndexField()

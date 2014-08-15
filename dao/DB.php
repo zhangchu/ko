@@ -96,18 +96,6 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 	/**
 	 * @return string
 	 */
-	public function sGetAutoIdField()
-	{
-		if (count($this->_aKeyField))
-		{
-			return $this->_aKeyField[0];
-		}
-		return $this->_sSplitField;
-	}
-
-	/**
-	 * @return string
-	 */
 	public function sGetIdKey()
 	{
 		return $this->_sIdKey;
@@ -167,7 +155,8 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 	 */
 	public function aInsert($aData, $aUpdate = array(), $aChange = array())
 	{
-		if ($bGenId = (strlen($this->_sIdKey) && strlen($autoIdField = $this->sGetAutoIdField()) && !array_key_exists($autoIdField, $aData)))
+		$autoIdField = $this->_sGetAutoIdField();
+		if ($bGenId = (strlen($this->_sIdKey) && strlen($autoIdField) && !array_key_exists($autoIdField, $aData)))
 		{
 			$aData[$autoIdField] = $this->_oGetIdGenerator()->iGetNewTimeID($this->_sIdKey);
 		}
@@ -177,7 +166,16 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 		{
 			$aRet['insertid'] = $aData[$autoIdField];
 		}
-		if (2 == $aRet['affectedrows'])
+		if (1 == $aRet['affectedrows'])
+		{
+			if ($aRet['insertid'] && strlen($autoIdField) && !array_key_exists($autoIdField, $aData))
+			{
+				$aData[$autoIdField] = $aRet['insertid'];
+			}
+			$aRet['data'] = $aData;
+			$this->_vDelCache($vHintId, $aData);
+		}
+		else if (2 == $aRet['affectedrows'])
 		{
 			$this->_vDelCache($vHintId, $aData);
 		}
@@ -378,6 +376,15 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 	}
 
 	//////////////////////////// 私有函数 ////////////////////////////
+
+	private function _sGetAutoIdField()
+	{
+		if (count($this->_aKeyField))
+		{
+			return $this->_aKeyField[0];
+		}
+		return $this->_sSplitField;
+	}
 
 	private function _aGet($vHintId, $aKey, $bOnlyFromInProcCache)
 	{

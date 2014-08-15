@@ -92,7 +92,6 @@ class Ko_Mode_Item extends Ko_Busi_Api
 		'sGetSplitField',
 		'aGetKeyField',
 		'aGetIndexField',
-		'sGetAutoIdField',
 		'sGetIdKey',
 		'iGetHintId',
 		'vGetAttribute',
@@ -162,12 +161,8 @@ class Ko_Mode_Item extends Ko_Busi_Api
 		$aInfo = $this->$itemDao->aInsert($aData, $aUpdate, $aChange);
 		if (1 == $aInfo['affectedrows'])
 		{
-			if ($aInfo['insertid'] && strlen($autoIdField = $this->sGetAutoIdField()) && !array_key_exists($autoIdField, $aData))
-			{
-				$aData[$autoIdField] = $aInfo['insertid'];
-			}
-			$this->_vInsert_Index($aData);
-			$this->_vFireInsert($this->$itemDao, $aData, $vAdmin);
+			$this->_vInsert_Index($aInfo['data']);
+			$this->_vFireInsert($this->$itemDao, $aInfo['data'], $vAdmin);
 		}
 		else if (2 == $aInfo['affectedrows'])
 		{
