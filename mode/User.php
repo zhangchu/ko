@@ -88,6 +88,7 @@ class Ko_Mode_User extends Ko_Busi_Api
 	 *   'persistent' => 长期登陆的 token 表，要求db_split类型，可选，对于过期的数据，应定期清理
 	 *   'session_timeout' => session_token 过期时间，可选
 	 *   'persistent_timeout' => persistent_token 过期时间，可选
+	 *   'persistent_strict' => 严格模式下，一个persistent_token只能验证一次，可选
 	 * )
 	 * </pre>
 	 *
@@ -98,6 +99,7 @@ class Ko_Mode_User extends Ko_Busi_Api
 	const TMPSALT_TIMEOUT				= 300;
 	const DEFAULT_SESSION_TIMEOUT		= 28800;	// 8 x 3600
 	const DEFAULT_PERSISTENT_TIMEOUT	= 2592000;	// 30 x 86400
+	const DEFAULT_PERSISTENT_STRICT     = true;
 
 	const E_REGISTER_ALREADY			= 1;		// 用户名已经注册
 	const E_REGISTER_UNKNOWN			= 9;		// 不可控的异常情况才会报此错误
@@ -480,7 +482,6 @@ class Ko_Mode_User extends Ko_Busi_Api
 		}
 		if (!$this->_bUpdatePersistentToken($uid, $series, $token, $sNewToken))
 		{
-			// 每个 persistent_token 只能验证一次，如果重复验证可能是因为数据被重复提交，或者失窃
 			$oOption = new Ko_Tool_SQL;
 			$this->$persistentDao->iDeleteByCond($uid, $oOption->oWhere('1'));
 			$iErrno = self::E_PERSISTENT_TOKEN;
@@ -719,17 +720,34 @@ class Ko_Mode_User extends Ko_Busi_Api
 
 	private function _bUpdatePersistentToken($iUid, $sSeries, $sToken, &$sNewToken)
 	{
-		$sNewToken = $this->_sGetNewSalt();
-		$sMtime = date('Y-m-d H:i:s');
-		$aUpdate = array(
-			'token' => $sNewToken,
-			'mtime' => $sMtime,
-			);
-		$persistentDao = $this->_aConf['persistent'].'Dao';
-		$key = array('uid' => $iUid, 'series' => $sSeries);
-		$oOption = new Ko_Tool_SQL;
-		$oOption->oWhere('token = ?', $sToken);
-		return $this->$persistentDao->iUpdate($key, $aUpdate, array(), $oOption) ? true : false;
+		if ($this->_iGetPersistentStrict())
+		{	// 每个 persistent_token 只能验证一次，如果重复验证可能是因为数据被重复提交，或者失窃
+			$sNewToken = $this->_sGetNewSalt();
+			$sMtime = date('Y-m-d H:i:s');
+			$aUpdate = array(
+				'token' => $sNewToken,
+				'mtime' => $sMtime,
+				);
+			$persistentDao = $this->_aConf['persistent'].'Dao';
+			$key = array('uid' => $iUid, 'series' => $sSeries);
+			$oOption = new Ko_Tool_SQL;
+			$oOption->oWhere('token = ?', $sToken);
+			return $this->$persistentDao->iUpdate($key, $aUpdate, array(), $oOption) ? true : false;
+		}
+		else
+		{	// 每次不更新 token，只做延期
+			$sNewToken = $sToken;
+			$sMtime = date('Y-m-d H:i:s');
+			$aUpdate = array(
+				'mtime' => $sMtime,
+				);
+			$persistentDao = $this->_aConf['persistent'].'Dao';
+			$key = array('uid' => $iUid, 'series' => $sSeries);
+			$oOption = new Ko_Tool_SQL;
+			$oOption->oWhere('token = ?', $sToken);
+			$this->$persistentDao->iUpdate($key, $aUpdate, array(), $oOption);
+			return true;
+		}
 	}
 
 	private function _sGetNewSalt()
@@ -816,6 +834,15 @@ class Ko_Mode_User extends Ko_Busi_Api
 			return $this->_aConf['persistent_timeout'];
 		}
 		return self::DEFAULT_PERSISTENT_TIMEOUT;
+	}
+
+	private function _iGetPersistentStrict()
+	{
+		if (isset($this->_aConf['persistent_strict']))
+		{
+			return $this->_aConf['persistent_strict'];
+		}
+		return self::DEFAULT_PERSISTENT_STRICT;
 	}
 }
 
