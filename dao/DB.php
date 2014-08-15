@@ -404,10 +404,7 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 		$oOption->oLimit(1);
 		$aRet = $this->_oGetSqlAgent()->aSelect($this->_sTable, $this->iGetHintId($vHintId), $oOption, 0, true);
 		$aRet = empty($aRet) ? array() : $aRet[0];
-		if (!empty($aRet))
-		{
-			$this->_oGetDBCache()->vSet($sCacheKey, $aRet, true);
-		}
+		$this->_oGetDBCache()->vSet($sCacheKey, $aRet, true);
 		return $aRet;
 	}
 
@@ -460,11 +457,8 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 			$aRet = $this->_oGetSqlAgent()->aSelect($this->_sTable, $this->iGetHintId($vHintId), $oOption, 0, true);
 			foreach ($aRet as $v)
 			{
-				if (!empty($v))
-				{
-					$sCacheKey = $aIdKeyMap[strval($v[$this->_aKeyField[0]])];
-					$this->_oGetDBCache()->vSet($sCacheKey, $v, false);
-				}
+				$sCacheKey = $aIdKeyMap[strval($v[$this->_aKeyField[0]])];
+				$this->_oGetDBCache()->vSet($sCacheKey, $v, false);
 			}
 		}
 	}
@@ -486,10 +480,7 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 			$aRet = $this->_oGetUObject()->aGetUObjectDetailLong($uoids, $this->_aUoFields);
 			foreach ($aRet as $i=>$item)
 			{
-				if (!empty($item))
-				{
-					$this->_oGetDBCache()->vSet($aKeys[$i+$c], $item, false);
-				}
+				$this->_oGetDBCache()->vSet($aKeys[$i+$c], $item, false);
 			}
 		}
 	}
