@@ -960,10 +960,10 @@ class Ko_Data_RedisK extends Ko_Data_KProxy
 	 * @return array|boolean list of elements in the specified score range (optionally with their scores).
 	 *                       false if key holds a value that is not a sorted set
 	 */
-	public function vZRevRangeByScore($sKey, $sMin, $sMax, $aOption = array())
+	public function vZRevRangeByScore($sKey, $sMax, $sMin, $aOption = array())
 	{
 		$bWithScores = isset($aOption['withscores']) && $aOption['withscores'];
-		$cmd = array('ZREVRANGEBYSCORE', $sKey, $sMin, $sMax);
+		$cmd = array('ZREVRANGEBYSCORE', $sKey, $sMax, $sMin);
 		if ($bWithScores)
 		{
 			$cmd[] = 'WITHSCORES';
