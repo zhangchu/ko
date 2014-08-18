@@ -27,4 +27,23 @@ class Ko_Tool_UA
 		}
 		return false;
 	}
+	
+	/**
+	 * 判断User-Agent是否非法
+	 *
+	 * @return boolean
+	 */
+	public static function BIsInvalid($sUa)
+	{
+		if ('' === $sUa)
+		{
+			return true;
+		}
+		$ua = strtolower(substr($sUa, 0, 4));
+		if ('wget' === $ua || 'curl' === $ua)
+		{
+			return true;
+		}
+		return false;
+	}
 }
