@@ -108,16 +108,8 @@ class Ko_View_Smarty
 	 */
 	public function sFetch($sFilePath, $sCacheId = null)
 	{
-		try
-		{
-			$this->_vPreAutoFetch($sFilePath);
-			$sRet = $this->_oSmarty->fetch($sFilePath, $sCacheId);
-		}
-		catch(Exception $e)
-		{
-			$sRet = $e->getMessage();
-		}
-		return $sRet;
+		$this->_vPreAutoFetch($sFilePath);
+		return $this->_oSmarty->fetch($sFilePath, $sCacheId);
 	}
 
 	public function vAddPluginsDir($vDir)
