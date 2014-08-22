@@ -39,11 +39,6 @@ class Ko_Tool_UA
 		{
 			return true;
 		}
-		$ua = strtolower(substr($sUa, 0, 4));
-		if ('wget' === $ua || 'curl' === $ua)
-		{
-			return true;
-		}
 		return false;
 	}
 }
