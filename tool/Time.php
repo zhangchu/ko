@@ -15,10 +15,25 @@ class Ko_Tool_Time
 	 */
 	public static function BCheckTime($aCron, $iMinute, $iHour, $iWeek, $iDay)
 	{
+		if (!(self::_BIsEmpty('day', $aCron) && self::_BIsEmpty('week', $aCron))
+			&& self::_BIsEmpty('hour', $aCron))
+		{
+			$aCron['hour'] = array(1);
+		}
+		if (!self::_BIsEmpty('hour', $aCron)
+			&& self::_BIsEmpty('minute', $aCron))
+		{
+			$aCron['minute'] = array(1);
+		}
 		return self::_BCheckTimeArr('day', $iDay, $aCron)
 			&& self::_BCheckTimeArr('week', $iWeek, $aCron)
 			&& self::_BCheckTimeArr('hour', $iHour, $aCron)
 			&& self::_BCheckTimeArr('minute', $iMinute, $aCron);
+	}
+	
+	private static function _BIsEmpty($sUnit, $aCron)
+	{
+		return !isset($aCron[$sUnit]) || '' === $aCron[$sUnit] || array() === $aCron[$sUnit];
 	}
 
 	private static function _BCheckTimeArr($sUnit, $iUnit, $aCron)
