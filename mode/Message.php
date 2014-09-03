@@ -430,6 +430,62 @@ class Ko_Mode_Message extends Ko_Busi_Api
 		return $this->aGetMessageListWithTotal($iUid, $iThread, $iTotal, $iStart, $iNum);
 	}
 	
+	/**
+	 * 用户查看会话消息列表详情，根据最大id查询
+	 *
+	 * @return array
+	 */
+	public function aGetMessageListByMaxmid($iUid, $iThread, $iMaxmid, $iNum)
+	{
+		if (isset($this->_aConf['userthread']))
+		{
+			$userthreadDao = $this->_aConf['userthread'].'Dao';
+			$info = $this->$userthreadDao->aGet(array('uid' => $iUid, 'mid' => $iThread));
+			if (empty($info))
+			{
+				return array();
+			}
+		}
+		
+		$oOption = new Ko_Tool_SQL;
+		if (isset($this->_aConf['userthread']))
+		{
+			$oOption->oWhere('ctime >= ?', $info['jointime']);
+		}
+		$oOption->oAnd('mid < ?', $iMaxmid)->oOrderBy('ctime desc')->oLimit($iNum);
+		return $this->_aGetMessageList($iUid, $iThread, $oOption);
+	}
+	
+	/**
+	 * 用户查看会话消息列表详情，根据最小id查询
+	 *
+	 * @return array
+	 */
+	public function aGetMessageListByMinmid($iUid, $iThread, $iMinmid, $iNum)
+	{
+		if (isset($this->_aConf['userthread']))
+		{
+			$userthreadDao = $this->_aConf['userthread'].'Dao';
+			$info = $this->$userthreadDao->aGet(array('uid' => $iUid, 'mid' => $iThread));
+			if (empty($info))
+			{
+				return array();
+			}
+			if ($info['unread'])
+			{
+				$this->$userthreadDao->iUpdate(array('uid' => $iUid, 'mid' => $iThread), array('unread' => 0));
+			}
+		}
+		
+		$oOption = new Ko_Tool_SQL;
+		if (isset($this->_aConf['userthread']))
+		{
+			$oOption->oWhere('ctime >= ?', $info['jointime']);
+		}
+		$oOption->oAnd('mid > ?', $iMinmid)->oOrderBy('ctime desc')->oLimit($iNum);
+		return $this->_aGetMessageList($iUid, $iThread, $oOption);
+	}
+	
 	private function _aGetThreadList($iUid, $oOption)
 	{
 		$list = $this->_aGetUserThreadList($iUid, $oOption);
