@@ -452,7 +452,17 @@ class Ko_Mode_Message extends Ko_Busi_Api
 		{
 			$oOption->oWhere('ctime >= ?', $info['jointime']);
 		}
-		$oOption->oAnd('mid < ?', $iMaxmid)->oOrderBy('ctime desc')->oLimit($iNum);
+		$listDao = $this->_aConf['list'].'Dao';
+		$minfo = $this->$listDao->aGet(array('threadmid' => $iThread, 'mid' => $iMaxmid));
+		if (empty($minfo))
+		{
+			$oOption->oAnd('mid < ?', $iMaxmid);
+		}
+		else
+		{
+			$oOption->oAnd('ctime < ?', $minfo['ctime']);
+		}
+		$oOption->oOrderBy('ctime desc')->oLimit($iNum);
 		return $this->_aGetMessageList($iUid, $iThread, $oOption);
 	}
 	
@@ -482,7 +492,17 @@ class Ko_Mode_Message extends Ko_Busi_Api
 		{
 			$oOption->oWhere('ctime >= ?', $info['jointime']);
 		}
-		$oOption->oAnd('mid > ?', $iMinmid)->oOrderBy('ctime desc')->oLimit($iNum);
+		$listDao = $this->_aConf['list'].'Dao';
+		$minfo = $this->$listDao->aGet(array('threadmid' => $iThread, 'mid' => $iMinmid));
+		if (empty($minfo))
+		{
+			$oOption->oAnd('mid > ?', $iMinmid);
+		}
+		else
+		{
+			$oOption->oAnd('ctime > ?', $minfo['ctime']);
+		}
+		$oOption->oOrderBy('ctime desc')->oLimit($iNum);
 		return $this->_aGetMessageList($iUid, $iThread, $oOption);
 	}
 	
