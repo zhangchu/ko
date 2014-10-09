@@ -66,7 +66,8 @@ class Ko_Mode_XList extends Ko_Busi_Api
 	 *   ),
 	 *   'list' => array(
 	 *     'orderfield' => array('uid', ...),
-	 *     'pagenum' => 10,
+	 *     'pagenum' => 10,  每页数据条目数
+	 *     'paging' => 0,    显示翻页数量
 	 *     'show' => array('uid', 'content', ...),
 	 *     'hide' => array('uid', ...),
 	 *     'condition' => array(
@@ -362,6 +363,11 @@ class Ko_Mode_XList extends Ko_Busi_Api
 			return $this->_aConf['list']['pagenum'];
 		}
 		return 10;
+	}
+
+	private function _iGetListPaging()
+	{
+		return intval($this->_aConf['list']['paging']);
 	}
 
 	private function _aGetListOrderField()
@@ -885,20 +891,50 @@ class Ko_Mode_XList extends Ko_Busi_Api
 		$startNum = ($curpage - 1) * $pagenum + 1;
 		$endNum = $startNum + $iCount - 1;
 
-		$newLink = $this->_sGetLinkHtml($this->_sGetInsertLink().'sXSAction=insert&'.$this->_aHttpBuildQuery($para), 'Insert');
-
-		$para['iXSPage'] = $curpage - 1;
-		$prevLink = ($curpage > 1) ? $this->_sGetLinkHtml('?'.$this->_aHttpBuildQuery($para), 'Prev') : 'Prev';
-
-		$para['iXSPage'] = $curpage + 1;
-		$nextLink = ($curpage < $totalpage) ? $this->_sGetLinkHtml('?'.$this->_aHttpBuildQuery($para), 'Next') : 'Next';
-
-		$html = '<div style="float:left;">';
+		if ($totalpage)
+		{
+			$para['iXSPage'] = $curpage - 1;
+			$prevLink = ($curpage > 1) ? $this->_sGetLinkHtml('?'.$this->_aHttpBuildQuery($para), 'Prev') : 'Prev';
+			$para['iXSPage'] = $curpage + 1;
+			$nextLink = ($curpage < $totalpage) ? $this->_sGetLinkHtml('?'.$this->_aHttpBuildQuery($para), 'Next') : 'Next';
+			
+			$paging = $this->_iGetListPaging();
+			if ($paging)
+			{
+				$halfpaging = ceil(($paging - 1) / 2);
+				$startpage = max(1, $curpage - $halfpaging);
+				$endpage = min($totalpage, max($startpage + $paging - 1, $curpage + $halfpaging));
+				$startpage = max(1, $endpage - $paging + 1);
+				$subflag = false;
+				while ($endpage - $startpage >= $paging)
+				{
+					$subflag ? $endpage-- : $startpage++;
+					$subflag = !$subflag;
+				}
+				$pagingLink = array();
+				for ($i=$startpage; $i<=$endpage; ++$i)
+				{
+					$para['iXSPage'] = $i;
+					$pagingLink[] = ($i != $curpage) ? $this->_sGetLinkHtml('?'.$this->_aHttpBuildQuery($para), $i) : $i;
+				}
+				$pagingLink = $prevLink.' '.((1 == $startpage) ? '' : '.. ').implode(' ', $pagingLink).' '.(($totalpage == $endpage) ? '' : '.. ').$nextLink;
+			}
+			else
+			{
+				$pagingLink = $prevLink.' '.$nextLink;
+			}
+			unset($para['iXSPage']);
+			$pagingLink .= '</div><div style="float:left;margin-right:10px;"><form action="?'.$this->_aHttpBuildQuery($para).'" method="GET"><input type="text" name="iXSPage" value="" size="4"><input type="submit" value="go"></form></div><div style="float:left;margin-right:10px;">';
+			$pagingLink .= '</div><div style="float:left;margin-right:10px;">TotalPage: '.$curpage.'/'.$totalpage;
+		}
+		
+		$html = '<div style="float:left;margin-right:10px;">';
 		if ($this->_bIsActionEnable('insert'))
 		{
-			$html .= $newLink.' | ';
+			$newLink = $this->_sGetLinkHtml($this->_sGetInsertLink().'sXSAction=insert&'.$this->_aHttpBuildQuery($para), 'Insert');
+			$html .= $newLink.'</div><div style="float:left;margin-right:10px;">';
 		}
-		$html .= 'Total: '.htmlspecialchars($iTotal).($iCount ? ', '.htmlspecialchars($startNum).' - '.htmlspecialchars($endNum) : '').' | '.$prevLink.' '.$nextLink.'</div><div style="clear:both;"></div>'."\n";
+		$html .= 'Total: '.htmlspecialchars($iTotal).($iCount ? ', '.htmlspecialchars($startNum).' - '.htmlspecialchars($endNum) : '').'</div><div style="float:left;margin-right:10px;">'.$pagingLink.'</div><div style="clear:both;"></div>'."\n";
 
 		return $html;
 	}
