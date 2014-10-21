@@ -56,7 +56,7 @@ class Ko_Tool_SQL
 	 */
 	public function oWhere()
 	{
-		$this->_sWhere = $this->_sEscapeWhere(func_get_args());
+		$this->_sWhere = Ko_Tool_Option::SEscapeWhere(func_get_args());
 		return $this;
 	}
 
@@ -65,7 +65,7 @@ class Ko_Tool_SQL
 	 */
 	public function oAnd()
 	{
-		$where = $this->_sEscapeWhere(func_get_args());
+		$where = Ko_Tool_Option::SEscapeWhere(func_get_args());
 		if (strlen($this->_sWhere))
 		{
 			$this->_sWhere = '('.$this->_sWhere.') AND ('.$where.')';
@@ -82,7 +82,7 @@ class Ko_Tool_SQL
 	 */
 	public function oOr()
 	{
-		$where = $this->_sEscapeWhere(func_get_args());
+		$where = Ko_Tool_Option::SEscapeWhere(func_get_args());
 		if (strlen($this->_sWhere))
 		{
 			$this->_sWhere = '('.$this->_sWhere.') OR ('.$where.')';
@@ -108,7 +108,7 @@ class Ko_Tool_SQL
 	 */
 	public function oHaving()
 	{
-		$this->_sHaving = $this->_sEscapeWhere(func_get_args());
+		$this->_sHaving = Ko_Tool_Option::SEscapeWhere(func_get_args());
 		return $this;
 	}
 
@@ -269,35 +269,6 @@ class Ko_Tool_SQL
 		return $this->_bForceMaster;
 	}
 
-	private function _sEscapeWhere($aArgs)
-	{
-		$iArgNum = count($aArgs);
-		assert($iArgNum && false === strpos($aArgs[0], '\'') && false === strpos($aArgs[0], '"'));
-
-		$where = $aArgs[0];
-		$pos = 0;
-		for ($i=1; $i<$iArgNum; ++$i)
-		{
-			$pos = strpos($where, '?', $pos);
-			if (false === $pos)
-			{
-				break;
-			}
-			if (is_array($aArgs[$i]))
-			{
-				$escapeArg = array_map(array('Ko_Data_Mysql', 'SEscape'), $aArgs[$i]);
-				$sReplace = '"'.implode('", "', $escapeArg).'"';
-			}
-			else
-			{
-				$sReplace = '"'.Ko_Data_Mysql::SEscape($aArgs[$i]).'"';
-			}
-			$where = substr($where, 0, $pos).$sReplace.substr($where, $pos + 1);
-			$pos += strlen($sReplace);
-		}
-		return $where;
-	}
-	
 	private function _sFormatWhere($sWhere)
 	{
 		$sWhere = trim($sWhere);
