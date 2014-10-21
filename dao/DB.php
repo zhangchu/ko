@@ -341,13 +341,12 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 		if ($this->_bGetForceInactive($oOption))
 		{
 			$no = $iHintId % $this->iTableCount();
-			$realtable = $this->sGetRealTableName($no);
-			$sql = $oOption->vSQL($realtable);
+			$sql = $oOption->vSQL($this->sGetRealTableName($no));
 			$oMysql = $this->oConnectDB($no, 'inactive');
+			$list = array();
 			if ($oOption->bCalcFoundRows())
 			{
 				$oMysql->bQuery($sql[0]);
-				$list = array();
 				while ($info = $oMysql->aFetchAssoc())
 				{
 					$list[] = $info;
@@ -355,18 +354,16 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 				$oMysql->bQuery($sql[1]);
 				$info = $oMysql->aFetchAssoc();
 				$oOption->vSetFoundRows($info['FOUND_ROWS()']);
-				return $list;
 			}
 			else
 			{
 				$oMysql->bQuery($sql);
-				$list = array();
 				while ($info = $oMysql->aFetchAssoc())
 				{
 					$list[] = $info;
 				}
-				return $list;
 			}
+			return $list;
 		}
 		return $this->_oGetSqlAgent()->aSelect($this->_sTable, $iHintId, $oOption, $iCacheTime, $this->_bGetForceMaster($oOption));
 	}
