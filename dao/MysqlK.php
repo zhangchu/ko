@@ -6,12 +6,6 @@
  * @author zhangchu
  */
 
-//define('KO_DB_HOST', '192.168.0.140');
-//define('KO_DB_USER', 'dev');
-//define('KO_DB_PASS', 'dev2008');
-//define('KO_DB_NAME', 'dev_config');
-//include_once('../ko.class.php');
-
 /**
  * 数据表分表直连操作类实现，使用了 server_setting, kind_setting, table_setting 来决定分表位置
  */
@@ -20,25 +14,25 @@ class Ko_Dao_MysqlK implements IKo_Dao_Table
 	private $_aServerList = array();
 	private $_aTableList = array();
 
-	protected function __construct($sKind, $bSlave = false)
+	protected function __construct($sKind)
 	{
 		$oMysql = Ko_Data_Mysql::OInstance(KO_DB_HOST, KO_DB_USER, KO_DB_PASS, KO_DB_NAME);
-
-		$allmaster = array();
-		$sql = 'select * from server_setting where master_sid = 0';
+		
+		$sql = 'select * from server_setting order by master_sid, active desc, sid desc';
 		$oMysql->bQuery($sql);
 		while ($info = $oMysql->aFetchAssoc())
 		{
-			$allmaster[$info['sid']] = $info;
-		}
-		$allslave = array();
-		if ($bSlave)
-		{
-			$sql = 'select * from server_setting where master_sid != 0 and active != 0';
-			$oMysql->bQuery($sql);
-			while ($info = $oMysql->aFetchAssoc())
+			if (0 == $info['master_sid'])
 			{
-				$allslave[$info['master_sid']][] = $info;
+				$this->_aServerList[$info['sid']]['master'][] = $info;
+			}
+			else if ($info['active'])
+			{
+				$this->_aServerList[$info['master_sid']]['slave'][] = $info;
+			}
+			else
+			{
+				$this->_aServerList[$info['master_sid']]['inactive'][] = $info;
 			}
 		}
 
@@ -47,22 +41,13 @@ class Ko_Dao_MysqlK implements IKo_Dao_Table
 		while ($info = $oMysql->aFetchAssoc())
 		{
 			$this->_aTableList[] = $info;
-			$sid = $info['sid'];
-			if ($bSlave && !empty($allslave[$sid]))
-			{
-				$this->_aServerList[$sid] = $allslave[$sid][0];
-			}
-			else
-			{
-				$this->_aServerList[$sid] = $allmaster[$sid];
-			}
 		}
 		assert(!empty($this->_aTableList));
 	}
 	
-	public static function OInstance($sKind, $bSlave = false)
+	public static function OInstance($sKind)
 	{
-		return new self($sKind, $bSlave);
+		return new self($sKind);
 	}
 
 	/**
@@ -76,12 +61,18 @@ class Ko_Dao_MysqlK implements IKo_Dao_Table
 	/**
 	 * @return Ko_Data_Mysql
 	 */
-	public function oConnectDB($no)
+	public function oConnectDB($no, $sTag = 'slave')
 	{
 		$sid = $this->_aTableList[$no]['sid'];
-		return Ko_Data_Mysql::OInstance($this->_aServerList[$sid]['host'].':'.$this->_aServerList[$sid]['port'],
-			$this->_aServerList[$sid]['user'],
-			$this->_aServerList[$sid]['passwd'],
+		if (empty($this->_aServerList[$sid][$sTag]))
+		{
+			$sTag = empty($this->_aServerList[$sid]['slave']) ? 'master' : 'slave';
+		}
+		assert(!empty($this->_aServerList[$sid][$sTag]));
+		return Ko_Data_Mysql::OInstance(
+			$this->_aServerList[$sid][$sTag][0]['host'].':'.$this->_aServerList[$sid][$sTag][0]['port'],
+			$this->_aServerList[$sid][$sTag][0]['user'],
+			$this->_aServerList[$sid][$sTag][0]['passwd'],
 			$this->_aTableList[$no]['db_name']);
 	}
 
@@ -97,13 +88,13 @@ class Ko_Dao_MysqlK implements IKo_Dao_Table
 		return $this->_aTableList[$no]['kind'].'_'.$this->_aTableList[$no]['no'];
 	}
 
-	public function vDoFetchSelect($sSql, $fnCallback)
+	public function vDoFetchSelect($sSql, $fnCallback, $sTag = 'slave')
 	{
 		$kind = $this->_aTableList[0]['kind'];
 		$tcount = $this->iTableCount();
 		for ($i=0; $i<$tcount; ++$i)
 		{
-			$oMysql = $this->oConnectDB($i);
+			$oMysql = $this->oConnectDB($i, $sTag);
 			$sql = str_replace($kind, $this->sGetRealTableName($i), $sSql);
 			$oMysql->bQuery($sql);
 			while ($info = $oMysql->aFetchAssoc())
@@ -113,28 +104,3 @@ class Ko_Dao_MysqlK implements IKo_Dao_Table
 		}
 	}
 }
-
-/*
-function fntest($info, $no)
-{
-	echo 'fntest '.$no."\n";
-	var_dump($info);
-}
-class A
-{
-	function fntest2($info, $no)
-	{
-		echo 'A::fntest2 '.$no."\n";
-		var_dump($info);
-	}
-}
-$test = Ko_Dao_MysqlK::OInstance('s_user_info');
-$sql = "select * from s_user_info limit 2";
-$test->vDoFetchSelect($sql, 'fntest');
-$test->vDoFetchSelect($sql, array('A', 'fntest2'));
-
-$test = Ko_Dao_MysqlK::OInstance('s_life_province');
-$sql = "select *, length(name) from s_life_province limit 2";
-$test->vDoFetchSelect($sql, 'fntest');
-*/
-?>

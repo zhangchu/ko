@@ -6,12 +6,6 @@
  * @author zhangchu
  */
 
-//define('KO_DB_HOST', '192.168.0.140');
-//define('KO_DB_USER', 'dev');
-//define('KO_DB_PASS', 'dev2008');
-//define('KO_DB_NAME', 'dev_config');
-//include_once('../ko.class.php');
-
 /**
  * 数据表分表直连操作类
  */
@@ -19,14 +13,14 @@ class Ko_Dao_Mysql implements IKo_Dao_Table
 {
 	private $_sKind;
 
-	protected function __construct($sKind, $bSlave = false)
+	protected function __construct($sKind)
 	{
 		$this->_sKind = $sKind;
 	}
 
-	public static function OInstance($sKind, $bSlave = false)
+	public static function OInstance($sKind)
 	{
-		return new self($sKind, $bSlave);
+		return new self($sKind);
 	}
 	
 	/**
@@ -40,7 +34,7 @@ class Ko_Dao_Mysql implements IKo_Dao_Table
 	/**
 	 * @return Ko_Data_Mysql
 	 */
-	public function oConnectDB($no)
+	public function oConnectDB($no, $sTag = 'slave')
 	{
 		return Ko_Data_Mysql::OInstance(KO_DB_HOST, KO_DB_USER, KO_DB_PASS, KO_DB_NAME);
 	}
@@ -53,12 +47,12 @@ class Ko_Dao_Mysql implements IKo_Dao_Table
 		return $this->_sKind;
 	}
 
-	public function vDoFetchSelect($sSql, $fnCallback)
+	public function vDoFetchSelect($sSql, $fnCallback, $sTag = 'slave')
 	{
 		$tcount = $this->iTableCount();
 		for ($i=0; $i<$tcount; ++$i)
 		{
-			$oMysql = $this->oConnectDB($i);
+			$oMysql = $this->oConnectDB($i, $sTag);
 			$oMysql->bQuery($sSql);
 			while ($info = $oMysql->aFetchAssoc())
 			{
@@ -67,28 +61,3 @@ class Ko_Dao_Mysql implements IKo_Dao_Table
 		}
 	}
 }
-
-/*
-function fntest($info, $no)
-{
-	echo 'fntest '.$no."\n";
-	var_dump($info);
-}
-class A
-{
-	function fntest2($info, $no)
-	{
-		echo 'A::fntest2 '.$no."\n";
-		var_dump($info);
-	}
-}
-$test = Ko_Dao_Mysql::OInstance('server_setting');
-$sql = "select * from server_setting limit 2";
-$test->vDoFetchSelect($sql, 'fntest');
-$test->vDoFetchSelect($sql, array('A', 'fntest2'));
-
-$test = Ko_Dao_Mysql::OInstance('kind_setting');
-$sql = "select *, length(kind) from kind_setting limit 2";
-$test->vDoFetchSelect($sql, 'fntest');
-*/
-?>

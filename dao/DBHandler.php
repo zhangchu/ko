@@ -132,9 +132,9 @@ class Ko_Dao_DBHandler implements IKo_Dao_DBHelp, IKo_Dao_Table
 	/**
 	 * @return Ko_Data_Mysql
 	 */
-	public function oConnectDB($no)
+	public function oConnectDB($no, $sTag = 'slave')
 	{
-		return $this->_oDB->oConnectDB($no);
+		return $this->_oDB->oConnectDB($no, $sTag);
 	}
 	
 	/**
@@ -145,9 +145,9 @@ class Ko_Dao_DBHandler implements IKo_Dao_DBHelp, IKo_Dao_Table
 		return $this->_oDB->sGetRealTableName($no);
 	}
 	
-	public function vDoFetchSelect($sSql, $fnCallback)
+	public function vDoFetchSelect($sSql, $fnCallback, $sTag = 'slave')
 	{
-		$this->_oDB->vDoFetchSelect($sSql, $fnCallback);
+		$this->_oDB->vDoFetchSelect($sSql, $fnCallback, $sTag);
 	}
 	
 	/**

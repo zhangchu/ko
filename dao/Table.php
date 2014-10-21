@@ -18,10 +18,10 @@ interface IKo_Dao_Table
 	/**
 	 * @return Ko_Data_Mysql
 	 */
-	public function oConnectDB($no);
+	public function oConnectDB($no, $sTag = 'slave');
 	/**
 	 * @return string
 	 */
 	public function sGetRealTableName($no);
-	public function vDoFetchSelect($sSql, $fnCallback);
+	public function vDoFetchSelect($sSql, $fnCallback, $sTag = 'slave');
 }

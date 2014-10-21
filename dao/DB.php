@@ -357,9 +357,9 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 	/**
 	 * @return Ko_Data_Mysql
 	 */
-	public function oConnectDB($no)
+	public function oConnectDB($no, $sTag = 'slave')
 	{
-		return $this->_oGetDirectMysql()->oConnectDB($no);
+		return $this->_oGetDirectMysql()->oConnectDB($no, $sTag);
 	}
 
 	/**
@@ -370,9 +370,9 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 		return $this->_oGetDirectMysql()->sGetRealTableName($no);
 	}
 
-	public function vDoFetchSelect($sSql, $fnCallback)
+	public function vDoFetchSelect($sSql, $fnCallback, $sTag = 'slave')
 	{
-		$this->_oGetDirectMysql()->vDoFetchSelect($sSql, $fnCallback);
+		$this->_oGetDirectMysql()->vDoFetchSelect($sSql, $fnCallback, $sTag);
 	}
 
 	//////////////////////////// 私有函数 ////////////////////////////
@@ -647,7 +647,7 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 	{
 		if (is_null($this->_oDirectMysql))
 		{
-			$this->_oDirectMysql = Ko_Dao_MysqlAgent::OInstance($this->_sTable, true);
+			$this->_oDirectMysql = Ko_Dao_MysqlAgent::OInstance($this->_sTable);
 		}
 		return $this->_oDirectMysql;
 	}

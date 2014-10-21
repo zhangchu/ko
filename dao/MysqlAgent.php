@@ -11,14 +11,14 @@
  */
 class Ko_Dao_MysqlAgent
 {
-	public static function OInstance($sKind, $bSlave = false)
+	public static function OInstance($sKind)
 	{
 		switch (KO_DB_ENGINE)
 		{
 		case 'kproxy':
-			return Ko_Dao_MysqlK::OInstance($sKind, $bSlave);
+			return Ko_Dao_MysqlK::OInstance($sKind);
 		case 'mysql':
-			return Ko_Dao_Mysql::OInstance($sKind, $bSlave);
+			return Ko_Dao_Mysql::OInstance($sKind);
 		default:
 			assert(0);
 		}
