@@ -154,6 +154,21 @@ class Ko_Tool_MONGO
 		$this->_aCommand = $aCommand;
 		return $this;
 	}
+
+	public function vSetFoundRows($iFoundRows)
+	{
+		assert($this->_bCalcFoundRows);
+		$this->_iFoundRows = $iFoundRows;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function iGetFoundRows()
+	{
+		assert($this->_bCalcFoundRows);
+		return $this->_iFoundRows;
+	}
 	
 	/**
 	 * @return array
@@ -225,21 +240,6 @@ class Ko_Tool_MONGO
 	public function aCommand()
 	{
 		return $this->_aCommand;
-	}
-
-	public function vSetFoundRows($iFoundRows)
-	{
-		assert($this->_bCalcFoundRows);
-		$this->_iFoundRows = $iFoundRows;
-	}
-
-	/**
-	 * @return int
-	 */
-	public function iGetFoundRows()
-	{
-		assert($this->_bCalcFoundRows);
-		return $this->_iFoundRows;
 	}
 }
 

@@ -157,6 +157,46 @@ class Ko_Tool_SQL
 		return $this;
 	}
 
+	public function vSetFoundRows($iFoundRows)
+	{
+		assert($this->_bCalcFoundRows);
+		$this->_iFoundRows = $iFoundRows;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function iGetFoundRows()
+	{
+		assert($this->_bCalcFoundRows);
+		return $this->_iFoundRows;
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function sWhereOrderLimit()
+	{
+		return $this->_sFormatWhere($this->_sWhere)
+			.' '.$this->_sFormatOrder($this->_sOrderBy)
+			.' '.$this->_sFormatLimit(0, $this->_iLimit);
+	}
+
+	/**
+	 * @return string|array
+	 */
+	public function vSQL($sKind)
+	{
+		$sql = 'SELECT'.($this->_bCalcFoundRows ? ' SQL_CALC_FOUND_ROWS' : '').' '.$this->_sFields
+			.' FROM '.$sKind
+			.' '.$this->_sFormatWhere($this->_sWhere)
+			.' '.$this->_sFormatGroup($this->_sGroupBy)
+			.' '.$this->_sFormatHaving($this->_sHaving)
+			.' '.$this->_sFormatOrder($this->_sOrderBy)
+			.' '.$this->_sFormatLimit($this->_iOffset, $this->_iLimit);
+		return $this->_bCalcFoundRows ? array($sql, 'SELECT FOUND_ROWS()') : $sql;
+	}
+	
 	/**
 	 * @return string
 	 */
@@ -229,21 +269,6 @@ class Ko_Tool_SQL
 		return $this->_bForceMaster;
 	}
 
-	public function vSetFoundRows($iFoundRows)
-	{
-		assert($this->_bCalcFoundRows);
-		$this->_iFoundRows = $iFoundRows;
-	}
-
-	/**
-	 * @return int
-	 */
-	public function iGetFoundRows()
-	{
-		assert($this->_bCalcFoundRows);
-		return $this->_iFoundRows;
-	}
-
 	private function _sEscapeWhere($aArgs)
 	{
 		$iArgNum = count($aArgs);
@@ -271,6 +296,61 @@ class Ko_Tool_SQL
 			$pos += strlen($sReplace);
 		}
 		return $where;
+	}
+	
+	private function _sFormatWhere($sWhere)
+	{
+		$sWhere = trim($sWhere);
+		if ('' != $sWhere && strtoupper(substr($sWhere, 0, 6)) != 'WHERE ')
+		{
+			$sWhere = 'WHERE '.$sWhere;
+		}
+		return $sWhere;
+	}
+
+	private function _sFormatGroup($sGroup)
+	{
+		$sGroup = trim($sGroup);
+		if ('' != $sGroup && strtoupper(substr($sGroup, 0, 6)) != 'GROUP ')
+		{
+			$sGroup = 'GROUP BY '.$sGroup;
+		}
+		return $sGroup;
+	}
+
+	private function _sFormatHaving($sHaving)
+	{
+		$sHaving = trim($sHaving);
+		if ('' != $sHaving && strtoupper(substr($sHaving, 0, 7)) != 'HAVING ')
+		{
+			$sHaving = 'HAVING '.$sHaving;
+		}
+		return $sHaving;
+	}
+
+	private function _sFormatOrder($sOrder)
+	{
+		$sOrder = trim($sOrder);
+		if ('' != $sOrder && strtoupper(substr($sOrder, 0, 6)) != 'ORDER ')
+		{
+			$sOrder = 'ORDER BY '.$sOrder;
+		}
+		return $sOrder;
+	}
+
+	private function _sFormatLimit($iStart, $iNum)
+	{
+		$iStart = intval($iStart);
+		$iNum = intval($iNum);
+		if ($iStart)
+		{
+			return 'LIMIT '.$iStart.', '.$iNum;
+		}
+		if ($iNum)
+		{
+			return 'LIMIT '.$iNum;
+		}
+		return '';
 	}
 }
 

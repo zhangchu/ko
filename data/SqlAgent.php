@@ -39,37 +39,29 @@ class Ko_Data_SqlAgent
 
 	public function iUpdate($sKind, $iHintId, $aUpdate, $aChange, $oOption)
 	{
-		$sql = $this->_sUpdateSql($sKind, $aUpdate, $aChange, $oOption->sWhere(), $oOption->sOrderBy(), $oOption->iLimit());
+		$sql = $this->_sUpdateSql($sKind, $aUpdate, $aChange, $oOption);
 		$info = $this->_aQuery($sKind, $iHintId, $sql);
 		return $info['affectedrows'];
 	}
 
 	public function iDelete($sKind, $iHintId, $oOption)
 	{
-		$sql = $this->_sDeleteSql($sKind, $oOption->sWhere(), $oOption->sOrderBy(), $oOption->iLimit());
+		$sql = $this->_sDeleteSql($sKind, $oOption);
 		$info = $this->_aQuery($sKind, $iHintId, $sql);
 		return $info['affectedrows'];
 	}
 
 	public function aSelect($sKind, $iHintId, $oOption, $iCacheTime, $bMaster)
 	{
+		$sql = $oOption->vSQL($sKind);
+		$info = $this->_aQuery($sKind, $iHintId, $sql, $iCacheTime, $bMaster);
 		if ($oOption->bCalcFoundRows())
 		{
-			$sqls = array();
-			$sqls[0] = $this->_sSelectSql($sKind, $oOption->sWhere(), $oOption->sOrderBy(),
-				$oOption->iOffset(), max(1, $oOption->iLimit()), $oOption->sFields(),
-				$oOption->sGroupBy(), $oOption->sHaving(), true);
-			$sqls[1] = 'SELECT FOUND_ROWS()';
-			$info = $this->_aQuery($sKind, $iHintId, $sqls, $iCacheTime, $bMaster);
 			$oOption->vSetFoundRows($info[1]['data'][0]['FOUND_ROWS()']);
 			return $info[0]['data'];
 		}
 		else
 		{
-			$sql = $this->_sSelectSql($sKind, $oOption->sWhere(), $oOption->sOrderBy(),
-				$oOption->iOffset(), $oOption->iLimit(), $oOption->sFields(),
-				$oOption->sGroupBy(), $oOption->sHaving(), false);
-			$info = $this->_aQuery($sKind, $iHintId, $sql, $iCacheTime, $bMaster);
 			return $info['data'];
 		}
 	}
@@ -138,95 +130,19 @@ class Ko_Data_SqlAgent
 		return $sql;
 	}
 
-	private function _sUpdateSql($sKind, $aUpdate, $aChange, $sWhere, $sOrder, $iLimit)
+	private function _sUpdateSql($sKind, $aUpdate, $aChange, $oOption)
 	{
-		$sql = 'UPDATE '.$sKind.' SET '.$this->_sGetSetSql($aUpdate, $aChange);
-		$sql .= ' '.$this->_sFormatWhere($sWhere);
-		$sql .= ' '.$this->_sFormatOrder($sOrder);
-		$sql .= ' '.$this->_sFormatLimit(0, $iLimit);
+		$sql = 'UPDATE '.$sKind
+			.' SET '.$this->_sGetSetSql($aUpdate, $aChange)
+			.' '.$oOption->sWhereOrderLimit();
 		return $sql;
 	}
 
-	private function _sDeleteSql($sKind, $sWhere, $sOrder, $iLimit)
+	private function _sDeleteSql($sKind, $oOption)
 	{
-		$sql = 'DELETE FROM '.$sKind;
-		$sql .= ' '.$this->_sFormatWhere($sWhere);
-		$sql .= ' '.$this->_sFormatOrder($sOrder);
-		$sql .= ' '.$this->_sFormatLimit(0, $iLimit);
+		$sql = 'DELETE FROM '.$sKind
+			.' '.$oOption->sWhereOrderLimit();
 		return $sql;
-	}
-
-	private function _sSelectSql($sKind, $sWhere, $sOrder, $iStart, $iNum, $sFields, $sGroup, $sHaving, $bFoundrows)
-	{
-		if ($bFoundrows)
-		{
-			$sql = 'SELECT SQL_CALC_FOUND_ROWS '.$sFields.' FROM '.$sKind;
-		}
-		else
-		{
-			$sql = 'SELECT '.$sFields.' FROM '.$sKind;
-		}
-		$sql .= ' '.$this->_sFormatWhere($sWhere);
-		$sql .= ' '.$this->_sFormatGroup($sGroup);
-		$sql .= ' '.$this->_sFormatHaving($sHaving);
-		$sql .= ' '.$this->_sFormatOrder($sOrder);
-		$sql .= ' '.$this->_sFormatLimit($iStart, $iNum);
-		return $sql;
-	}
-
-	private function _sFormatWhere($sWhere)
-	{
-		$sWhere = trim($sWhere);
-		if ('' != $sWhere && strtoupper(substr($sWhere, 0, 6)) != 'WHERE ')
-		{
-			$sWhere = 'WHERE '.$sWhere;
-		}
-		return $sWhere;
-	}
-
-	private function _sFormatGroup($sGroup)
-	{
-		$sGroup = trim($sGroup);
-		if ('' != $sGroup && strtoupper(substr($sGroup, 0, 6)) != 'GROUP ')
-		{
-			$sGroup = 'GROUP BY '.$sGroup;
-		}
-		return $sGroup;
-	}
-
-	private function _sFormatHaving($sHaving)
-	{
-		$sHaving = trim($sHaving);
-		if ('' != $sHaving && strtoupper(substr($sHaving, 0, 7)) != 'HAVING ')
-		{
-			$sHaving = 'HAVING '.$sHaving;
-		}
-		return $sHaving;
-	}
-
-	private function _sFormatOrder($sOrder)
-	{
-		$sOrder = trim($sOrder);
-		if ('' != $sOrder && strtoupper(substr($sOrder, 0, 6)) != 'ORDER ')
-		{
-			$sOrder = 'ORDER BY '.$sOrder;
-		}
-		return $sOrder;
-	}
-
-	private function _sFormatLimit($iStart, $iNum)
-	{
-		$iStart = intval($iStart);
-		$iNum = intval($iNum);
-		if ($iStart)
-		{
-			return 'LIMIT '.$iStart.', '.$iNum;
-		}
-		if ($iNum)
-		{
-			return 'LIMIT '.$iNum;
-		}
-		return '';
 	}
 }
 
