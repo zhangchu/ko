@@ -337,7 +337,38 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 	public function aGetList($vHintId, $oOption, $iCacheTime=0)
 	{
 		$oOption = $this->_vBuildOption($oOption, $vHintId, array());
-		return $this->_oGetSqlAgent()->aSelect($this->_sTable, $this->iGetHintId($vHintId), $oOption, $iCacheTime, $this->_bGetForceMaster($oOption));
+		$iHintId = $this->iGetHintId($vHintId);
+		if ($this->_bGetForceInactive($oOption))
+		{
+			$no = $iHintId % $this->iTableCount();
+			$realtable = $this->sGetRealTableName($no);
+			$sql = $oOption->vSQL($realtable);
+			$oMysql = $this->oConnectDB($no, 'inactive');
+			if ($oOption->bCalcFoundRows())
+			{
+				$oMysql->bQuery($sql[0]);
+				$list = array();
+				while ($info = $oMysql->aFetchAssoc())
+				{
+					$list[] = $info;
+				}
+				$oMysql->bQuery($sql[1]);
+				$info = $oMysql->aFetchAssoc();
+				$oOption->vSetFoundRows($info['FOUND_ROWS()']);
+				return $list;
+			}
+			else
+			{
+				$oMysql->bQuery($sql);
+				$list = array();
+				while ($info = $oMysql->aFetchAssoc())
+				{
+					$list[] = $info;
+				}
+				return $list;
+			}
+		}
+		return $this->_oGetSqlAgent()->aSelect($this->_sTable, $iHintId, $oOption, $iCacheTime, $this->_bGetForceMaster($oOption));
 	}
 
 	public function vDeleteCache($vHintId, $vKey)
@@ -553,6 +584,15 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 			return false;
 		}
 		return $oOption->bForceMaster();
+	}
+	
+	private function _bGetForceInactive($oOption)
+	{
+		if ($this->_bIsMongoDB || is_array($oOption))
+		{
+			return false;
+		}
+		return $oOption->bForceInactive();
 	}
 
 	private function _vBuildOption($oOption, $vHintId, $aKey)

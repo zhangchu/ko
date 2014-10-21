@@ -20,6 +20,7 @@ class Ko_Tool_SQL
 	private $_iLimit = 0;
 	private $_bCalcFoundRows = false;
 	private $_bForceMaster = false;
+	private $_bForceInactive = false;
 
 	private $_iFoundRows = 0;
 
@@ -38,6 +39,7 @@ class Ko_Tool_SQL
 		$option->_iLimit = $this->_iLimit;
 		$option->_bCalcFoundRows = $this->_bCalcFoundRows;
 		$option->_bForceMaster = $this->_bForceMaster;
+		$option->_bForceInactive = $this->_bForceInactive;
 		$option->_iFoundRows = $this->_iFoundRows;
 		return $option;
 	}
@@ -157,6 +159,15 @@ class Ko_Tool_SQL
 		return $this;
 	}
 
+	/**
+	 * @return Ko_Tool_SQL 返回 $this
+	 */
+	public function oForceInactive($bForceInactive)
+	{
+		$this->_bForceInactive = $bForceInactive;
+		return $this;
+	}
+
 	public function vSetFoundRows($iFoundRows)
 	{
 		assert($this->_bCalcFoundRows);
@@ -193,7 +204,8 @@ class Ko_Tool_SQL
 			.' '.$this->_sFormatGroup($this->_sGroupBy)
 			.' '.$this->_sFormatHaving($this->_sHaving)
 			.' '.$this->_sFormatOrder($this->_sOrderBy)
-			.' '.$this->_sFormatLimit($this->_iOffset, $this->_iLimit);
+			.' '.$this->_sFormatLimit($this->_iOffset,
+				$this->_bCalcFoundRows ? max(1, $this->_iLimit) : $this->_iLimit);
 		return $this->_bCalcFoundRows ? array($sql, 'SELECT FOUND_ROWS()') : $sql;
 	}
 	
@@ -269,6 +281,14 @@ class Ko_Tool_SQL
 		return $this->_bForceMaster;
 	}
 
+	/**
+	 * @return boolean
+	 */
+	public function bForceInactive()
+	{
+		return $this->_bForceInactive;
+	}
+	
 	private function _sFormatWhere($sWhere)
 	{
 		$sWhere = trim($sWhere);
