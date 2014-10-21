@@ -6,8 +6,6 @@
  * @author zhangchu
  */
 
-//include_once('../ko.class.php');
-
 /**
  * 命名规则函数实现
  */
@@ -23,7 +21,8 @@ class Ko_Tool_Module
 		$sScript = $_SERVER['SCRIPT_FILENAME'];
 		if ('/' != $sScript[0] && ':/' != substr($sScript, 1, 2))
 		{
-			$sScript = $_SERVER['PWD'].'/'.$_SERVER['SCRIPT_FILENAME'];
+			$sPath = realpath(dirname($_SERVER['SCRIPT_FILENAME']));
+			$sScript = $sPath.'/'.$_SERVER['SCRIPT_FILENAME'];
 		}
 		return $sScript;
 	}
@@ -135,49 +134,3 @@ class Ko_Tool_Module
 		return substr($sClassName, 1, $pos - 1);
 	}
 }
-
-/*
-
-class Ko_A_B
-{
-}
-class KA_B_C
-{
-}
-
-class A extends KA_B_C
-{
-}
-class KB extends A
-{
-}
-
-$obj = new Ko_A_B;
-echo Ko_Tool_Module::SGetObjectModuleName($obj);
-echo "\n";
-
-$obj = new KA_B_C;
-echo Ko_Tool_Module::SGetObjectModuleName($obj);
-echo "\n";
-
-$obj = new KB;
-echo Ko_Tool_Module::SGetObjectModuleName($obj);
-echo "\n";
-
-echo Ko_Tool_Module::SGetRegularModuleName('o2o_user');
-echo "\n";
-echo Ko_Tool_Module::SGetRegularModuleName('o2o_UsEr');
-echo "\n";
-
-echo Ko_Tool_Module::SGetRootModuleName('O2o_User');
-echo "\n";
-
-echo Ko_Tool_Module::SGetRootModuleName('O2o');
-echo "\n";
-
-var_dump(Ko_Tool_Module::AGetSubModule("o2o_buy_cash_hkdApi"));
-var_dump(Ko_Tool_Module::AGetSubModule("o2o_buy_cashFunc"));
-var_dump(Ko_Tool_Module::AGetSubModule("loginApi"));
-
-*/
-?>
