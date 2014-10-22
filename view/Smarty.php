@@ -27,6 +27,16 @@ class Ko_View_Smarty
 		}
 	}
 
+	public function vSetTemplateDir($sDir)
+	{
+		$this->_oSmarty->setTemplateDir($sDir);
+	}
+
+	public function vSetCompileDir($sDir)
+	{
+		$this->_oSmarty->setCompileDir($sDir);
+	}
+
 	/**
 	 * 单行文本 input编辑/显示 或 多行文本 textarea编辑
 	 */
