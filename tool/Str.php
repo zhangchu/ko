@@ -14,6 +14,32 @@
 class Ko_Tool_Str
 {
 	private static $s_aGB = array('gb18030', 'gb2312', 'gbk');
+	
+	/**
+	 * 无论输入是utf-8还是gb18030，都返回utf8
+	 * 由于要进行字符检查，在已知输入的字符集的时候，应该使用 SConvert2UTF8
+	 *
+	 * @return string
+	 */
+	public static function SForce2UTF8($sIn)
+	{
+		return self::BIsUtf8($sIn)
+			? self::SFilterErrorCode($sIn, 'UTF-8')
+			: self::SConvert2UTF8($sIn);
+	}
+	
+	/**
+	 * 无论输入是utf-8还是gb18030，都返回gb18030
+	 * 由于要进行字符检查，在已知输入的字符集的时候，应该使用 SConvert2GB18030
+	 *
+	 * @return string
+	 */
+	public static function SForce2GB18030($sIn)
+	{
+		return self::BIsUtf8($sIn)
+			? self::SConvert2GB18030($sIn)
+			: self::SFilterErrorCode($sIn, 'GB18030');
+	}
 
 	/**
 	 * 判断字符串是utf-8编码还是gb18030编码
