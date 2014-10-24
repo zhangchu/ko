@@ -37,35 +37,27 @@ class Ko_Tool_Str
 				else if ($c0 >= 0xF0)  $j = 4;
 				else if ($c0 >= 0xE0)  $j = 3;
 				else                   $j = 2;
-				if ($j == 2)
-				{
-					if (self::_BCheckSecondByte_GB18030($sIn, $i, $iLen, &$j))
-					{
-						if ($j > 2)
-						{
-							return false;
-						}
-						continue;
-					}
-				}
 				if ($i + $j <= $iLen)
 				{
-					for ($k=1; $k<$j; $k++)
+					if (self::_BCheckSecondByte_UTF8($sIn, $i, $iLen, &$j))
 					{
-						$ck = ord($sIn[$i + $k]);
-						if (0x80 <= $ck && $ck <= 0xBF)
+						if ($j == 2)
 						{
-							continue;
+							if (self::_BCheckSecondByte_GB18030($sIn, $i, $iLen, &$j))
+							{
+								if ($j != 2)
+								{
+									return false;
+								}
+								$i += $j - 1;
+								continue;
+							}
 						}
-						break;
-					}
-					if ($k === $j)
-					{
 						return true;
 					}
 				}
 			}
-			return false;
+			break;
 		}
 		return false;
 	}
@@ -315,6 +307,145 @@ class Ko_Tool_Str
 		self::_VCheckStr_GB18030($sIn, '_VStr2Arr_OnChar', '_VStr2Arr_OnFail', '_VStr2Arr_OnComplete', $aOut);
 		return $aOut;
 	}
+	/**
+	 * 过滤unicode兼容字符
+	 * 确保xml格式正确
+	 * @see http://www.w3.org/TR/xml/#charsets
+	 * @param string $sStr
+	 * @return string
+	 */
+	public static function SStripInvalidXmlChar($sStr, $sEnc = 'utf-8') {
+        $bIsGBEnc = 'gb' === strtolower(substr($sEnc, 0, 2));
+        $sStr = $bIsGBEnc ? Ko_Tool_Str::SConvert2UTF8($sStr) : $sStr;
+		$sStr = self::SFilterErrorCode_Xml($sStr);
+        $sStr = $bIsGBEnc ? Ko_Tool_Str::SConvert2GB18030($sStr) : $sStr;
+        return $sStr;
+	}
+    /**
+	 * 过滤unicode兼容字符
+	 * 确保xml格式正确
+	 * @see http://www.w3.org/TR/xml/#charsets
+	 * @param string $sStr
+	 * @return string
+	 */
+    public static function SFilterForXml($sStr) {
+        $sOut = '';
+        $iLen = mb_strlen($sStr, 'UTF-8');
+        for($i = 0; $i < $iLen; $i++) {
+            $sChar = mb_substr($sStr, $i, 1, 'UTF-8');
+            $iCharCode = self::_uniord($sChar);
+            if(
+                $iCharCode == 0x9 ||
+                $iCharCode == 0xA ||
+                $iCharCode == 0xD ||
+                ($iCharCode >= 0x20 && $iCharCode <= 0xD7FF) ||
+                ($iCharCode >= 0xE000 && $iCharCode <= 0xFFFD) ||
+                ($iCharCode >= 0x10000 && $iCharCode <= 0x10FFFF)
+            ) {
+                $sOut .= $sChar;
+            }
+        }
+        
+        return $sOut;
+    }
+    
+    private static function _uniord($c) {
+        if (ord($c{0}) >=0 && ord($c{0}) <= 127)
+            return ord($c{0});
+        if (ord($c{0}) >= 192 && ord($c{0}) <= 223)
+            return (ord($c{0})-192)*64 + (ord($c{1})-128);
+        if (ord($c{0}) >= 224 && ord($c{0}) <= 239)
+            return (ord($c{0})-224)*4096 + (ord($c{1})-128)*64 + (ord($c{2})-128);
+        if (ord($c{0}) >= 240 && ord($c{0}) <= 247)
+            return (ord($c{0})-240)*262144 + (ord($c{1})-128)*4096 + (ord($c{2})-128)*64 + (ord($c{3})-128);
+        if (ord($c{0}) >= 248 && ord($c{0}) <= 251)
+            return (ord($c{0})-248)*16777216 + (ord($c{1})-128)*262144 + (ord($c{2})-128)*4096 + (ord($c{3})-128)*64 + (ord($c{4})-128);
+        if (ord($c{0}) >= 252 && ord($c{0}) <= 253)
+            return (ord($c{0})-252)*1073741824 + (ord($c{1})-128)*16777216 + (ord($c{2})-128)*262144 + (ord($c{3})-128)*4096 + (ord($c{4})-128)*64 + (ord($c{5})-128);
+        if (ord($c{0}) >= 254 && ord($c{0}) <= 255)    //  error
+            return FALSE;
+        return 0;
+    }
+
+    /**
+     * 全半角转换
+     * [UTF8编码]
+     * @param $sStr
+     * @param bool $bQuanJiao2BanJiao
+     * @return bool|mixed
+     */
+    public static  function STransQuanJiao($sStr, $bQuanJiao2BanJiao = false) {
+        $aQuanjiaoDict = array(
+            '０' , '１' , '２' , '３' , '４' ,
+            '５' , '６' , '７' , '８' , '９' ,
+            'Ａ' , 'Ｂ' , 'Ｃ' , 'Ｄ' , 'Ｅ' ,
+            'Ｆ' , 'Ｇ' , 'Ｈ' , 'Ｉ' , 'Ｊ' ,
+            'Ｋ' , 'Ｌ' , 'Ｍ' , 'Ｎ' , 'Ｏ' ,
+            'Ｐ' , 'Ｑ' , 'Ｒ' , 'Ｓ' , 'Ｔ' ,
+            'Ｕ' , 'Ｖ' , 'Ｗ' , 'Ｘ' , 'Ｙ' ,
+            'Ｚ' , 'ａ' , 'ｂ' , 'ｃ' , 'ｄ' ,
+            'ｅ' , 'ｆ' , 'ｇ' , 'ｈ' , 'ｉ' ,
+            'ｊ' , 'ｋ' , 'ｌ' , 'ｍ' , 'ｎ' ,
+            'ｏ' , 'ｐ' , 'ｑ' , 'ｒ' , 'ｓ' ,
+            'ｔ' , 'ｕ' , 'ｖ' , 'ｗ' , 'ｘ' ,
+            'ｙ' , 'ｚ' , '－' , '　' , '：' ,
+            '．' , '，' , '／' , '％' , '＃' ,
+            '！' , '＠' , '＆' , '（' , '）' ,
+            '＜' , '＞' , '＂' , '＇' , '？' ,
+            '［' , '］' , '｛' , '｝' , '＼' ,
+            '｜' , '＋' , '＝' , '＿' , '＾' ,
+            '￥' , '￣' , '｀'
+        );
+        $aBanjiaoDict = array( // 半角
+            '0', '1', '2', '3', '4',
+            '5', '6', '7', '8', '9',
+            'A', 'B', 'C', 'D', 'E',
+            'F', 'G', 'H', 'I', 'J',
+            'K', 'L', 'M', 'N', 'O',
+            'P', 'Q', 'R', 'S', 'T',
+            'U', 'V', 'W', 'X', 'Y',
+            'Z', 'a', 'b', 'c', 'd',
+            'e', 'f', 'g', 'h', 'i',
+            'j', 'k', 'l', 'm', 'n',
+            'o', 'p', 'q', 'r', 's',
+            't', 'u', 'v', 'w', 'x',
+            'y', 'z', '-', ' ', ':',
+            '.', ',', '/', '%', '#',
+            '!', '@', '&', '(', ')',
+            '<', '>', '"', '\'','?',
+            '[', ']', '{', '}', '\\',
+            '|', '+', '=', '_', '^',
+            '$', '~', '`'
+        );
+        if ($bQuanJiao2BanJiao == false) {
+            return str_replace($aBanjiaoDict, $aQuanjiaoDict, $sStr);  // 半角到全角
+        } else if ($bQuanJiao2BanJiao == true) {
+            return str_replace($aQuanjiaoDict, $aBanjiaoDict, $sStr);  // 全角到半角
+        } else {
+            return false;
+        }
+    }
+
+	/**
+	 * json 字符的不编码UINICODE，主要针对中文字符进行json_encode后编码变长的问题。
+	 * 该方法php 5.4 版本开始系统支持，调用如：json_encode($val, JSON_UNESCAPED_UNICODE);
+	 * 如果php5.4以前版本想让json_encode后的数据包变小，可以使用该方法。解码不受影响。
+	 *
+	 * @param $sIn
+	 * @return string
+	 * @author weilq
+	 */
+	public static function SJson_Unescaped_Unicode($sIn){
+
+		$sJSON = json_encode($sIn, defined('JSON_UNESCAPED_UNICODE') ? JSON_UNESCAPED_UNICODE : 0);
+		if (!defined('JSON_UNESCAPED_UNICODE') && function_exists('mb_convert_encoding')) {
+			$sJSON = preg_replace_callback(
+				'~\\\\u([0-9a-f]{4})~i',
+				create_function('$aMatches', 'return mb_convert_encoding(pack("H*", $aMatches[1]), "UTF-8", "UTF-16");'),
+				$sJSON);
+		}
+		return $sJSON;
+	}
 
 	private static function _SConvertCharset($sCharset)
 	{
@@ -475,20 +606,26 @@ class Ko_Tool_Str
 			else                   $j = 2;
 			if ($i + $j <= $iLen)
 			{
-				for ($k=1; $k<$j; $k++)
-				{
-					$ck = ord($sIn[$i + $k]);
-					if (0x80 <= $ck && $ck <= 0xBF)
-					{
-						continue;
-					}
-					break;
-				}
-				if ($k === $j)
-				{
-					return true;
-				}
+				return self::_BCheckSecondByte_UTF8($sIn, $i, $iLen, &$j);
 			}
+		}
+		return false;
+	}
+	
+	private static function _BCheckSecondByte_UTF8($sIn, $i, $iLen, &$j)
+	{
+		for ($k=1; $k<$j; $k++)
+		{
+			$ck = ord($sIn[$i + $k]);
+			if (0x80 <= $ck && $ck <= 0xBF)
+			{
+				continue;
+			}
+			break;
+		}
+		if ($k === $j)
+		{
+			return true;
 		}
 		return false;
 	}
@@ -519,32 +656,32 @@ class Ko_Tool_Str
 	{
 		if (0x81 <= $c0 && $c0 <= 0xFE)
 		{
-			return self::_BCheckSecondByte_GB18030($sIn, $i, $iLen, &$j);
+			$j = 2;
+			if ($i + $j <= $iLen)
+			{
+				return self::_BCheckSecondByte_GB18030($sIn, $i, $iLen, &$j);
+			}
 		}
 		return false;
 	}
 	
 	private static function _BCheckSecondByte_GB18030($sIn, $i, $iLen, &$j)
 	{
-		$j = 2;
-		if ($i + $j <= $iLen)
+		$c1 = ord($sIn[$i+1]);
+		if ((0x40 <= $c1 && $c1 <= 0x7E) || (0x80 <= $c1 && $c1 <= 0xFE))
 		{
-			$c1 = ord($sIn[$i+1]);
-			if ((0x40 <= $c1 && $c1 <= 0x7E) || (0x80 <= $c1 && $c1 <= 0xFE))
+			return true;
+		}
+		else if (0x30 <= $c1 && $c1 <= 0x39)
+		{
+			$j = 4;
+			if ($i + $j <= $iLen)
 			{
-				return true;
-			}
-			else if (0x30 <= $c1 && $c1 <= 0x39)
-			{
-				$j = 4;
-				if ($i + $j <= $iLen)
+				$c2 = ord($sIn[$i+2]);
+				$c3 = ord($sIn[$i+3]);
+				if (0x81 <= $c2 && $c2 <= 0xFE && 0x30 <= $c3 && $c3 <= 0x39)
 				{
-					$c2 = ord($sIn[$i+2]);
-					$c3 = ord($sIn[$i+3]);
-					if (0x81 <= $c2 && $c2 <= 0xFE && 0x30 <= $c3 && $c3 <= 0x39)
-					{
-						return true;
-					}
+					return true;
 				}
 			}
 		}
