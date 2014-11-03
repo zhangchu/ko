@@ -26,8 +26,8 @@ class Ko_Tool_Safe
 				$refinfo = parse_url(strtolower($referer));
 				if (empty($aPostAllowRefDomain))
 				{
-					$servername = getenv('SERVER_NAME');
-					if ($refinfo['host'] !== $servername)
+					list($host, $port) = explode(':', getenv('HTTP_HOST'), 2);
+					if ($refinfo['host'] !== $host)
 					{
 						return false;
 					}
