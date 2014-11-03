@@ -134,8 +134,13 @@ class Ko_Tool_Ip
 	 */
 	public static function SGetClientIP()
 	{
-		$fip = getenv('HTTP_X_FORWARDED_FOR').' '.getenv('HTTP_VIA').' '.getenv('REMOTE_ADDR');
-		return self::SGetFirstOuterIP($fip);
+		static $ip = null;
+		if (is_null($ip))
+		{
+			$fip = getenv('HTTP_X_FORWARDED_FOR').' '.getenv('HTTP_VIA').' '.getenv('REMOTE_ADDR');
+			$ip = self::SGetFirstOuterIP($fip);
+		}
+		return $ip;
 	}
 
 	/**
@@ -145,8 +150,13 @@ class Ko_Tool_Ip
 	 */
 	public static function SGetProxyIP()
 	{
-		$fip = getenv('HTTP_X_FORWARDED_FOR').' '.getenv('HTTP_VIA').' '.getenv('REMOTE_ADDR');
-		return self::SGetLastOuterIP($fip);
+		static $ip = null;
+		if (is_null($ip))
+		{
+			$fip = getenv('HTTP_X_FORWARDED_FOR').' '.getenv('HTTP_VIA').' '.getenv('REMOTE_ADDR');
+			$ip = self::SGetLastOuterIP($fip);
+		}
+		return $ip;
 	}
 	
 	/**
@@ -156,12 +166,16 @@ class Ko_Tool_Ip
 	 */
 	public static function SGetServerIp()
 	{
-		$sIp = getenv('SERVER_ADDR');
-		if ($sIp == '' || $sIp == '127.0.0.1')
+		static $ip = null;
+		if (is_null($ip))
 		{
-			$sIp = 'unknown';
+			$ip = getenv('SERVER_ADDR');
+			if ($ip == '' || $ip == '127.0.0.1')
+			{
+				$ip = 'unknown';
+			}
 		}
-		return $sIp;
+		return $ip;
 	}
 
 	/**
