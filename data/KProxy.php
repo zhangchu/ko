@@ -48,6 +48,10 @@ class Ko_Data_KProxy
 			KO_DEBUG >= 5 && Ko_Tool_Debug::VAddTmpLog('data/KProxy', '__construct_Create:'.$sProxyStr);
 		}
 		$this->_oProxy = self::$s_aProxylist[$sProxyStr];
+		if (KO_DEBUG && (isset($_GET['dumpkproxy']) || isset($_GET['kproxydump'])))
+		{
+			$this->_oProxy = new Ko_Data_KProxyWrap($sProxyStr, $this->_oProxy);
+		}
 	}
 
 	protected function _aGetCacheContext($iSecond)
