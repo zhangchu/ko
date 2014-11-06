@@ -1216,9 +1216,11 @@ class Ko_Data_RedisK extends Ko_Data_KProxy
 		$vlen = count($aValue);
 		assert($klen === $vlen);
 		$ret = array();
-		for ($i=0; $i<$klen; $i++)
+		$i = 0;
+		foreach ($aKey as $key)
 		{
-			$ret[$aKey[$i]] = $aValue[$i];
+			$ret[$key] = $aValue[$i];
+			$i ++;
 		}
 		return $ret;
 	}
