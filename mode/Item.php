@@ -200,13 +200,43 @@ class Ko_Mode_Item extends Ko_Busi_Api
 	}
 
 	/**
+	 * 对于 db_single 或 db_split 类型，分别使用下面两种方式调用
+	 * public function iUpdateByCond($oOption, $aUpdate, $aChange=array(), $vAdmin='')
+	 * public function iUpdateByCond($vHintId, $oOption, $aUpdate, $aChange=array(), $vAdmin='')
+	 *
 	 * @param Ko_Tool_SQL|Ko_Tool_MONGO|array $oOption
 	 * @return int
 	 */
-	public function iUpdateByCond($oOption, $aUpdate, $aChange=array(), $vAdmin='')
+	public function iUpdateByCond()
 	{
+		$aArgv = func_get_args();
+		$splitField = $this->sGetSplitField();
+		if (strlen($splitField))
+		{
+			assert(count($aArgv) >= 3);
+			$vHintId = $aArgv[0];
+			$oOption = $aArgv[1];
+			$aUpdate = $aArgv[2];
+			$aChange = isset($aArgv[3]) ? $aArgv[3] : array();
+			$vAdmin = isset($aArgv[4]) ? $aArgv[4] : '';
+		}
+		else
+		{
+			assert(count($aArgv) >= 2);
+			$oOption = $aArgv[0];
+			$aUpdate = $aArgv[1];
+			$aChange = isset($aArgv[2]) ? $aArgv[2] : array();
+			$vAdmin = isset($aArgv[3]) ? $aArgv[3] : '';
+		}
 		assert(!Ko_Tool_Option::BIsWhereEmpty($oOption, $this->vGetAttribute('ismongodb')));
-		$list = $this->aGetList($oOption);
+		if (strlen($splitField))
+		{
+			$list = $this->aGetList($vHintId, $oOption);
+		}
+		else
+		{
+			$list = $this->aGetList($oOption);
+		}
 		$iRet = 0;
 		foreach ($list as $info)
 		{
@@ -233,13 +263,39 @@ class Ko_Mode_Item extends Ko_Busi_Api
 	}
 
 	/**
+	 * 对于 db_single 或 db_split 类型，分别使用下面两种方式调用
+	 * public function iDeleteByCond($oOption, $vAdmin='')
+	 * public function iDeleteByCond($vHintId, $oOption, $vAdmin='')
+	 *
 	 * @param Ko_Tool_SQL|Ko_Tool_MONGO|array $oOption
 	 * @return int
 	 */
-	public function iDeleteByCond($oOption, $vAdmin='')
+	public function iDeleteByCond()
 	{
+		$aArgv = func_get_args();
+		$splitField = $this->sGetSplitField();
+		if (strlen($splitField))
+		{
+			assert(count($aArgv) >= 2);
+			$vHintId = $aArgv[0];
+			$oOption = $aArgv[1];
+			$vAdmin = isset($aArgv[2]) ? $aArgv[2] : '';
+		}
+		else
+		{
+			assert(count($aArgv) >= 1);
+			$oOption = $aArgv[0];
+			$vAdmin = isset($aArgv[1]) ? $aArgv[1] : '';
+		}
 		assert(!Ko_Tool_Option::BIsWhereEmpty($oOption, $this->vGetAttribute('ismongodb')));
-		$list = $this->aGetList($oOption);
+		if (strlen($splitField))
+		{
+			$list = $this->aGetList($vHintId, $oOption);
+		}
+		else
+		{
+			$list = $this->aGetList($oOption);
+		}
 		$iRet = 0;
 		foreach ($list as $info)
 		{
