@@ -767,7 +767,7 @@ class Ko_Mode_XList extends Ko_Busi_Api
 		{
 			return;
 		}
-		Ko_Mode_XTool::VGetOperatorSql($sOperator, $sField, $sValue, &$vData);
+		Ko_Mode_XTool::VGetOperatorSql($sOperator, $sField, $sValue, $vData);
 	}
 
 	private function _vGetReqCondition($aReq, $oOption)
@@ -974,7 +974,7 @@ class Ko_Mode_XList extends Ko_Busi_Api
 			$html .= $this->_sGetReqQueryHtml($aReq);
 			$html .= $this->_sGetReqHeadHtml($aReq);
 			$oOption = new Ko_Tool_SQL;
-			$html .= $this->_sGetReqListHtml($aReq, $oOption, &$iCount);
+			$html .= $this->_sGetReqListHtml($aReq, $oOption, $iCount);
 			$html .= $this->_sGetReqPageHtml($aReq, $oOption->iGetFoundRows(), $iCount);
 		}
 		return $html;

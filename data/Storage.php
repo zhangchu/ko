@@ -67,7 +67,7 @@ class Ko_Data_Storage extends Ko_Busi_Api
 				return true;
 			}
 		}
-		$ret = $this->_bWrite($sContent, $sExt, $sDomain, &$sDest);
+		$ret = $this->_bWrite($sContent, $sExt, $sDomain, $sDest);
 		if ($ret && strlen($this->_aConf['uni']))
 		{
 			$aData = array(

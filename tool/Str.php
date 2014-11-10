@@ -65,11 +65,11 @@ class Ko_Tool_Str
 				else                   $j = 2;
 				if ($i + $j <= $iLen)
 				{
-					if (self::_BCheckSecondByte_UTF8($sIn, $i, $iLen, &$j))
+					if (self::_BCheckSecondByte_UTF8($sIn, $i, $iLen, $j))
 					{
 						if ($j == 2)
 						{
-							if (self::_BCheckSecondByte_GB18030($sIn, $i, $iLen, &$j))
+							if (self::_BCheckSecondByte_GB18030($sIn, $i, $iLen, $j))
 							{
 								if ($j != 2)
 								{
@@ -398,7 +398,7 @@ class Ko_Tool_Str
 					continue;
 				}
 			}
-			else if (self::_BCheckMultiByte_Xml($sIn, $i, $c0, $iLen, &$j))
+			else if (self::_BCheckMultiByte_Xml($sIn, $i, $c0, $iLen, $j))
 			{
 				self::$fnChar($sIn, $i, $j, $aOut);
 				$i += $j - 1;
@@ -471,7 +471,7 @@ class Ko_Tool_Str
 				self::$fnChar($sIn, $i, 1, $aOut);
 				continue;
 			}
-			else if (self::_BCheckMultiByte_UTF8($sIn, $i, $c0, $iLen, &$j))
+			else if (self::_BCheckMultiByte_UTF8($sIn, $i, $c0, $iLen, $j))
 			{
 				self::$fnChar($sIn, $i, $j, $aOut);
 				$i += $j - 1;
@@ -493,7 +493,7 @@ class Ko_Tool_Str
 			else                   $j = 2;
 			if ($i + $j <= $iLen)
 			{
-				return self::_BCheckSecondByte_UTF8($sIn, $i, $iLen, &$j);
+				return self::_BCheckSecondByte_UTF8($sIn, $i, $iLen, $j);
 			}
 		}
 		return false;
@@ -528,7 +528,7 @@ class Ko_Tool_Str
 				self::$fnChar($sIn, $i, 1, $aOut);
 				continue;
 			}
-			else if (self::_BCheckMultiByte_GB18030($sIn, $i, $c0, $iLen, &$j))
+			else if (self::_BCheckMultiByte_GB18030($sIn, $i, $c0, $iLen, $j))
 			{
 				self::$fnChar($sIn, $i, $j, $aOut);
 				$i += $j - 1;
@@ -546,7 +546,7 @@ class Ko_Tool_Str
 			$j = 2;
 			if ($i + $j <= $iLen)
 			{
-				return self::_BCheckSecondByte_GB18030($sIn, $i, $iLen, &$j);
+				return self::_BCheckSecondByte_GB18030($sIn, $i, $iLen, $j);
 			}
 		}
 		return false;
