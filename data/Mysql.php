@@ -164,11 +164,15 @@ class Ko_Data_Mysql
 	{
 		$this->_bFreeResult();
 		$this->_hResult = mysql_query($sSql, $this->_hLink);
-		if (false === $this->_hResult && 2006 == $this->iErrno() && self::MAX_RECONN > $iReconnect)
-		{	//MySQL server has gone away
-			$this->_vClose();
-			$this->_vConnect();
-			return $this->_bQuery($sSql, $iReconnect + 1);
+		if (false === $this->_hResult && self::MAX_RECONN > $iReconnect)
+		{
+			$errno = $this->iErrno();
+			if (2006 === $errno || false === $errno)
+			{	//MySQL server has gone away
+				$this->_vClose();
+				$this->_vConnect();
+				return $this->_bQuery($sSql, $iReconnect + 1);
+			}
 		}
 		return $this->_hResult !== false;
 	}
