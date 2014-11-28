@@ -75,7 +75,7 @@ if (!defined('KO_TEMPLATE_C_DIR'))
 	/**
 	 * 模板编译路径
 	 */
-	define('KO_TEMPLATE_C_DIR', KO_TEMPLATE_DIR.'templates_c'.DS);
+	define('KO_TEMPLATE_C_DIR', dirname(KO_INCLUDE_DIR).DS.'templates_c'.DS);
 }
 
 if (!defined('KO_CHARSET'))
