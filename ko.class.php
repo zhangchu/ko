@@ -67,7 +67,7 @@ if (!defined('KO_TEMPLATE_DIR'))
 	/**
 	 * 应用模板路径
 	 */
-	define('KO_TEMPLATE_DIR', dirname(KO_INCLUDE_DIR).DS.'template'.DS);
+	define('KO_TEMPLATE_DIR', dirname(KO_INCLUDE_DIR).DS.'templates'.DS);
 }
 
 if (!defined('KO_TEMPLATE_C_DIR'))
