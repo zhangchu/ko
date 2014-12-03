@@ -12,14 +12,6 @@ if (!defined('DS'))
 	define('DS', DIRECTORY_SEPARATOR);
 }
 
-if (!defined('KO_TEMPDIR'))
-{
-	/**
-	 * 临时文件目录
-	 */
-	define('KO_TEMPDIR', '/tmp/');
-}
-
 if (!defined('KO_DEBUG'))
 {
 	/**
@@ -30,12 +22,20 @@ if (!defined('KO_DEBUG'))
 	define('KO_DEBUG', 0);
 }
 
+if (!defined('KO_TEMPDIR'))
+{
+	/**
+	 * 临时文件目录
+	 */
+	define('KO_TEMPDIR', DS === '\\' ? 'C:\\' : '/tmp/');
+}
+
 if (!defined('KO_LOG_FILE'))
 {
 	/**
 	 * 保存调试信息的文件名
 	 */
-	define('KO_LOG_FILE', '/tmp/ko.log');
+	define('KO_LOG_FILE', KO_TEMPDIR.'ko.log');
 }
 
 if (!defined('KO_DIR'))
@@ -59,7 +59,14 @@ if (!defined('KO_SMARTY_INC'))
 	/**
 	 * Smarty 类文件定义
 	 */
-	define('KO_SMARTY_INC', KO_DIR.'/vendor/Smarty-3.1.14/libs/Smarty.class.php');
+	define('KO_SMARTY_INC', KO_DIR.DS.'vendor'.DS.'Smarty-3.1.18'.DS.'Smarty.class.php');
+}
+if (!defined('KO_SMARTY_PLUGINS'))
+{
+	/**
+	 * Smarty 自定义插件目录定义
+	 */
+	define('KO_SMARTY_PLUGINS', dirname(KO_SMARTY_INC).DS.'plugins'.DS);
 }
 
 if (!defined('KO_TEMPLATE_DIR'))
@@ -338,24 +345,3 @@ function koAssertCallback($file, $line, $code)
 		throw new Exception($error);
 	}
 }
-
-/*
-
-class test implements IKo_Tool_Singleton
-{
-	public static function OInstance($sClassName)
-	{
-	}
-}
-
-$a = new Ko_Tool_Module();
-var_dump($a);
-
-assert_options(ASSERT_BAIL, 0);
-assert(0);
-
-$a = new KA_B_C();
-
-*/
-
-?>
