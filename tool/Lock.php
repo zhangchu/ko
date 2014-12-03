@@ -17,12 +17,38 @@ class Ko_Tool_Lock
 	 */
 	public static function BGetExLock($sName)
 	{
+		return self::_BGetLock($sName, LOCK_EX | LOCK_NB);
+	}
+
+	/**
+	 * 获取写锁，独占锁，阻塞
+	 *
+	 * @return boolean
+	 */
+	public static function BWaitExLock($sName)
+	{
+		return self::_BGetLock($sName, LOCK_EX);
+	}
+	
+	/**
+	 * 释放锁
+	 */
+	public static function VReleaseLock($sName)
+	{
+		if (isset(self::$s_aLockHandle[$sName]))
+		{
+			fclose(self::$s_aLockHandle[$sName]);
+		}
+	}
+	
+	private static function _BGetLock($sName, $iOperation)
+	{
 		$lockfp = fopen($sName.'.lock', 'w');
 		if (!$lockfp)
 		{
 			return false;
 		}
-		if (!flock($lockfp, LOCK_EX | LOCK_NB))
+		if (!flock($lockfp, $iOperation))
 		{
 			return false;
 		}
