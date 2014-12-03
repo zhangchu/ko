@@ -21,20 +21,11 @@ class Ko_View_Smarty
 		$this->_oSmarty = new Smarty();
 		$this->_oSmarty->setTemplateDir(KO_TEMPLATE_DIR);
 		$this->_oSmarty->setCompileDir(KO_TEMPLATE_C_DIR);
+		$this->_oSmarty->addPluginsDir(KO_SMARTY_PLUGINS);
 		foreach ($aParam as $key => $val)
 		{
 			$this->_oSmarty->$key = $val;
 		}
-	}
-
-	public function vSetTemplateDir($sDir)
-	{
-		$this->_oSmarty->setTemplateDir($sDir);
-	}
-
-	public function vSetCompileDir($sDir)
-	{
-		$this->_oSmarty->setCompileDir($sDir);
 	}
 
 	/**
@@ -122,6 +113,45 @@ class Ko_View_Smarty
 		return $this->_oSmarty->fetch($sFilePath, $sCacheId);
 	}
 
+	/**
+	 * @return string|array
+	 */
+	public function vGetTemplateDir($sKey = null)
+	{
+		return $this->_oSmarty->getTemplateDir($sKey);
+	}
+
+	public function vAddTemplateDir($vDir, $sKey = null)
+	{
+		$this->_oSmarty->addTemplateDir($vDir, $sKey);
+	}
+
+	public function vSetTemplateDir($vDir)
+	{
+		$this->_oSmarty->setTemplateDir($vDir);
+	}
+	
+	/**
+	 * @return string
+	 */
+	public function sGetCompileDir()
+	{
+		return $this->_oSmarty->getCompileDir();
+	}
+	
+	public function vSetCompileDir($sDir)
+	{
+		$this->_oSmarty->setCompileDir($sDir);
+	}
+	
+	/**
+	 * @return array
+	 */
+	public function aGetPluginsDir()
+	{
+		return $this->_oSmarty->getPluginsDir();
+	}
+
 	public function vAddPluginsDir($vDir)
 	{
 		$this->_oSmarty->addPluginsDir($vDir);
@@ -130,11 +160,6 @@ class Ko_View_Smarty
 	public function vSetPluginsDir($vDir)
 	{
 		$this->_oSmarty->setPluginsDir($vDir);
-	}
-	
-	public function aGetPluginsDir()
-	{
-		$this->_oSmarty->getPluginsDir();
 	}
 
 	/**
@@ -169,7 +194,20 @@ class Ko_View_Smarty
 	{
 		$this->_oSmarty->cache_lifetime = $iLifeTime;
 	}
-	
+
+	/**
+	 * @return boolean
+	 */
+	public function bTemplateExists($sFilePath)
+	{
+		return $this->_oSmarty->templateExists($sFilePath);
+	}
+
+	public function vGetTemplateVars($sName)
+	{
+		return $this->_oSmarty->getTemplateVars($sName);
+	}
+
 	/**
 	 * 注册模版自动分析处理类
 	 */
