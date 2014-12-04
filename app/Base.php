@@ -60,31 +60,23 @@ class Ko_App_Base
 	 */
 	public function vRun()
 	{
-		try
-		{
-			//基本权限验证过程
-			$this->vCheckAuth();
+		//基本权限验证过程
+		$this->vCheckAuth();
 
-			//参数分析过程
-			$this->vGetPara();
+		//参数分析过程
+		$this->vGetPara();
 
-			//参数校验过程
-			$this->vCheckPara();
+		//参数校验过程
+		$this->vCheckPara();
 
-			//主要逻辑计算过程
-			$this->vMain();
+		//主要逻辑计算过程
+		$this->vMain();
 
-			//输出 HTTP 协议头信息部分
-			$this->vOutputHttp();
+		//输出 HTTP 协议头信息部分
+		$this->vOutputHttp();
 
-			//输出 HTTP 协议页面部分
-			$this->vOutputPage();
-		}
-		catch(Exception $ex)
-		{
-			//统一异常处理
-			$this->vShowError($ex);
-		}
+		//输出 HTTP 协议页面部分
+		$this->vOutputPage();
 	}
 
 	/**
@@ -159,13 +151,4 @@ class Ko_App_Base
 	protected function vOutputTail()
 	{
 	}
-
-	/**
-	 * 统一异常处理
-	 */
-	protected function vShowError($ex)
-	{
-	}
 }
-
-?>
