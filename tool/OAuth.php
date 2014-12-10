@@ -19,6 +19,30 @@ class Ko_Tool_OAuth
 	}
 
 	/**
+	 * 检查参数是否完整正确
+	 */
+	public static function BCheckParas($aReq, $bTempToken)
+	{
+		$bXAuth = $bTempToken && isset($aReq['x_auth_mode']);
+		if (!isset($aReq['oauth_consumer_key'])
+			|| ('HMAC-SHA1' !== $aReq['oauth_signature_method'])
+			|| !isset($aReq['oauth_timestamp'])
+			|| !isset($aReq['oauth_nonce'])
+			|| (isset($aReq['oauth_version']) && '1.0' !== $aReq['oauth_version'])
+			|| !isset($aReq['oauth_signature'])
+			|| (!$bXAuth && $bTempToken && !isset($aReq['oauth_token']) && !isset($aReq['oauth_callback']))
+			|| (!$bXAuth && $bTempToken && isset($aReq['oauth_token']) && !isset($aReq['oauth_verifier']))
+			|| (!$bXAuth && !$bTempToken && !isset($aReq['oauth_token']))
+			|| ($bXAuth && 'client_auth' !== $aReq['x_auth_mode'])
+			|| ($bXAuth && !isset($aReq['x_auth_username']))
+			|| ($bXAuth && !isset($aReq['x_auth_password'])))
+		{
+			return false;
+		}
+		return true;
+	}
+
+	/**
 	 * 生成签名串
 	 *
 	 * @return string

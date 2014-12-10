@@ -358,20 +358,7 @@ class Ko_Mode_OAuthServer extends Ko_Mode_OAuthServerBase
 	private function _vCheckParas($sBaseuri, $bTempToken)
 	{
 		$this->_sBaseuri = $sBaseuri;
-		$bXAuth = $bTempToken && isset($this->_aReq['x_auth_mode']);
-
-		if (!isset($this->_aReq['oauth_consumer_key'])
-			|| ('HMAC-SHA1' !== $this->_aReq['oauth_signature_method'])
-			|| !isset($this->_aReq['oauth_timestamp'])
-			|| !isset($this->_aReq['oauth_nonce'])
-			|| (isset($this->_aReq['oauth_version']) && '1.0' !== $this->_aReq['oauth_version'])
-			|| !isset($this->_aReq['oauth_signature'])
-			|| (!$bXAuth && $bTempToken && !isset($this->_aReq['oauth_token']) && !isset($this->_aReq['oauth_callback']))
-			|| (!$bXAuth && $bTempToken && isset($this->_aReq['oauth_token']) && !isset($this->_aReq['oauth_verifier']))
-			|| (!$bXAuth && !$bTempToken && !isset($this->_aReq['oauth_token']))
-			|| ($bXAuth && 'client_auth' !== $this->_aReq['x_auth_mode'])
-			|| ($bXAuth && !isset($this->_aReq['x_auth_username']))
-			|| ($bXAuth && !isset($this->_aReq['x_auth_password'])))
+		if (!Ko_Tool_OAuth::BCheckParas($this->_aReq, $bTempToken))
 		{
 			header('HTTP/1.0 400 Bad Request');
 			exit;
