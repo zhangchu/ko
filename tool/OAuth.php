@@ -51,10 +51,36 @@ class Ko_Tool_OAuth
 			{
 				continue;
 			}
-			$data[] = array(
-				'k' => self::_SEncode_Percent($k),
-				'v' => self::_SEncode_Percent($v),
-				);
+			if (is_array($v))
+			{
+				if (self::_BKeyIsContinuousNumber($v))
+				{
+					foreach ($v as $v2)
+					{
+						$data[] = array(
+							'k' => self::_SEncode_Percent($k.'[]'),
+							'v' => self::_SEncode_Percent($v2),
+						);
+					}
+				}
+				else
+				{
+					foreach ($v as $k2 => $v2)
+					{
+						$data[] = array(
+							'k' => self::_SEncode_Percent($k.'['.$k2.']'),
+							'v' => self::_SEncode_Percent($v2),
+						);
+					}
+				}
+			}
+			else
+			{
+				$data[] = array(
+					'k' => self::_SEncode_Percent($k),
+					'v' => self::_SEncode_Percent($v),
+					);
+			}
 		}
 		usort($data, array('self', '_ISortPara_Callback'));
 		$data2 = array();
@@ -63,6 +89,19 @@ class Ko_Tool_OAuth
 			$data2[] = $v['k'].'='.$v['v'];
 		}
 		return implode('&', $data2);
+	}
+	
+	private static function _BKeyIsContinuousNumber($map)
+	{
+		$size = count($map);
+		for ($i=0; $i<$size; ++$i)
+		{
+			if (!isset($map[$i]))
+			{
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private static function _ISortPara_Callback($a, $b)
