@@ -37,11 +37,6 @@ class Ko_Mode_OAuthServerBase extends Ko_Mode_OAuthBase
 	{
 		$oSmarty->vAssignHtml($sKey, $this->_aReq);
 	}
-
-	protected function _sGenKey()
-	{
-		return md5(uniqid('', true));
-	}
 }
 
 ?>

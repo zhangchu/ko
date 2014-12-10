@@ -484,7 +484,7 @@ class Ko_Mode_OAuth2Server extends Ko_Mode_OAuthServerBase
 
 	private function _sGenCode($iUid, $sScope)
 	{
-		$code = $this->_sGenKey();
+		$code = Ko_Tool_OAuth::SGenKey();
 		$aData = array(
 			'cid' => $this->_sClientId,
 			'code' => $code,
@@ -513,7 +513,7 @@ class Ko_Mode_OAuth2Server extends Ko_Mode_OAuthServerBase
 			return $tokenInfo[0]['token'];
 		}
 		
-		$token = $this->_sGenKey();
+		$token = Ko_Tool_OAuth::SGenKey();
 		$aData = array(
 			'cid' => $this->_sClientId,
 			'token' => $token,
@@ -527,7 +527,7 @@ class Ko_Mode_OAuth2Server extends Ko_Mode_OAuthServerBase
 
 	private function _sGenRefreshToken($iUid, $sScope)
 	{
-		$token = $this->_sGenKey();
+		$token = Ko_Tool_OAuth::SGenKey();
 		$aData = array(
 			'cid' => $this->_sClientId,
 			'token' => $token,

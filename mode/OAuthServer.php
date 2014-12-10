@@ -106,7 +106,7 @@ class Ko_Mode_OAuthServer extends Ko_Mode_OAuthServerBase
 	 */
 	public function vSetClientInfo($iCid, &$sSecret)
 	{
-		$sSecret = $this->_sGenKey();
+		$sSecret = Ko_Tool_OAuth::SGenKey();
 		$aData = array(
 			'cid' => $iCid,
 			'secret' => $sSecret,
@@ -218,8 +218,8 @@ class Ko_Mode_OAuthServer extends Ko_Mode_OAuthServerBase
 			return array($tokenInfo[0]['token'], $tokenInfo[0]['secret']);
 		}
 
-		$sToken = $this->_sGenKey();
-		$sSecret = $this->_sGenKey();
+		$sToken = Ko_Tool_OAuth::SGenKey();
+		$sSecret = Ko_Tool_OAuth::SGenKey();
 		$aData = array(
 			'cid' => $iCid,
 			'token' => $sToken,
@@ -336,7 +336,7 @@ class Ko_Mode_OAuthServer extends Ko_Mode_OAuthServerBase
 
 	private function _vAuthClient($iUid, $sScope, $sCallback)
 	{
-		$sVerifier = $this->_sGenKey();
+		$sVerifier = Ko_Tool_OAuth::SGenKey();
 		$aUpdate = array(
 			'verifier' => $sVerifier,
 			'uid' => $iUid,
@@ -420,7 +420,7 @@ class Ko_Mode_OAuthServer extends Ko_Mode_OAuthServerBase
 
 	private function _bCheckSignature($sClientSecret, $sTokenSecret)
 	{
-		return $this->_aReq['oauth_signature'] === self::_SEncode_HMAC_SHA1(self::_SGetSignatureBase($this->_sGetReqMethod(), $this->_sGetBaseUri(), $this->_aReq), $sClientSecret, $sTokenSecret);
+		return $this->_aReq['oauth_signature'] === Ko_Tool_OAuth::SGetSignature($this->_sGetReqMethod(), $this->_sGetBaseUri(), $this->_aReq, $sClientSecret, $sTokenSecret);
 	}
 
 	private function _bCheckNonce()
@@ -464,8 +464,8 @@ class Ko_Mode_OAuthServer extends Ko_Mode_OAuthServerBase
 
 	private function _aGetTemporaryCredentials()
 	{
-		$sToken = $this->_sGenKey();
-		$sSecret = $this->_sGenKey();
+		$sToken = Ko_Tool_OAuth::SGenKey();
+		$sSecret = Ko_Tool_OAuth::SGenKey();
 		$aData = array(
 			'token' => $sToken,
 			'secret' => $sSecret,
@@ -476,13 +476,6 @@ class Ko_Mode_OAuthServer extends Ko_Mode_OAuthServerBase
 		$temptokenDao = $this->_aConf['temptoken'].'Dao';
 		$this->$temptokenDao->aInsert($aData);
 		return array($sToken, $sSecret);
-	}
-
-	private static function _SGetSignatureBase($sMethod, $sBaseUri, $aReq)
-	{
-		return self::_SEncode_Percent($sMethod)
-			.'&'.self::_SEncode_Percent($sBaseUri)
-			.'&'.self::_SEncode_Percent(self::_SGetNormalizedParams($aReq));
 	}
 
 	private function _sGetReqMethod()
@@ -497,50 +490,6 @@ class Ko_Mode_OAuthServer extends Ko_Mode_OAuthServerBase
 			return $this->_sBaseuri;
 		}
 		return $this->_aConf['baseuri'];
-	}
-
-	private static function _SGetNormalizedParams($aReq)
-	{
-		$data = array();
-		foreach ($aReq as $k => $v)
-		{
-			if ('oauth_signature' === $k)
-			{
-				continue;
-			}
-			$data[] = array(
-				'k' => self::_SEncode_Percent($k),
-				'v' => self::_SEncode_Percent($v),
-				);
-		}
-		usort($data, array('self', '_ISortPara_Callback'));
-		$data2 = array();
-		foreach ($data as $v)
-		{
-			$data2[] = $v['k'].'='.$v['v'];
-		}
-		return implode('&', $data2);
-	}
-
-	private static function _ISortPara_Callback($a, $b)
-	{
-		$ret = strcmp($a['k'], $b['k']);
-		if (0 === $ret)
-		{
-			$ret = strcmp($a['v'], $b['v']);
-		}
-		return $ret;
-	}
-
-	private static function _SEncode_HMAC_SHA1($sBase, $sClientSecret, $sTokenSecret)
-	{
-		$sKey = self::_SEncode_Percent($sClientSecret).'&'.self::_SEncode_Percent($sTokenSecret);
-		return base64_encode(hash_hmac('sha1', $sBase, $sKey, true));
-	}
-
-	private static function _SEncode_Percent($sStr)
-	{
-		return str_replace('%7E', '~', rawurlencode($sStr));
 	}
 
 	private function _iGetClientTimeout()
@@ -577,7 +526,7 @@ class Ko_Mode_OAuthServer extends Ko_Mode_OAuthServerBase
 		{
 			$uri .= $k.'='.urlencode($v).'&';
 		}
-		$sSignature = self::_SEncode_HMAC_SHA1(self::_SGetSignatureBase($sMethod, $sUri, $aReq), $sSecret, $sRequestSecret);
+		$sSignature = Ko_Tool_OAuth::SGetSignature($sMethod, $sUri, $aReq, $sSecret, $sRequestSecret);
 		return $uri.'oauth_signature='.urlencode($sSignature);
 	}
 }
