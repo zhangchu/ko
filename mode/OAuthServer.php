@@ -296,7 +296,7 @@ class Ko_Mode_OAuthServer extends Ko_Mode_OAuthServerBase
 			'oauth_nonce' => mt_rand(),
 			'oauth_version' => '1.0',
 			);
-		return self::_SGetTokenUri($sMethod, $sUri, $aReq, $sSecret, $sRequestSecret);
+		return self::_SGetTokenUri($sMethod, $sUri, $aReq, $sSecret, '');
 	}
 	
 	/**
