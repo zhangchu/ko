@@ -21,8 +21,8 @@ class Ko_Tool_Module
 		$sScript = $_SERVER['SCRIPT_FILENAME'];
 		if ('/' != $sScript[0] && ':/' != substr($sScript, 1, 2))
 		{
-			$sPath = realpath(dirname($_SERVER['SCRIPT_FILENAME']));
-			$sScript = $sPath.'/'.$_SERVER['SCRIPT_FILENAME'];
+			$sPath = realpath(dirname($sScript));
+			$sScript = $sPath.'/'.$sScript;
 		}
 		return $sScript;
 	}
