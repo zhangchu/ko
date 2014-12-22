@@ -155,11 +155,6 @@ class Ko_Data_MongoDB
 		{
 			$ret[] = $doc;
 		}
-		$len = strlen(serialize($ret));
-
-		if($len>50*1024)
-			//error_log($len." ".serialize($_SERVER)."\n",3,'/tmp/mongo.txt');
-			CLogFunc::addSysLog(CLogFunc::$user_op_log['web_debug_log'], LOG_LOCAL3, 'mongo '.$sKind.' '.$_SERVER['SCRIPT_FILENAME'].' '.$len, LOG_NOTICE);
 		return $ret;
 	}
 	
