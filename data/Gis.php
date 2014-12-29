@@ -17,21 +17,21 @@ class Ko_Data_Gis extends Ko_Data_KProxy
 	const MDD    = 0x2;
 	const AREA   = 0x4;
 
-	private static $s_OInstance;
+	private static $s_aInstances = array();
 
-	protected function __construct ()
+	protected function __construct ($sTag)
 	{
-		KO_DEBUG >= 6 && Ko_Tool_Debug::VAddTmpLog('data/Gis', '__construct');
-		parent::__construct('Gis');
+		KO_DEBUG >= 6 && Ko_Tool_Debug::VAddTmpLog('data/Gis', '__construct:'.$sTag);
+		parent::__construct('Gis', $sTag);
 	}
 
-	public static function OInstance()
+	public static function OInstance($sTag = '')
 	{
-		if (empty(self::$s_OInstance))
+		if (empty(self::$s_aInstances[$sTag]))
 		{
-			self::$s_OInstance = new self();
+			self::$s_aInstances[$sTag] = new self($sTag);
 		}
-		return self::$s_OInstance;
+		return self::$s_aInstances[$sTag];
 	}
 	
 	public function vReload($iHow = self::REGION)
