@@ -30,7 +30,7 @@ class Ko_Data_DLog extends Ko_Data_KProxy
 	
 	public static function VLog($identity, $tag, $locus, $content)
 	{
-		Ko_Data_DLog::OInstance()->_vLog();
+		Ko_Data_DLog::OInstance()->_vLog($identity, $tag, $locus, $content);
 	}
 
 	private function _vLog($identity, $tag, $locus, $content)
