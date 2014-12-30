@@ -89,6 +89,25 @@ class Ko_Tool_Str
 	}
 	
 	/**
+	 * 判断字符串是否是纯ASCII编码
+	 *
+	 * @return boolean
+	 */
+	public static function BIsASCII($sIn)
+	{
+		$iLen = strlen($sIn);
+		for($i=0; $i<$iLen; $i++)
+		{
+			$c0 = ord($sIn[$i]);
+			if ($c0 >= 0x80)
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/**
 	 * 从 GB18030 转化为 UTF-8 编码
 	 */
 	public static function VConvert2UTF8(&$aIn)
