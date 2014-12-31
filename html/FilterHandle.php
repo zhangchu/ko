@@ -15,7 +15,7 @@ class Ko_Html_FilterHandle
 		assert($oNode instanceof Ko_Html_Node);
 
 		$tag = $oNode->sGetTag();
-		return !in_array($tag, $aAllowTag);
+		return !in_array($tag, $aAllowTag, true);
 	}
 
 	public static function BFilterStyle($oNode, $oStyle, $aAllowStyle)
@@ -46,7 +46,7 @@ class Ko_Html_FilterHandle
 
 		$n = $oAttr->sGetName();
 		$v = $oAttr->sGetValue();
-		if (isset($aAllowAttr['']) && in_array($n, $aAllowAttr['']))
+		if (isset($aAllowAttr['']) && in_array($n, $aAllowAttr[''], true))
 		{
 			if (self::_BCheckProtocols($n, $v, $aCheckProtocolsAttr, $aAllowProtocols))
 			{
@@ -55,7 +55,7 @@ class Ko_Html_FilterHandle
 			return true;
 		}
 		$tag = $oNode->sGetTag();
-		if (isset($aAllowAttr[$tag]) && in_array($n, $aAllowAttr[$tag]))
+		if (isset($aAllowAttr[$tag]) && in_array($n, $aAllowAttr[$tag], true))
 		{
 			if (self::_BCheckProtocols($n, $v, $aCheckProtocolsAttr, $aAllowProtocols))
 			{
@@ -77,7 +77,7 @@ class Ko_Html_FilterHandle
 		if ($oChild instanceof Ko_Html_Node)
 		{
 			$tag = $oChild->sGetTag();
-			if (in_array($tag, $aForbidTag))
+			if (in_array($tag, $aForbidTag, true))
 			{
 				return true;
 			}
@@ -108,7 +108,7 @@ class Ko_Html_FilterHandle
 
 	private static function _BCheckProtocols($sName, $sValue, $aCheckProtocolsAttr, $aAllowProtocols)
 	{
-		if (in_array($sName, $aCheckProtocolsAttr))
+		if (in_array($sName, $aCheckProtocolsAttr, true))
 		{
 			return self::_BIsAllowProtocols($sValue, $aAllowProtocols);
 		}
@@ -128,7 +128,7 @@ class Ko_Html_FilterHandle
 			$protocol = '';
 		}
 		$protocol = strtolower($protocol);
-		return strlen($link) && in_array($protocol, $aAllowProtocols);
+		return strlen($link) && in_array($protocol, $aAllowProtocols, true);
 	}
 }
 

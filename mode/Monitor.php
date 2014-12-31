@@ -154,7 +154,7 @@ class Ko_Mode_Monitor extends Ko_Busi_Api
 			if ('tcp' === $info[0])
 			{
 				list($service, $pname, $pid, $localaddr) = $this->_aParseTcpService($sip, $info);
-				if (in_array($service, $this->_aConf['tcpservices']))
+				if (in_array($service, $this->_aConf['tcpservices'], true))
 				{
 					$aConfig['tcp_'.$service][$pid][$pname][] = $localaddr;
 				}
@@ -167,7 +167,7 @@ class Ko_Mode_Monitor extends Ko_Busi_Api
 			else if ('udp' === $info[0])
 			{
 				list($service, $pid, $socket) = $this->_aParseUdpService($sip, $info);
-				if (in_array($service, $this->_aConf['udpservices']))
+				if (in_array($service, $this->_aConf['udpservices'], true))
 				{
 					$aConfig['udp_'.$service][$pid][$service][] = $socket;
 				}
@@ -180,7 +180,7 @@ class Ko_Mode_Monitor extends Ko_Busi_Api
 			else if ('unix' === $info[0])
 			{
 				list($service, $pid, $socket) = $this->_aParseUnixService($sip, $info);
-				if (in_array($service, $this->_aConf['unixservices']))
+				if (in_array($service, $this->_aConf['unixservices'], true))
 				{
 					$aConfig['unix_'.$service][$pid][$service][] = $socket;
 				}

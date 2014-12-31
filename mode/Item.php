@@ -126,7 +126,7 @@ class Ko_Mode_Item extends Ko_Busi_Api
 	 */
 	public function __call($sName, $aArgs)
 	{
-		if (in_array($sName, $this->_allowMethods))
+		if (in_array($sName, $this->_allowMethods, true))
 		{
 			$itemDao = $this->_aConf['item'].'Dao';
 			return call_user_func_array(array($this->$itemDao, $sName), $aArgs);

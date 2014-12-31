@@ -91,7 +91,7 @@ class Ko_Mode_AdList extends Ko_Busi_Api
 		$loc = $this->_aGetLocation($sIp);
 		foreach ($list as $v)
 		{
-			if ($sGrp == $v['grp'] && $v['stime'] <= $now && $now <= $v['etime'] && !in_array($loc, $v['forbidregions']) && (empty($v['regions']) || in_array($loc, $v['regions'])))
+			if ($sGrp == $v['grp'] && $v['stime'] <= $now && $now <= $v['etime'] && !in_array($loc, $v['forbidregions'], true) && (empty($v['regions']) || in_array($loc, $v['regions'], true)))
 			{
 				$ids[$v['id']] = $v['priority'];
 			}

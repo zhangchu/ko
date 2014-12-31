@@ -163,7 +163,7 @@ class Ko_Mode_XTool
 	 */
 	public static function BIsDBIndexTag($sKey)
 	{
-		return in_array($sKey, self::$s_aDBIndexTag);
+		return in_array($sKey, self::$s_aDBIndexTag, true);
 	}
 
 	private static function _AGetDBSizeInfo($sSubType)

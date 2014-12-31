@@ -160,22 +160,22 @@ class Ko_Tool_Pinyin
 	{
 		$onsetlen = 2;
 		$onset = substr($sPy, 0, $onsetlen);
-		if (!in_array($onset, self::$s_aSyllableOnset))
+		if (!in_array($onset, self::$s_aSyllableOnset, true))
 		{
 			$onsetlen = 1;
 			$onset = substr($sPy, 0, $onsetlen);
-			if (!in_array($onset, self::$s_aSyllableOnset))
+			if (!in_array($onset, self::$s_aSyllableOnset, true))
 			{
 				$onsetlen = 0;
 				$onset = '';
 			}
 		}
 		$rime = $onsetlen ? substr($sPy, $onsetlen) : $sPy;
-		if (in_array($rime, self::$s_aSyllableRime))
+		if (in_array($rime, self::$s_aSyllableRime, true))
 		{	//有韵母
 			return array($onset, $rime);
 		}
-		if (in_array($sPy, self::$s_aSyllableRime))
+		if (in_array($sPy, self::$s_aSyllableRime, true))
 		{	//没声母，有韵母
 			return array('', $sPy);
 		}

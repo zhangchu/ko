@@ -49,7 +49,7 @@ class Ko_Html_Node implements IKo_Html_Item
 			else
 			{
 				$child = new Ko_Html_Node($this, $tag);
-				if (!$child->_bParseAllAttr($oHtmlStr) || '!' === $tag[0] || in_array($tag, self::$s_aSingleTag))
+				if (!$child->_bParseAllAttr($oHtmlStr) || '!' === $tag[0] || in_array($tag, self::$s_aSingleTag, true))
 				{
 					$child->_bClosed = true;
 				}

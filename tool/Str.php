@@ -355,7 +355,7 @@ class Ko_Tool_Str
 
 	private static function _SConvertCharset($sCharset)
 	{
-		if (in_array(strtolower($sCharset), self::$s_aGB))
+		if (in_array(strtolower($sCharset), self::$s_aGB, true))
 		{
 			return 'GB18030';
 		}

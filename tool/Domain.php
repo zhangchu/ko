@@ -28,7 +28,7 @@ class Ko_Tool_Domain
 		$tags = explode('.', $tags);
 		for ($i=count($tags)-2; $i>=0; $i--)
 		{
-			if (in_array($tags[$i], self::$s_aGenericTopLevelDomain))
+			if (in_array($tags[$i], self::$s_aGenericTopLevelDomain, true))
 			{
 				continue;
 			}

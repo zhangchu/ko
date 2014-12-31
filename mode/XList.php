@@ -739,7 +739,7 @@ class Ko_Mode_XList extends Ko_Busi_Api
 	private function _sGetReqOrder($aReq)
 	{
 		$orderfield = $this->_aGetListOrderField();
-		if (in_array($aReq['sXSOrder'], $orderfield))
+		if (in_array($aReq['sXSOrder'], $orderfield, true))
 		{
 			return $aReq['sXSOrder'].' '.($aReq['iXSOrder'] ? 'desc' : 'asc');
 		}
@@ -829,7 +829,7 @@ class Ko_Mode_XList extends Ko_Busi_Api
 		$html = '';
 		foreach ($showfield as $field)
 		{
-			if (in_array($field, $orderfield))
+			if (in_array($field, $orderfield, true))
 			{
 				$para['sXSOrder'] = $field;
 				if ($field == $aReq['sXSOrder'])

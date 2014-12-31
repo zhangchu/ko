@@ -97,7 +97,7 @@ class Ko_View_Escape
 	
 	private static function _VEscape($sKey, $vInput, $fnEscape, $aExclude)
 	{
-		if (in_array($sKey, $aExclude))
+		if (in_array($sKey, $aExclude, true))
 		{
 			return $vInput;
 		}
