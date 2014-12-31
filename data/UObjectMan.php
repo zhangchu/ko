@@ -86,6 +86,21 @@ class Ko_Data_UObjectMan extends Ko_Data_KProxy
 		{
 		}
 	}
+	
+	public function vClearKind()
+	{
+		KO_DEBUG >= 2 && Ko_Tool_Debug::VAddTmpLog('data/UObjectMan', 'clearKind:'.$this->_sKind);
+		try
+		{
+			$aPara = array(
+				'kind' => $this->_sKind,
+				);
+			$this->_oProxy->invoke('clearKind', $aPara);
+		}
+		catch (Exception $ex)
+		{
+		}
+	}
 
 	////////////////////////////////// 私有函数 //////////////////////////////////
 
