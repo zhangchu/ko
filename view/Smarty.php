@@ -37,46 +37,6 @@ class Ko_View_Smarty
 	}
 
 	/**
-	 * 单行文本 简单的作为JS变量
-	 */
-	public function vAssignSlashes($vTplVar, $vValue=null, $aExclude=array())
-	{
-		$this->_vAssignEscape($vTplVar, $vValue, array('Ko_View_Escape', 'VEscapeSlashes'), $aExclude);
-	}
-
-	/**
-	 * 单行文本 作为JS变量，并最终输出到页面显示
-	 */
-	public function vAssignSlashesHtml($vTplVar, $vValue=null, $aExclude=array())
-	{
-		$this->_vAssignEscape($vTplVar, $vValue, array('Ko_View_Escape', 'VEscapeSlashesHtml'), $aExclude);
-	}
-
-	/**
-	 * 多行文本 显示
-	 */
-	public function vAssignMultiline($vTplVar, $vValue=null, $aExclude=array())
-	{
-		$this->_vAssignEscape($vTplVar, $vValue, array('Ko_View_Escape', 'VEscapeMultiline'), $aExclude);
-	}
-
-	/**
-	 * JSON，不支持批量设置
-	 */
-	public function vAssignJson($sName, $vValue)
-	{
-		$this->_oSmarty->assign($sName, Ko_View_Escape::SEscapeJson($vValue));
-	}
-
-	/**
-	 * 将HTML作为普通文本设置到编辑器中，不支持批量设置 或 html文本 编辑器编辑
-	 */
-	public function vAssignEditor($sName, $sValue, $sTextType='html')
-	{
-		$this->_oSmarty->assign($sName, Ko_View_Escape::SEscapeEditor($sValue, $sTextType));
-	}
-
-	/**
 	 * assign raw，不推荐使用 或 html文本 显示
 	 */
 	public function vAssignRaw($vTplVar, $vValue=null)
