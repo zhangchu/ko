@@ -56,32 +56,70 @@ class Ko_Data_Storage extends Ko_Busi_Api
 	{
 		if (strlen($this->_aConf['uni']))
 		{
-			$uniDao = $this->_aConf['uni'].'Dao';
 			$md5 = md5($sContent, true);
-			$key = array('md5' => $md5, 'domain' => $sDomain);
-			$info = $this->$uniDao->aGet($key);
-			if (!empty($info))
+			if ($this->_bIsMd5Exist($md5, $sDomain, $sDest))
 			{
-				$this->$uniDao->iUpdate($key, array(), array('ref' => 1));
-				$sDest = $info['dest'];
 				return true;
 			}
 		}
 		$ret = $this->_bWrite($sContent, $sExt, $sDomain, $sDest);
 		if ($ret && strlen($this->_aConf['uni']))
 		{
-			$aData = array(
-				'md5' => $md5,
-				'domain' => $sDomain,
-				'dest' => $sDest,
-				'ref' => 1,
-			);
-			$this->$uniDao->aInsert($aData, array(), array('ref' => 1));
+			$this->_vSetMd5($md5, $sDomain, $sDest);
 		}
 		return $ret;
 	}
 	
+	public function bWriteFile($sFilename, $sExt, $sDomain, &$sDest)
+	{
+		if (strlen($this->_aConf['uni']))
+		{
+			$md5 = md5_file($sFilename, true);
+			if ($this->_bIsMd5Exist($md5, $sDomain, $sDest))
+			{
+				return true;
+			}
+		}
+		$ret = $this->_bWriteFile($sFilename, $sExt, $sDomain, $sDest);
+		if ($ret && strlen($this->_aConf['uni']))
+		{
+			$this->_vSetMd5($md5, $sDomain, $sDest);
+		}
+		return $ret;
+	}
+	
+	private function _bIsMd5Exist($md5, $sDomain, &$sDest)
+	{
+		$uniDao = $this->_aConf['uni'].'Dao';
+		$key = array('md5' => $md5, 'domain' => $sDomain);
+		$info = $this->$uniDao->aGet($key);
+		if (!empty($info))
+		{
+			$this->$uniDao->iUpdate($key, array(), array('ref' => 1));
+			$sDest = $info['dest'];
+			return true;
+		}
+		return false;
+	}
+	
+	private function _vSetMd5($md5, $sDomain, $sDest)
+	{
+		$uniDao = $this->_aConf['uni'].'Dao';
+		$aData = array(
+			'md5' => $md5,
+			'domain' => $sDomain,
+			'dest' => $sDest,
+			'ref' => 1,
+		);
+		$this->$uniDao->aInsert($aData, array(), array('ref' => 1));
+	}
+	
 	protected function _bWrite($sContent, $sExt, $sDomain, &$sDest)
+	{
+		assert(0);
+	}
+	
+	protected function _bWriteFile($sFilename, $sExt, $sDomain, &$sDest)
 	{
 		assert(0);
 	}
