@@ -27,6 +27,7 @@ class Ko_Tool_Mime
 		'cpt'     => 'application/mac-compactpro',
 		'csh'     => 'application/x-csh',
 		'css'     => 'text/css',
+		'csv'     => 'text/csv',
 		'dcr'     => 'application/x-director',
 		'dif'     => 'video/x-dv',
 		'dir'     => 'application/x-director',
@@ -119,6 +120,7 @@ class Ko_Tool_Mime
 		'rgb'     => 'image/x-rgb',
 		'rm'      => 'application/vnd.rn-realmedia',
 		'roff'    => 'application/x-troff',
+		'rss'     => 'application/rss+xml',
 		'rtf'     => 'text/rtf',
 		'rtx'     => 'text/richtext',
 		'sgm'     => 'text/sgml',
@@ -179,11 +181,11 @@ class Ko_Tool_Mime
 		'zip'     => 'application/zip',
 		);
 	
-	public static function sGetMimeType($sExt)
+	public static function sGetMimeType($sExt, $sDefault = 'application/octet-stream')
 	{
 		$sExt = strtolower($sExt);
 		return isset(self::$s_aMimeTypes[$sExt])
 			? self::$s_aMimeTypes[$sExt]
-			: 'application/octet-stream';
+			: $sDefault;
 	}
 }
