@@ -48,42 +48,55 @@ class Ko_Tool_Str
 	 */
 	public static function BIsUtf8($sIn)
 	{
+		$onlyAscii = true;
+		$onlyUtf8 = false;
 		$iLen = strlen($sIn);
-		for($i=0; $i<$iLen; $i++)
+		for ($i=0; $i<$iLen; $i++)
 		{
 			$c0 = ord($sIn[$i]);
 			if ($c0 < 0x80)
 			{
 				continue;
 			}
-			else if (0xC0 <= $c0 && $c0 <= 0xFD)
+			else if (self::_BCheckMultiByte_UTF8($sIn, $i, $c0, $iLen, $j))
 			{
-				if ($c0 >= 0xFC)       $j = 6;
-				else if ($c0 >= 0xF8)  $j = 5;
-				else if ($c0 >= 0xF0)  $j = 4;
-				else if ($c0 >= 0xE0)  $j = 3;
-				else                   $j = 2;
-				if ($i + $j <= $iLen)
+				$i += $j - 1;
+				$onlyAscii = false;
+				if ($j > 2)
 				{
-					if (self::_BCheckSecondByte_UTF8($sIn, $i, $iLen, $j))
-					{
-						if ($j == 2)
-						{
-							if (self::_BCheckSecondByte_GB18030($sIn, $i, $iLen, $j))
-							{
-								if ($j != 2)
-								{
-									return false;
-								}
-								$i += $j - 1;
-								continue;
-							}
-						}
-						return true;
-					}
+					$onlyUtf8 = true;
 				}
+				continue;
 			}
-			break;
+			return false;
+		}
+
+		if ($onlyAscii)
+		{
+			return false;
+		}
+		if ($onlyUtf8)
+		{
+			return true;
+		}
+		
+		for ($i=0; $i<$iLen; $i++)
+		{
+			$c0 = ord($sIn[$i]);
+			if ($c0 >= 0x80)
+			{
+				$j = 2;
+				if (self::_BCheckSecondByte_GB18030($sIn, $i, $iLen, $j))
+				{
+					if ($j != 2)
+					{
+						return false;
+					}
+					$i += $j - 1;
+					continue;
+				}
+				return true;
+			}
 		}
 		return false;
 	}
