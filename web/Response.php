@@ -8,7 +8,7 @@
 
 class Ko_Web_Response
 {
-    private static $_ORes;
+    private static $s_ORes;
 
     private $_sProtocol     = 'HTTP/1.1';
     private $_iHttpCode     = 200;
@@ -25,11 +25,11 @@ class Ko_Web_Response
 
     public final static function OInstance()
     {
-        if (null === self::$_ORes)
+        if (null === self::$s_ORes)
         {
-            self::$_ORes = new static();
+            self::$s_ORes = new static();
         }
-        return self::$_ORes;
+        return self::$s_ORes;
     }
 
     /**
