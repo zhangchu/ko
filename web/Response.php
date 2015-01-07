@@ -124,7 +124,7 @@ class Ko_Web_Response
      * @param bool $bPermanently 是否为永久重定向
      * @return $this
      */
-    public function oRedirect($sLocation, $bPermanently = false)
+    public function oSetRedirect($sLocation, $bPermanently = false)
     {
         $statusCode = $bPermanently ? 301 : 302;
         $this->vHttpCode($statusCode);
@@ -149,19 +149,6 @@ class Ko_Web_Response
             $sName = ucfirst($sName);
         }
         return $this->_oHeader($sName, $sValue);
-    }
-    
-    /**
-     * @param Ko_View_Render_Base $oBody
-     * @return Ko_View_Render_Base
-     */
-    public function oGetBody()
-    {
-        if (null === $this->_oBody)
-        {
-            $this->_oBody = new Ko_View_Render_Base;
-        }
-        return $this->_oBody;
     }
     
     /**
