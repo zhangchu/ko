@@ -15,12 +15,7 @@ class Ko_Html_Utils
 	 */
 	public static function SDeleteUselessBlank($sText)
 	{
-		$sText = str_replace(array("\t", "\r", "\n"), array(' ', ' ', ' '), $sText);
-		while (false !== strpos($sText, '  '))
-		{
-			$sText = str_replace('  ', ' ', $sText);
-		}
-		return $sText;
+		return preg_replace('/[\s\x0b\0]+/', ' ', $sText);
 	}
 	
 	/**
