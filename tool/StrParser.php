@@ -33,7 +33,9 @@ class Ko_Tool_StrParser
 	public function bIsBlank($iOffset = 0)
 	{
 		$sChar = $this->sChar($iOffset);
-		return ' ' === $sChar || "\t" === $sChar || "\n" === $sChar || "\r" === $sChar;
+		return ' ' === $sChar || "\t" === $sChar
+			|| "\n" === $sChar || "\r" === $sChar
+			|| "\0" === $sChar || "\x0B" === $sChar;
 	}
 
 	/**
