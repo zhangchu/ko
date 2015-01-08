@@ -24,7 +24,7 @@ class Ko_Tool_Str
 	public static function SForce2UTF8($sIn)
 	{
 		return self::BIsUtf8($sIn)
-			? self::SFilterErrorCode($sIn, 'UTF-8')
+			? $sIn
 			: self::SConvert2UTF8($sIn);
 	}
 	
