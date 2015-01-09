@@ -152,7 +152,7 @@ class Ko_Mode_Content extends Ko_Busi_Api
 			else
 			{
 				$map[$aid][$obj['id']] = $aInfo[$aid]['classname']::S2Text(
-					$list[$k]['content'], $aInfo[$aid]['maxlength'], $aInfo[$aid]['ext']);
+					strval($list[$k]['content']), $aInfo[$aid]['maxlength'], $aInfo[$aid]['ext']);
 			}
 		}
 		return $map;
@@ -195,7 +195,7 @@ class Ko_Mode_Content extends Ko_Busi_Api
 			else
 			{
 				$map[$aid][$obj['id']] = $aInfo[$aid]['classname']::S2Html(
-					$list[$k]['content'], $aInfo[$aid]['maxlength']);
+					strval($list[$k]['content']), $aInfo[$aid]['maxlength']);
 			}
 		}
 		return $map;
@@ -213,7 +213,7 @@ class Ko_Mode_Content extends Ko_Busi_Api
 		{
 			return '';
 		}
-		return $info['content'];
+		return strval($info['content']);
 	}
 
 	private function _iGetAidMaxLength($aid)
