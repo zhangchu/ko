@@ -31,11 +31,11 @@ class Ko_Mode_Content extends Ko_Busi_Api
 	 * <pre>
 	 * array(
 	 *   'contentApi' =>              目标数据库 Api 名称
-	 *   'maxlength' =>               最大内容长度
+	 *   'maxlength' =>               最大内容长度, optional
 	 *   'app' => array(
 	 *     aid => array(                        aid决定种类与格式
 	 *       'type' => 'html|text',             内容格式
-	 *       'maxlength' =>                     这个aid里面内容最大的长度，不大于全局的最大长度
+	 *       'maxlength' =>                     这个aid里面内容最大的长度，不大于全局的最大长度 optional
 	 *     ),
 	 *   ),
 	 * )
@@ -62,6 +62,7 @@ class Ko_Mode_Content extends Ko_Busi_Api
 			'content' => $aData['content'],
 		);
 		$this->$contentApi->aInsert($aData, $aUpdate);
+		return true;
 	}
 	
 	public function sGetText($iAid, $iId, $iMaxLength = 0, $sExt = '')
@@ -88,16 +89,45 @@ class Ko_Mode_Content extends Ko_Busi_Api
 		return $classname::S2Html($content, $iMaxLength);
 	}
 	
+	public function aGetText($iAid, $aIds, $iMaxLength = 0, $sExt = '')
+	{
+		$aInfo = array(
+			$iAid => array(
+				'ids' => $aIds,
+				'maxlength' => $iMaxLength,
+				'ext' => $sExt
+			),
+		);
+		$ret = $this->aGetTextEx($aInfo);
+		return $ret[$iAid];
+	}
+	
+	public function aGetHtml($iAid, $aIds, $iMaxLength = 0)
+	{
+		$aInfo = array(
+			$iAid => array(
+				'ids' => $aIds,
+				'maxlength' => $iMaxLength,
+			),
+		);
+		$ret = $this->aGetHtmlEx($aInfo);
+		return $ret[$iAid];
+	}
+	
 	/**
 	 * @param array $aInfo = array(aid => array('ids' => array(), 'maxlength' => 0, 'ext' => ''))
 	 * @return array
 	 */
-	public function aGetText($aInfo)
+	public function aGetTextEx($aInfo)
 	{
 		$objs = array();
 		foreach ($aInfo as $aid => &$info)
 		{
 			assert(isset($this->_aConf['app'][$aid]));
+			if (!isset($info['ids']))
+			{
+				$info = array('ids' => $info);
+			}
 			foreach ($info['ids'] as $id)
 			{
 				assert($id > 0);
@@ -132,12 +162,16 @@ class Ko_Mode_Content extends Ko_Busi_Api
 	 * @param array $aInfo = array(aid => array('ids' => array(), 'maxlength' => 0))
 	 * @return array
 	 */
-	public function aGetHtml($aInfo)
+	public function aGetHtmlEx($aInfo)
 	{
 		$objs = array();
 		foreach ($aInfo as $aid => &$info)
 		{
 			assert(isset($this->_aConf['app'][$aid]));
+			if (!isset($info['ids']))
+			{
+				$info = array('ids' => $info);
+			}
 			foreach ($info['ids'] as $id)
 			{
 				assert($id > 0);
