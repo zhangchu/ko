@@ -8,7 +8,7 @@
 
 class Ko_View_Render_JSON extends Ko_View_Render_Base
 {
-    protected function _sRender()
+    public function sRender()
     {
         return json_encode($this->_aData);
     }

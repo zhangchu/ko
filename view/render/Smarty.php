@@ -6,7 +6,7 @@
  * @author jiangjw & zhangchu
  */
 
-class Ko_View_Render_Smarty extends Ko_View_Render_Base
+class Ko_View_Render_Smarty extends Ko_View_Render_List
 {
     private $_oSmarty;
     
