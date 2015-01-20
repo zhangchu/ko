@@ -120,24 +120,7 @@ class Ko_Mode_Content extends Ko_Busi_Api
 	 */
 	public function aGetTextEx($aInfo)
 	{
-		$objs = array();
-		foreach ($aInfo as $aid => &$info)
-		{
-			assert(isset($this->_aConf['app'][$aid]));
-			if (!isset($info['ids']))
-			{
-				$info = array('ids' => $info);
-			}
-			foreach ($info['ids'] as $id)
-			{
-				assert($id > 0);
-				$objs[] = compact('aid', 'id');
-			}
-			$info['maxlength'] = intval($info['maxlength']);
-			$info['ext'] = strval($info['ext']);
-			$info['classname'] = 'Ko_Mode_Content_'.ucfirst($this->_aConf['app'][$aid]['type']);
-		}
-		unset($info);
+		$this->_vNormalizeInfo($aInfo, $objs);
 		
 		$contentApi = $this->_aConf['contentApi'];
 		$list = $this->$contentApi->aGetDetails($objs, '', '', false);
@@ -164,23 +147,7 @@ class Ko_Mode_Content extends Ko_Busi_Api
 	 */
 	public function aGetHtmlEx($aInfo)
 	{
-		$objs = array();
-		foreach ($aInfo as $aid => &$info)
-		{
-			assert(isset($this->_aConf['app'][$aid]));
-			if (!isset($info['ids']))
-			{
-				$info = array('ids' => $info);
-			}
-			foreach ($info['ids'] as $id)
-			{
-				assert($id > 0);
-				$objs[] = compact('aid', 'id');
-			}
-			$info['maxlength'] = intval($info['maxlength']);
-			$info['classname'] = 'Ko_Mode_Content_'.ucfirst($this->_aConf['app'][$aid]['type']);
-		}
-		unset($info);
+		$this->_vNormalizeInfo($aInfo, $objs);
 		
 		$contentApi = $this->_aConf['contentApi'];
 		$list = $this->$contentApi->aGetDetails($objs, '', '', false);
@@ -199,6 +166,28 @@ class Ko_Mode_Content extends Ko_Busi_Api
 			}
 		}
 		return $map;
+	}
+	
+	private function _vNormalizeInfo(&$aInfo, &$objs)
+	{
+		$objs = array();
+		foreach ($aInfo as $aid => &$info)
+		{
+			assert(isset($this->_aConf['app'][$aid]));
+			if (!isset($info['ids']))
+			{
+				$info = array('ids' => $info);
+			}
+			foreach ($info['ids'] as $id)
+			{
+				assert($id > 0);
+				$objs[] = compact('aid', 'id');
+			}
+			$info['maxlength'] = intval($info['maxlength']);
+			$info['ext'] = strval($info['ext']);
+			$info['classname'] = 'Ko_Mode_Content_'.ucfirst($this->_aConf['app'][$aid]['type']);
+		}
+		unset($info);
 	}
 	
 	private function _aGetContent($iAid, $iId)
