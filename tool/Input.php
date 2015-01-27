@@ -382,27 +382,3 @@ class Ko_Tool_Input
 		}
 	}
 }
-
-/*
-
-$_REQUEST['bbb'] = array('iId' => '123a', 'sName' => '321');
-$uid = Ko_Tool_Input::VClean('r', 'bbb', false);
-var_dump($uid);
-
-$_REQUEST['uid'] = '123a';
-$uid = Ko_Tool_Input::VClean('r', 'uid', Ko_Tool_Input::T_UINT);
-var_dump($uid);
-
-$req = Ko_Tool_Input::ACleanAll();
-var_dump($req);
-
-$_REQUEST['uid'] = array('123a', '不错(#伤心)');
-$req = Ko_Tool_Input::ACleanAll(array('uid' => Ko_Tool_Input::T_STR));
-Ko_Tool_Str::VConvert2GB18030($req);
-var_dump($req);
-
-$ret = get_magic_quotes_gpc();
-var_dump($ret);
-
-*/
-?>
