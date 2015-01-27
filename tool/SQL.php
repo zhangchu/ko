@@ -128,7 +128,7 @@ class Ko_Tool_SQL
 	 */
 	public function oOffset($iOffset)
 	{
-		$this->_iOffset = $iOffset;
+		$this->_iOffset = max(0, $iOffset);
 		return $this;
 	}
 
@@ -137,7 +137,7 @@ class Ko_Tool_SQL
 	 */
 	public function oLimit($iLimit)
 	{
-		$this->_iLimit = $iLimit;
+		$this->_iLimit = max(0, $iLimit);
 		return $this;
 	}
 
