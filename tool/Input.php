@@ -6,8 +6,6 @@
  * @author zhangchu
  */
 
-//include_once('../ko.class.php');
-
 /**
  * 检测和规范输入数据实现
  */
@@ -99,6 +97,21 @@ class Ko_Tool_Input
 		$aRet = array();
 		self::_VCleanOneType($aRet, array(), $iVarType, $sVarName, $GLOBALS[self::$s_aSuperGlobal[$sSource]][$sVarName], $sCharset);
 		return $aRet[$sVarName];
+	}
+	
+	/**
+	 * 从 $_GET & $_POST 解析指定名称的 cgi 参数，$_POST 优先
+	 * @param string $sVarName 参数的名称
+	 * @param int $iVarType 指定参数的类型
+	 * @return mixed 类型检查后的参数
+	 */
+	public static function VCleanOneGP($sVarName, $iVarType = false, $sCharset = KO_CHARSET)
+	{
+		if (isset($_POST[$sVarName]))
+		{
+			return self::VClean('p', $sVarName, $iVarType, $sCharset);
+		}
+		return self::VClean('g', $sVarName, $iVarType, $sCharset);
 	}
 
 	/**
