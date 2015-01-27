@@ -128,6 +128,26 @@ class Ko_Tool_Input
 		}
 		return $aRet;
 	}
+	
+	/**
+	 * 单独解析所有 $_GET & $_POST 数据，$_POST 优先
+	 * @return array 返回数据中包括 $aValTypes 中定义的数据，也包括符合命名规范的参数(首字母在self::$s_aTypeMap中已定义)
+	 */
+	public static function ACleanAllGP($aValTypes = array(), $sCharset = KO_CHARSET)
+	{
+		self::_VInit();
+
+		$aRet = array();
+		foreach ($_GET as $k => $v)
+		{
+			self::_VCleanOne($aRet, $aValTypes, $k, $v, $sCharset);
+		}
+		foreach ($_POST as $k => $v)
+		{
+			self::_VCleanOne($aRet, $aValTypes, $k, $v, $sCharset);
+		}
+		return $aRet;
+	}
 
 	/**
 	 * 单独解析所有 $_GET 数据
