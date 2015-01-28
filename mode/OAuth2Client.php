@@ -66,10 +66,6 @@ class Ko_Mode_OAuth2Client extends Ko_Mode_OAuthClientBase
 	 */
 	protected $_aConf = array();
 
-	protected $_aReqType = array(
-		'code' => Ko_Tool_Input::T_STR,
-		);
-	
 	/**
 	 * 入口接口 / 回调接口
 	 *

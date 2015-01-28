@@ -82,21 +82,6 @@ class Ko_Mode_OAuth2Server extends Ko_Mode_OAuthServerBase
 	const DEFAULT_TOKEN_TIMEOUT				= 86400;
 	const DEFAULT_REFRESHTOKEN_TIMEOUT		= 2592000;	// 30 x 86400
 
-	protected $_aReqType = array(
-		'client_id' => Ko_Tool_Input::T_STR,
-		'client_secret' => Ko_Tool_Input::T_STR,
-		'username' => Ko_Tool_Input::T_STR,
-		'password' => Ko_Tool_Input::T_STR,
-		'response_type' => Ko_Tool_Input::T_STR,
-		'grant_type' => Ko_Tool_Input::T_STR,
-		'code' => Ko_Tool_Input::T_STR,
-		'access_token' => Ko_Tool_Input::T_STR,
-		'refresh_token' => Ko_Tool_Input::T_STR,
-		'redirect_uri' => Ko_Tool_Input::T_STR,
-		'scope' => Ko_Tool_Input::T_STR,
-		'state' => Ko_Tool_Input::T_STR,
-		);
-
 	protected $_sClientId = '';		//auth 接口是传入的 client_id，token接口是验证通过的 client_id
 
 	/**

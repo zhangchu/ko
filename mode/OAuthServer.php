@@ -83,22 +83,6 @@ class Ko_Mode_OAuthServer extends Ko_Mode_OAuthServerBase
 	const DEFAULT_TEMPTOKEN_TIMEOUT			= 1800;
 	const DEFAULT_TOKEN_TIMEOUT				= 86400;
 
-	protected $_aReqType = array(
-		'oauth_consumer_key' => Ko_Tool_Input::T_STR,
-		'oauth_token' => Ko_Tool_Input::T_STR,
-		'oauth_signature_method' => Ko_Tool_Input::T_STR,
-		'oauth_signature' => Ko_Tool_Input::T_STR,
-		'oauth_timestamp' => Ko_Tool_Input::T_STR,
-		'oauth_nonce' => Ko_Tool_Input::T_STR,
-		'oauth_version' => Ko_Tool_Input::T_STR,
-		'oauth_callback' => Ko_Tool_Input::T_STR,
-		'oauth_verifier' => Ko_Tool_Input::T_STR,
-
-		'x_auth_mode' => Ko_Tool_Input::T_STR,
-		'x_auth_username' => Ko_Tool_Input::T_STR,
-		'x_auth_password' => Ko_Tool_Input::T_STR,
-		);
-
 	private $_sBaseuri;
 
 	/**

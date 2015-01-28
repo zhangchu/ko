@@ -73,11 +73,6 @@ class Ko_Mode_OAuthClient extends Ko_Mode_OAuthClientBase
 	 */
 	protected $_aConf = array();
 
-	protected $_aReqType = array(
-		'oauth_token' => Ko_Tool_Input::T_STR,
-		'oauth_verifier' => Ko_Tool_Input::T_STR,
-		);
-	
 	/**
 	 * 保存 request token
 	 * 
