@@ -235,7 +235,17 @@ class Ko_Web_Request
     {
         return self::_VServer('HTTP_X_REQUESTED_WITH');
     }
+    
+    public static function SPhpAuthUser()
+    {
+        return self::_VServer('PHP_AUTH_USER');
+    }
 
+    public static function SPhpAuthPw()
+    {
+        return self::_VServer('PHP_AUTH_PW');
+    }
+    
     private static function _VServer($sName)
     {
         return isset($_SERVER[$sName]) ? $_SERVER[$sName] : null;
