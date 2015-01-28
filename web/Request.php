@@ -25,7 +25,7 @@ class Ko_Web_Request
         {
             $aValTypes[$k] = $bTrim ? Ko_Tool_Input::T_STR : Ko_Tool_Input::T_NOTRIM;
         }
-        return Ko_Tool_Input::ACleanAllGet($aValTypes, $sCharset);
+        return Ko_Tool_Input::ACleanAllPost($aValTypes, $sCharset);
     }
     
     public static function AInput($bTrim = true, $sCharset = KO_CHARSET)
