@@ -221,7 +221,7 @@ class Ko_Web_Request
         return self::_VServer('HTTP_VIA');
     }
 
-    public static function SHttpXForwordedFor()
+    public static function SHttpXForwardedFor()
     {
         return self::_VServer('HTTP_X_FORWARDED_FOR');
     }
