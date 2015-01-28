@@ -18,7 +18,7 @@ class Ko_Tool_Module
 	 */
 	public static function SGetScriptFullName()
 	{
-		$sScript = $_SERVER['SCRIPT_FILENAME'];
+		$sScript = Ko_Web_Request::SScriptFilename();
 		if ('/' != $sScript[0] && ':/' != substr($sScript, 1, 2))
 		{
 			$sPath = realpath(dirname($sScript));

@@ -15,6 +15,6 @@ class Ko_Tool_Request
 	 */
 	public static function BIsAjax()
 	{
-		return 'XMLHttpRequest' === getenv('HTTP_X_REQUESTED_WITH');
+		return 'XMLHttpRequest' === Ko_Web_Request::SHttpXRequestedWith();
 	}
 }

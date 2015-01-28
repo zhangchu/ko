@@ -19,7 +19,7 @@ class Ko_Mode_OAuthBase extends Ko_Busi_Api
 	public function aGetPara($aReqType = array())
 	{
 		$types = array_merge($this->_aReqType, $aReqType);
-		if ('GET' === getenv('REQUEST_METHOD'))
+		if ('GET' === Ko_Web_Request::SRequestMethod())
 		{
 			return $this->_aReq = Ko_Tool_Input::ACleanAllGet($types, 'UTF-8');
 		}

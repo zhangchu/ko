@@ -26,7 +26,7 @@ class Ko_App_Safe extends Ko_App_Base
 	
 	public static function BCheckRequestMethod($sAllowMethod = 'POST')
 	{
-		$method = getenv('REQUEST_METHOD');
+		$method = Ko_Web_Request::SRequestMethod();
 		return false !== strpos($sAllowMethod, $method);
 	}
 }

@@ -137,7 +137,9 @@ class Ko_Tool_Ip
 		static $ip = null;
 		if (is_null($ip))
 		{
-			$fip = getenv('HTTP_X_FORWARDED_FOR').' '.getenv('HTTP_VIA').' '.getenv('REMOTE_ADDR');
+			$fip = Ko_Web_Request::SHttpXForwardedFor()
+				.' '.Ko_Web_Request::SHttpVia()
+				.' '.Ko_Web_Request::SRemoteAddr();
 			$ip = self::SGetFirstOuterIP($fip);
 		}
 		return $ip;
@@ -153,7 +155,9 @@ class Ko_Tool_Ip
 		static $ip = null;
 		if (is_null($ip))
 		{
-			$fip = getenv('HTTP_X_FORWARDED_FOR').' '.getenv('HTTP_VIA').' '.getenv('REMOTE_ADDR');
+			$fip = Ko_Web_Request::SHttpXForwardedFor()
+				.' '.Ko_Web_Request::SHttpVia()
+				.' '.Ko_Web_Request::SRemoteAddr();
 			$ip = self::SGetLastOuterIP($fip);
 		}
 		return $ip;
@@ -169,7 +173,7 @@ class Ko_Tool_Ip
 		static $ip = null;
 		if (is_null($ip))
 		{
-			$ip = getenv('SERVER_ADDR');
+			$ip = Ko_Web_Request::SServerAddr();
 			if ($ip == '' || $ip == '127.0.0.1')
 			{
 				$ip = 'unknown';

@@ -147,7 +147,7 @@ class Ko_Mode_OAuth2Server extends Ko_Mode_OAuthServerBase
 		{
 			return false;
 		}
-		if ($iUid && 'POST' === getenv('REQUEST_METHOD'))
+		if ($iUid && 'POST' === Ko_Web_Request::SRequestMethod())
 		{
 			$this->_vAuthClient($iUid, $bAgree, $sScope, $sRedirectUri);
 		}
@@ -383,8 +383,8 @@ class Ko_Mode_OAuth2Server extends Ko_Mode_OAuthServerBase
 	private function _bCheckClient($fnCheckClient_Callback)
 	{
 		//http://tools.ietf.org/html/rfc6749#section-2.3.1
-		$client_id = urldecode($_SERVER['PHP_AUTH_USER']);
-		$client_secret = urldecode($_SERVER['PHP_AUTH_PW']);
+		$client_id = urldecode(Ko_Web_Request::SPhpAuthUser());
+		$client_secret = urldecode(Ko_Web_Request::SPhpAuthPw());
 		if (0 === strlen($client_id) || 0 === strlen($client_secret))
 		{
 			$client_id = $this->_aReq['client_id'];

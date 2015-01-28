@@ -18,15 +18,15 @@ class Ko_Tool_Safe
 	 */
 	public static function BCheckMethod($aPostAllowRefDomain = array())
 	{
-		if ('POST' === getenv('REQUEST_METHOD'))
+		if ('POST' === Ko_Web_Request::SRequestMethod())
 		{
-			$referer = getenv('HTTP_REFERER');
+			$referer = Ko_Web_Request::SHttpReferer();
 			if (strlen($referer))
 			{
 				$refinfo = parse_url(strtolower($referer));
 				if (empty($aPostAllowRefDomain))
 				{
-					list($host, $port) = explode(':', getenv('HTTP_HOST'), 2);
+					list($host, $port) = explode(':', Ko_Web_Request::SHttpHost(), 2);
 					if ($refinfo['host'] !== $host)
 					{
 						return false;

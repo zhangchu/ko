@@ -130,7 +130,7 @@ class Ko_Mode_OAuthServer extends Ko_Mode_OAuthServerBase
 		{
 			return false;
 		}
-		if ($iUid && 'POST' === getenv('REQUEST_METHOD'))
+		if ($iUid && 'POST' === Ko_Web_Request::SRequestMethod())
 		{
 			return $this->_vAuthClient($iUid, $sScope, $sCallback);
 		}
@@ -467,7 +467,7 @@ class Ko_Mode_OAuthServer extends Ko_Mode_OAuthServerBase
 
 	private function _sGetReqMethod()
 	{
-		return getenv('REQUEST_METHOD');
+		return Ko_Web_Request::SRequestMethod();
 	}
 
 	private function _sGetBaseUri()

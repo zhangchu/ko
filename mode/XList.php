@@ -151,8 +151,7 @@ class Ko_Mode_XList extends Ko_Busi_Api
 			if (isset($aReq[$cginame])) $this->_sSplitValue = $aReq[$cginame];
 		}
 
-		$method = getenv('REQUEST_METHOD');
-		if ('POST' == $method)
+		if ('POST' === Ko_Web_Request::SRequestMethod())
 		{
 			$this->_vMain_Post($aReq);
 		}
