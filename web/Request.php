@@ -148,9 +148,19 @@ class Ko_Web_Request
         return self::_VServer('PATH_INFO');
     }
     
+    public static function SRemoteAddr()
+    {
+        return self::_VServer('REMOTE_ADDR');
+    }
+
     public static function SScriptName()
     {
         return self::_VServer('SCRIPT_NAME');
+    }
+    
+    public static function SScriptFilename()
+    {
+        return self::_VServer('SCRIPT_FILENAME');
     }
     
     public static function SRequestMethod($bOverride = false)
@@ -191,9 +201,9 @@ class Ko_Web_Request
         return self::_VServer('SERVER_NAME');
     }
     
-    public static function SScriptFilename()
+    public static function SServerAddr()
     {
-        return self::_VServer('SCRIPT_FILENAME');
+        return self::_VServer('SERVER_ADDR');
     }
     
     public static function SHttpHost()
@@ -211,11 +221,6 @@ class Ko_Web_Request
         return self::_VServer('HTTP_REFERER');
     }
     
-    public static function SRemoteAddr()
-    {
-        return self::_VServer('REMOTE_ADDR');
-    }
-
     public static function SHttpVia()
     {
         return self::_VServer('HTTP_VIA');
@@ -226,9 +231,9 @@ class Ko_Web_Request
         return self::_VServer('HTTP_X_FORWARDED_FOR');
     }
     
-    public static function SServerAddr()
+    public static function SHttpXRequestedWith()
     {
-        return self::_VServer('SERVER_ADDR');
+        return self::_VServer('HTTP_X_REQUESTED_WITH');
     }
 
     private static function _VServer($sName)
