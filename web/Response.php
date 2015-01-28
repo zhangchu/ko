@@ -8,47 +8,28 @@
 
 class Ko_Web_Response
 {
-    private static $s_ORes;
+    private static $s_sProtocol     = 'HTTP/1.1';
+    private static $s_iHttpCode     = 200;
+    private static $s_aCookies      = array();
+    private static $s_aHeaders      = array();
 
-    private $_sProtocol     = 'HTTP/1.1';
-    private $_iHttpCode     = 200;
-    private $_aCookies      = array();
-    private $_aHeaders      = array();
-
-    private $_oBody         = null;
-    private $_bSendBody     = false;
-
-    private function __construct()
-    {
-        $this->_oHeader('Content-Type', 'text/html; charset='.KO_CHARSET);
-    }
-
-    public final static function OInstance()
-    {
-        if (null === self::$s_ORes)
-        {
-            self::$s_ORes = new static();
-        }
-        return self::$s_ORes;
-    }
+    private static $s_oBody         = null;
+    private static $s_bSendBody     = false;
 
     /**
      * http状态码
      * @param int $iCode
-     * @return $this
      */
-    public function oSetHttpCode($iCode)
+    public static function VSetHttpCode($iCode)
     {
-        $this->_iHttpCode = intval($iCode);
-        return $this;
+        self::$s_iHttpCode = intval($iCode);
     }
 
     /**
      * Content-Type值
      * @param string $sContentType e.g. text/html
-     * @return $this
      */
-    public function oSetContentType($sContentType, $sCharset = null)
+    public static function VSetContentType($sContentType, $sCharset = null)
     {
         static $s_aWhiteList = array(
             'application/javascript',
@@ -69,21 +50,23 @@ class Ko_Web_Response
         }
         if ('' === $sCharset)
         {
-            return $this->_oHeader('Content-Type', $sContentType);
+            self::_VHeader('Content-Type', $sContentType);
         }
-        return $this->_oHeader('Content-Type', $sContentType.'; charset='.$sCharset);
+        else
+        {
+            self::_VHeader('Content-Type', $sContentType.'; charset='.$sCharset);
+        }
     }
 
     /**
      * 设置Content-Disposition
      * @param string $sFileName 文件名
      * @param bool $bIsAttachment true: 下载；false: 在浏览器中打开
-     * @return $this
      */
-    public function oSetContentDisposition($sFileName, $bIsAttachment = true)
+    public static function VSetContentDisposition($sFileName, $bIsAttachment = true)
     {
         $type = $bIsAttachment ? 'attachment' : 'inline';
-        return $this->_oHeader('Content-Disposition', $type.'; filename='.$sFileName);
+        self::_VHeader('Content-Disposition', $type.'; filename='.$sFileName);
     }
     
     /**
@@ -95,9 +78,8 @@ class Ko_Web_Response
      * @param string $sDomain 域名
      * @param bool $bSecure 是否仅限于安全连接(HTTPS)； 默认不限
      * @param bool $bHttpOnly 是否仅限于HTTP协议（脚本不可访问)； 默认脚本不可以访问
-     * @return $this
      */
-    public function oSetCookie (
+    public static function VSetCookie (
         $sName,
         $sValue = '',
         $iExpire = 0,
@@ -106,7 +88,7 @@ class Ko_Web_Response
         $bSecure = false,
         $bHttpOnly = true
     ) {
-        $this->_aCookies[] = array(
+        self::$s_aCookies[] = array(
             'name'     => $sName,
             'value'    => $sValue,
             'expire'   => $iExpire,
@@ -115,20 +97,18 @@ class Ko_Web_Response
             'secure'   => $bSecure,
             'httpOnly' => $bHttpOnly
         );
-        return $this;
     }
 
     /**
      * 重定向
      * @param string $sLocation 重定向地址
      * @param bool $bPermanently 是否为永久重定向
-     * @return $this
      */
-    public function oSetRedirect($sLocation, $bPermanently = false)
+    public static function VSetRedirect($sLocation, $bPermanently = false)
     {
         $statusCode = $bPermanently ? 301 : 302;
-        $this->vHttpCode($statusCode);
-        return $this->_oHeader('Location', $sLocation);
+        self::VHttpCode($statusCode);
+        self::_VHeader('Location', $sLocation);
     }
 
     /**
@@ -136,9 +116,8 @@ class Ko_Web_Response
      * @param string $sName
      *  如果不以`X-`开头，则自动加上`X-`;
      * @param string $sValue
-     * @return $this|array|null
      */
-    public function oSetExtraHeader($sName, $sValue)
+    public static function VSetExtraHeader($sName, $sValue)
     {
         if (0 !== strncasecmp($sName, 'X-', 2))
         {
@@ -148,92 +127,74 @@ class Ko_Web_Response
         {
             $sName = ucfirst($sName);
         }
-        return $this->_oHeader($sName, $sValue);
+        self::_VHeader($sName, $sValue);
     }
     
     /**
      * @param Ko_View_Render_Base $oBody
-     * @return $this|Ko_View_Render_Base
      */
-    public function oAppendBody(Ko_View_Render_Base $oBody)
+    public static function VAppendBody(Ko_View_Render_Base $oBody)
     {
-        if (null === $this->_oBody)
+        if (null === self::$s_oBody)
         {
-            $this->_oBody = $oBody;
+            self::$s_oBody = $oBody;
         }
         else
         {
-            $this->_oBody->oAppend($oBody);
+            self::$s_oBody->oAppend($oBody);
         }
-        return $this;
     }
 
     /**
      * 发送数据头和数据体
-     * @return $this
      */
-    public function oSend()
+    public static function VSend()
     {
-        if (!$this->_bSendBody)
+        if (!self::$s_bSendBody)
         {
-            $this->_oSendHeader();
+            self::_VSendHeader();
         }
-        return $this->_oSendBody();
+        self::_VSendBody();
     }
 
-    /**
-     * 发送数据头
-     * @return $this
-     */
-    private function _oSendHeader()
+    private static function _VSendHeader()
     {
-        if (200 != $this->_iHttpCode)
+        if (200 != self::$s_iHttpCode)
         {
-            $message = Ko_Tool_HttpCode::sGetText($this->_iHttpCode);
-            header($this->_sProtocol.' '.$this->_iHttpCode.' '.$message);
+            $message = Ko_Tool_HttpCode::sGetText(self::$s_iHttpCode);
+            header(self::$s_sProtocol.' '.self::$s_iHttpCode.' '.$message);
         }
-        $this->_vSendCookies();
-        $this->_vSendHeaders();
-        return $this;
-    }
 
-    /**
-     * 发送数据体
-     * @return $this
-     */
-    private function _oSendBody()
-    {
-        if (null !== $this->_oBody)
-        {
-            echo $this->_oBody->sRender();
-            $this->_oBody = null;
-            $this->_bSendBody = true;
-        }
-        return $this;
-    }
-
-    private function _oHeader($sName, $sValue)
-    {
-        $this->_aHeaders[$sName] = trim($sValue);
-        return $this;
-    }
-
-    private function _vSendCookies()
-    {
-        foreach ($this->_aCookies as $c)
+        foreach (self::$s_aCookies as $c)
         {
             setcookie(
                 $c['name'], $c['value'], $c['expire'], $c['path'],
                 $c['domain'], $c['secure'], $c['httpOnly']
             );
         }
-    }
-    
-    private function _vSendHeaders()
-    {
-        foreach ($this->_aHeaders as $name => $value)
+
+        if (!isset(self::$s_aHeaders['Content-Type']))
+        {
+            self::$s_aHeaders['Content-Type'] = 'text/html; charset='.KO_CHARSET;
+        }
+        foreach (self::$s_aHeaders as $name => $value)
         {
             header($name.': '.$value);
         }
+    }
+
+    private static function _VSendBody()
+    {
+        if (null !== self::$s_oBody)
+        {
+            echo self::$s_oBody->sRender();
+            self::$s_oBody = null;
+            self::$s_bSendBody = true;
+        }
+    }
+
+    private static function _VHeader($sName, $sValue)
+    {
+        self::$s_aHeaders[$sName] = trim($sValue);
     }
 }
