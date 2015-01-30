@@ -82,11 +82,7 @@ class Ko_Web_Rewrite
             {
                 return $rules['$'];
             }
-            else if (isset($rules['*']))
-            {
-                return $rules['*'];
-            }
-            return null;
+			return isset($rules['*']) ? $rules['*'] : null;
         }
         
         if (isset($rules[$path]) && @preg_match ('/'.$path.'/', $path))
@@ -114,10 +110,6 @@ class Ko_Web_Rewrite
                 }
             }
         }
-        if (isset($rules['*']))
-        {
-            return $rules['*'];
-        }
-        return null;
+		return isset($rules['*']) ? $rules['*'] : null;
     }
 }
