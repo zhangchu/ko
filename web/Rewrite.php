@@ -8,37 +8,37 @@
 
 class Ko_Web_Rewrite
 {
-    private $_aRules = array();
-
-    public function vLoadFile($sFilename)
+    private static $s_aRules = array();
+	
+    public static function VLoadFile($sFilename)
     {
         $content = file_get_contents($sFilename);
         if (false === $content)
         {
             return array();
         }
-        return $this->vLoadConf($content);
+        return self::VLoadConf($content);
     }
     
-    public function vLoadConf($sContent)
+    public static function VLoadConf($sContent)
     {
         $rules = Ko_Web_RewriteParser::AProcess($sContent);
-        return $this->vLoadRules($rules);
+        return self::VLoadRules($rules);
     }
     
-    public function vLoadRules($aRules)
+    public static function VLoadRules($aRules)
     {
-        $this->_aRules = $aRules;
+        self::$s_aRules = $aRules;
     }
     
-    public function aGet($sRequestUri)
+    public static function AGet($sRequestUri)
     {
         list($path, $query) = explode('?', $sRequestUri, 2);
         $paths = explode('/', $path);
         $paths = array_values(array_diff($paths, array('')));
         
         $keys = array();
-        $matched = $this->_sMatchPath($paths, $this->_aRules, $keys);
+        $matched = self::_SMatchPath($paths, self::$s_aRules, $keys);
         if (null === $matched)
         {
             return array(null, 0);
@@ -73,7 +73,7 @@ class Ko_Web_Rewrite
         return array($location, $httpCode);
     }
     
-    private function _sMatchPath($paths, $rules, &$aKeys)
+    private static function _SMatchPath($paths, $rules, &$aKeys)
     {
         $path = array_shift($paths);
         if (null === $path)
@@ -87,7 +87,7 @@ class Ko_Web_Rewrite
         
         if (isset($rules[$path]) && @preg_match ('/'.$path.'/', $path))
         {
-            $matched = $this->_sMatchPath($paths, $rules[$path], $aKeys);
+            $matched = self::_SMatchPath($paths, $rules[$path], $aKeys);
             if (null !== $matched)
             {
                 $aKeys[] = $path;
@@ -102,7 +102,7 @@ class Ko_Web_Rewrite
             }
             if (@preg_match('/^'.$pattern.'$/i', $path))
             {
-                $matched = $this->_sMatchPath($paths, $subrules, $aKeys);
+                $matched = self::_SMatchPath($paths, $subrules, $aKeys);
                 if (null !== $matched)
                 {
                     $aKeys[] = $pattern;
