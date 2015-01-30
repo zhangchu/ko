@@ -26,8 +26,9 @@ class Ko_Web_Response
     }
 
     /**
-     * Content-Type值
-     * @param string $sContentType e.g. text/html
+     * 设置Content-Type及Charset
+     * @param string $sContentType content-type
+     * @param string|null $sCharset 编码
      */
     public static function VSetContentType($sContentType, $sCharset = null)
     {
@@ -107,7 +108,7 @@ class Ko_Web_Response
     public static function VSetRedirect($sLocation, $bPermanently = false)
     {
         $statusCode = $bPermanently ? 301 : 302;
-        self::VHttpCode($statusCode);
+        self::$s_iHttpCode = $statusCode;
         self::_VHeader('Location', $sLocation);
     }
 
