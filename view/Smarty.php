@@ -168,6 +168,11 @@ class Ko_View_Smarty
 		return $this->_oSmarty->getTemplateVars($sName);
 	}
 
+	public function vRegisterPlugin($sType, $sName, $vCallback)
+	{
+		return $this->_oSmarty->registerPlugin($sType, $sName, $vCallback);
+	}
+
 	/**
 	 * 注册模版自动分析处理类
 	 */
