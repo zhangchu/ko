@@ -9,7 +9,23 @@
 class Ko_Web_Rewrite
 {
     private static $s_aRules = array();
-	
+    
+    public static function VLoadCacheFile($sConfFilename, $sCacheFilename)
+    {
+        if (!is_file($sCacheFilename) || filemtime($sConfFilename) > filemtime($sCacheFilename))
+        {
+            self::VLoadFile($sConfFilename);
+            $script = "<?php\nKo_Web_Rewrite::VLoadRules("
+                .Ko_Tool_Stringify::SConvArray(self::$s_aRules)
+                .");\n";
+            file_put_contents($sCacheFilename, $script);
+        }
+        else
+        {
+            require_once($sCacheFilename);
+        }
+    }
+    
     public static function VLoadFile($sFilename)
     {
         $content = file_get_contents($sFilename);
@@ -82,7 +98,7 @@ class Ko_Web_Rewrite
             {
                 return $rules['$'];
             }
-			return isset($rules['*']) ? $rules['*'] : null;
+            return isset($rules['*']) ? $rules['*'] : null;
         }
         
         if (isset($rules[$path]) && @preg_match ('/'.$path.'/', $path))
@@ -110,6 +126,6 @@ class Ko_Web_Rewrite
                 }
             }
         }
-		return isset($rules['*']) ? $rules['*'] : null;
+        return isset($rules['*']) ? $rules['*'] : null;
     }
 }
