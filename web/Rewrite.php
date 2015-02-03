@@ -64,7 +64,7 @@ class Ko_Web_Rewrite
         
         $matchedPattern = '/^\/'.implode('\/', $keys).'/i';
         $uri = '/'.implode('/', $paths);
-        if (!preg_match($matchedPattern, $uri, $match))
+        if (!@preg_match($matchedPattern, $uri, $match))
         {
             return array(null, 0);
         }
@@ -86,7 +86,18 @@ class Ko_Web_Rewrite
                 $location .= '&'.$query;
             }
         }
+        self::_VResetEnv($location);
         return array($location, $httpCode);
+    }
+    
+    private static function _VResetEnv($location)
+    {
+        list(, $qs) = explode('?', $location, 2);
+        parse_str($qs, $arr);
+        $GLOBALS['_GET'] = $_GET = $arr;
+        $GLOBALS['_REQUEST'] = $_REQUEST = $_REQUEST + $arr;
+        $GLOBALS['_SERVER']['QUERY_STRING'] = $_SERVER['QUERY_STRING'] = $qs;
+        $GLOBALS['_ENV']['QUERY_STRING'] = $_ENV['QUERY_STRING'] = $qs;
     }
     
     private static function _SMatchPath($paths, $rules, &$aKeys)
