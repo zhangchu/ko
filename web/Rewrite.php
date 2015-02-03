@@ -57,7 +57,7 @@ class Ko_Web_Rewrite
         $matched = self::_SMatchPath($paths, self::$s_aRules, $keys);
         if (null === $matched)
         {
-            return array(null, 0);
+            return array($sRequestUri, 0);
         }
         $keys = array_reverse($keys);
         list($location, $httpCode) = explode(' ', $matched, 2);
@@ -66,12 +66,12 @@ class Ko_Web_Rewrite
         $uri = '/'.implode('/', $paths);
         if (!@preg_match($matchedPattern, $uri, $match))
         {
-            return array(null, 0);
+            return array($sRequestUri, 0);
         }
         $location = @preg_replace($matchedPattern, $location, $match[0]);
         if (false === $location)
         {
-            return array(null, 0);
+            return array($sRequestUri, 0);
         }
         $httpCode = intval($httpCode);
         
@@ -86,39 +86,7 @@ class Ko_Web_Rewrite
                 $location .= '&'.$query;
             }
         }
-        self::_VResetEnv($location);
         return array($location, $httpCode);
-    }
-    
-    private static function _VResetEnv($location)
-    {
-        list($sn, $qs) = explode('?', $location, 2);
-        parse_str($qs, $arr);
-        $GLOBALS['_GET'] = $_GET = $arr;
-        $GLOBALS['_REQUEST'] = $_REQUEST = $_REQUEST + $arr;
-        $GLOBALS['_SERVER']['QUERY_STRING'] = $_SERVER['QUERY_STRING'] =
-        $GLOBALS['_ENV']['QUERY_STRING'] = $_ENV['QUERY_STRING'] = $qs;
-        
-        if (false !== ($pos = strpos($sn, '.php/')))
-        {
-            $pi = substr($sn, $pos + 4);
-            $sn = substr($sn, 0, $pos + 4);
-        }
-        else
-        {
-            $pi = '';
-        }
-        $GLOBALS['_SERVER']['PHP_SELF'] = $_SERVER['PHP_SELF'] =
-        $GLOBALS['_SERVER']['SCRIPT_NAME'] = $_SERVER['SCRIPT_NAME'] =
-        $GLOBALS['_ENV']['PHP_SELF'] = $_ENV['PHP_SELF'] =
-        $GLOBALS['_ENV']['SCRIPT_NAME'] = $_ENV['SCRIPT_NAME'] = $sn;
-        
-        $GLOBALS['_SERVER']['SCRIPT_FILENAME'] = $_SERVER['SCRIPT_FILENAME'] =
-        $GLOBALS['_ENV']['SCRIPT_FILENAME'] = $_ENV['SCRIPT_FILENAME'] =
-            Ko_Web_Request::SDocumentRoot().$sn;
-        
-        $GLOBALS['_SERVER']['PATH_INFO'] = $_SERVER['PATH_INFO'] =
-        $GLOBALS['_ENV']['PATH_INFO'] = $_ENV['PATH_INFO'] = $pi;
     }
     
     private static function _SMatchPath($paths, $rules, &$aKeys)
