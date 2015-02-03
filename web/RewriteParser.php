@@ -3,7 +3,7 @@
  * RewriteParser
  *
  * @package ko\web
- * @author jiangjw
+ * @author jiangjw & zhangchu
  */
 
 /**

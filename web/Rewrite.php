@@ -3,7 +3,7 @@
  * Rewrite
  *
  * @package ko\web
- * @author: jiangjw (joy.jingwei@gmail.com)
+ * @author jiangjw & zhangchu
  */
 
 class Ko_Web_Rewrite
