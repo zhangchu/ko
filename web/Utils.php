@@ -51,6 +51,10 @@ class Ko_Web_Utils
 		}
 		else
 		{
+			if ('/' === substr($sn, -1))
+			{
+				$sn .= 'index.php';
+			}
 			$pi = '';
 		}
 		$GLOBALS['_SERVER']['PHP_SELF'] = $_SERVER['PHP_SELF'] =
