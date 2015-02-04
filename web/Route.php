@@ -11,9 +11,7 @@
  *
  * 1. .php 结尾的直接路由
  *    /path/abc/xyz.php
- * 2. / 结尾的补充 index.php 后直接路由
- *    /path/abc/ => /path/abc/index.php
- * 3. 其他种类
+ * 2. 非 .php 结尾的
  *    /path/abc/index => /path/abc.php 并执行注册为 index 的函数
  */
 class Ko_Web_Route
@@ -40,10 +38,6 @@ class Ko_Web_Route
 		self::$s_sFile = $scriptFilename;
 		self::$s_sFunc = '';
 		self::$s_sMethod = $requestMethod;
-		if ('/' === substr(self::$s_sFile, -1))
-		{
-			self::$s_sFile .= 'index.php';
-		}
 		if ('.php' === substr(self::$s_sFile, -4))
 		{
 			if (!is_file(self::$s_sFile))
