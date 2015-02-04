@@ -33,7 +33,14 @@ class Ko_Web_Route
 	private static $s_sFunc = '';
 	private static $s_sMethod = '';
 	
-	public static function IDispatch($scriptFilename, $requestMethod)
+	public static function IDispatch()
+	{
+		$scriptFilename = Ko_Web_Request::SScriptFilename();
+		$requestMethod = Ko_Web_Request::SRequestMethod(true);
+		return self::_IDispatch($scriptFilename, $requestMethod);
+	}
+	
+	private static function _IDispatch($scriptFilename, $requestMethod)
 	{
 		self::$s_sFile = $scriptFilename;
 		self::$s_sFunc = '';
