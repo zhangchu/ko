@@ -24,40 +24,70 @@ class Ko_Web_Route
 	
 	private static $s_aRoute = array();
 	
+	private static $s_aError = array(
+		self::ERR_FILE => 'File Not Found',
+		self::ERR_FUNC => 'Func Not Supported',
+		self::ERR_METHOD => 'Method Not Supported',
+	);
+	
+	private static $s_iErrno = 0;
+	private static $s_sFile = '';
+	private static $s_sFunc = '';
+	private static $s_sMethod = '';
+	
 	public static function IDispatch($scriptFilename, $requestMethod)
 	{
-		if ('/' === substr($scriptFilename, -1))
+		self::$s_sFile = $scriptFilename;
+		self::$s_sFunc = '';
+		self::$s_sMethod = $requestMethod;
+		if ('/' === substr(self::$s_sFile, -1))
 		{
-			$scriptFilename .= 'index.php';
+			self::$s_sFile .= 'index.php';
 		}
-		if ('.php' === substr($scriptFilename, -4))
+		if ('.php' === substr(self::$s_sFile, -4))
 		{
-			if (!is_file($scriptFilename))
+			if (!is_file(self::$s_sFile))
 			{
-				return self::ERR_FILE;
+				return self::$s_iErrno = self::ERR_FILE;
 			}
-			self::_VRequireFile($scriptFilename);
+			self::_VRequireFile(self::$s_sFile);
 		}
 		else
 		{
-			$dirname = dirname($scriptFilename).'.php';
+			self::$s_sFunc = basename(self::$s_sFile);
+			$dirname = dirname(self::$s_sFile).'.php';
 			if (!is_file($dirname))
 			{
-				return self::ERR_FILE;
+				return self::$s_iErrno = self::ERR_FILE;
 			}
 			self::_VRequireFile($dirname);
-			$basename = basename($scriptFilename);
-			if (!isset(self::$s_aRoute[$basename]))
+			if (!isset(self::$s_aRoute[self::$s_sFunc]))
 			{
-				return self::ERR_FUNC;
+				return self::$s_iErrno = self::ERR_FUNC;
 			}
-			if (!isset(self::$s_aRoute[$basename][$requestMethod]))
+			if (!isset(self::$s_aRoute[self::$s_sFunc][self::$s_sMethod]))
 			{
-				return self::ERR_METHOD;
+				return self::$s_iErrno = self::ERR_METHOD;
 			}
-			call_user_func(self::$s_aRoute[$basename][$requestMethod]);
+			call_user_func(self::$s_aRoute[self::$s_sFunc][self::$s_sMethod]);
 		}
-		return 0;
+		return self::$s_iErrno = 0;
+	}
+	
+	public static function V404()
+	{
+		$error = "File: ".self::$s_sFile."\n"
+			."Func: ".self::$s_sFunc."\n"
+			."Method: ".self::$s_sMethod."\n"
+			."Errno: ".self::$s_iErrno."\n"
+			."Error: ".self::$s_aError[self::$s_iErrno]."\n";
+		$render = new Ko_View_Render_TEXT;
+		$render->oSetData('error', $error);
+		
+		Ko_Web_Response::VSetHttpCode(404);
+		Ko_Web_Response::VSetContentType('text/plain');
+		Ko_Web_Response::VAppendBody($render);
+		Ko_Web_Response::VSend();
 	}
 	
 	public static function VGet($sName, $fnRoute)
