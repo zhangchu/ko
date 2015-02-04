@@ -74,6 +74,11 @@ class Ko_Web_Route
 		return self::$s_iErrno = 0;
 	}
 	
+	public static function AGetDispatchInfo()
+	{
+		return array(self::$s_sFile, self::$s_sFunc);
+	}
+	
 	public static function V404()
 	{
 		$error = "File: ".self::$s_sFile."\n"
