@@ -19,7 +19,7 @@ class Ko_View_Render_HTML extends Ko_View_Render_Base
 	{
 		$this->_oContentApi = $api;
 	}
-	
+
 	public function sRender()
 	{
 		$singleAid = (1 === count($this->_aData));
