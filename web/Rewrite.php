@@ -6,9 +6,15 @@
  * @author jiangjw & zhangchu
  */
 
+/**
+ * 根据 request_uri 进行 rewrite 操作
+ */
 class Ko_Web_Rewrite
 {
     private static $s_aRules = array();
+    
+    private static $s_sRewrited = '';
+    private static $s_iHttpCode = 0;
     
     public static function VLoadCacheFile($sConfFilename, $sCacheFilename)
     {
@@ -47,7 +53,17 @@ class Ko_Web_Rewrite
         self::$s_aRules = $aRules;
     }
     
-    public static function AGet($sRequestUri)
+    public static function AGet()
+    {
+        if ('' === self::$s_sRewrited)
+        {
+            $uri = Ko_Web_Request::SRequestUri();
+            list(self::$s_sRewrited, self::$s_iHttpCode) = self::_AGet($uri);
+        }
+        return array(self::$s_sRewrited, self::$s_iHttpCode);
+    }
+    
+    private static function _AGet($sRequestUri)
     {
         list($path, $query) = explode('?', $sRequestUri, 2);
         $paths = explode('/', $path);
