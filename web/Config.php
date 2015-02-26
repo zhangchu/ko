@@ -82,9 +82,9 @@ class Ko_Web_Config
 			self::$s_sAppName = $aConfig['global'][$host];
 			if (isset($aConfig['app_'.self::$s_sAppName]))
 			{
-				self::$s_sDocumentRoot = $aConfig['app_'.self::$s_sAppName]['documentroot'];
-				self::$s_sRewriteConf = $aConfig['app_'.self::$s_sAppName]['rewriteconf'];
-				self::$s_sRewriteCache = $aConfig['app_'.self::$s_sAppName]['rewritecache'];
+				self::$s_sDocumentRoot = strval($aConfig['app_'.self::$s_sAppName]['documentroot']);
+				self::$s_sRewriteConf = strval($aConfig['app_'.self::$s_sAppName]['rewriteconf']);
+				self::$s_sRewriteCache = strval($aConfig['app_'.self::$s_sAppName]['rewritecache']);
 			}
 		}
 	}
