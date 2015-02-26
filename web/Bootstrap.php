@@ -10,6 +10,8 @@ class Ko_Web_Bootstrap
 {
 	public static function VInit()
 	{
+		Ko_Web_Event::Trigger('ko.bootstrap', 'before');
+		
 		Ko_Web_Error::VHandle();
 
 		Ko_Web_Event::Trigger('ko.rewrite', 'before');
