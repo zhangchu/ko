@@ -86,7 +86,7 @@ class Ko_Web_Route
 			.'Func: '.self::$s_sFunc."\n"
 			.'Method: '.self::$s_sMethod."\n"
 			.'Errno: '.self::$s_iErrno."\n"
-			.'Error: '.self::$s_aError[self::$s_iErrno]."\n";
+			.'Error: '.self::$s_aError[self::$s_iErrno];
 		$render = new Ko_View_Render_TEXT;
 		$render->oSetData('error', $error);
 		
