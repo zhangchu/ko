@@ -69,22 +69,6 @@ if (!defined('KO_SMARTY_PLUGINS'))
 	define('KO_SMARTY_PLUGINS', dirname(KO_SMARTY_INC).DS.'plugins'.DS);
 }
 
-if (!defined('KO_TEMPLATE_DIR'))
-{
-	/**
-	 * 应用模板路径
-	 */
-	define('KO_TEMPLATE_DIR', dirname(KO_INCLUDE_DIR).DS.'templates'.DS);
-}
-
-if (!defined('KO_TEMPLATE_C_DIR'))
-{
-	/**
-	 * 模板编译路径
-	 */
-	define('KO_TEMPLATE_C_DIR', dirname(KO_INCLUDE_DIR).DS.'templates_c'.DS);
-}
-
 if (!defined('KO_CHARSET'))
 {
 	/**
@@ -113,7 +97,7 @@ if (!defined('KO_DB_ENGINE'))
 	/**
 	 * 配置数据库连接使用哪种引擎，如：kproxy/mysql
 	 */
-	define('KO_DB_ENGINE', 'mysql');
+	define('KO_DB_ENGINE', 'kproxy');
 }
 if (!defined('KO_DB_HOST'))
 {
@@ -192,7 +176,7 @@ if (!defined('KO_ENC'))
 	/**
 	 * 使用的序列化编码算法，Vbs/Serialize/IgBinary
 	 */
-	define('KO_ENC', 'Serialize');
+	define('KO_ENC', 'IgBinary');
 }
 
 if (!defined('KO_IMAGE'))
@@ -208,7 +192,7 @@ if (!defined('KO_MC_ENGINE'))
 	/**
 	 * 配置使用的 memcache 的连接方式，kproxy/memcache/saemc
 	 */
-	define('KO_MC_ENGINE', 'memcache');
+	define('KO_MC_ENGINE', 'kproxy');
 }
 if (!defined('KO_MC_HOST'))
 {
@@ -229,7 +213,7 @@ if (!defined('KO_REDIS_ENGINE'))
 	/**
 	 * 配置使用的 redis 的连接方式，kproxy/redis
 	 */
-	define('KO_REDIS_ENGINE', 'redis');
+	define('KO_REDIS_ENGINE', 'kproxy');
 }
 if (!defined('KO_REDIS_HOST'))
 {

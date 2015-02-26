@@ -8,6 +8,15 @@
 
 include_once(KO_SMARTY_INC);
 
+if (!defined('KO_TEMPLATE_DIR'))
+{
+	define('KO_TEMPLATE_DIR', dirname(KO_INCLUDE_DIR).DS.'templates'.DS);
+}
+if (!defined('KO_TEMPLATE_C_DIR'))
+{
+	define('KO_TEMPLATE_C_DIR', dirname(KO_INCLUDE_DIR).DS.'templates_c'.DS);
+}
+
 /**
  * Smarty操作封装
  */
