@@ -18,6 +18,20 @@ class Ko_Web_Rewrite
     
     public static function VLoadCacheFile($sConfFilename, $sCacheFilename)
     {
+        if (!is_file($sConfFilename))
+        {
+            return;
+        }
+        $cacheDir = dirname($sCacheFilename);
+        if (!is_dir($cacheDir))
+        {
+            mkdir($cacheDir, 0777, true);
+            if (!is_dir($cacheDir))
+            {
+                self::VLoadFile($sConfFilename);
+                return;
+            }
+        }
         if (!is_file($sCacheFilename) || filemtime($sConfFilename) > filemtime($sCacheFilename))
         {
             self::VLoadFile($sConfFilename);
