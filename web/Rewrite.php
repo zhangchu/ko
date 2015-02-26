@@ -19,18 +19,17 @@ class Ko_Web_Rewrite
 	public static function VHandle()
 	{
 		$confFilename = Ko_Web_Config::SGetRewriteConf();
-		if ('' === $confFilename)
+		if ('' !== $confFilename)
 		{
-			return;
-		}
-		$cacheFilename = Ko_Web_Config::SGetRewriteCache();
-		if ('' === $cacheFilename)
-		{
-			self::VLoadFile($confFilename);
-		}
-		else
-		{
-			self::VLoadCacheFile($confFilename, $cacheFilename);
+			$cacheFilename = Ko_Web_Config::SGetRewriteCache();
+			if ('' === $cacheFilename)
+			{
+				self::VLoadFile($confFilename);
+			}
+			else
+			{
+				self::VLoadCacheFile($confFilename, $cacheFilename);
+			}
 		}
 		list($rewrited, $httpcode) = self::AGet();
 		if ($httpcode)
