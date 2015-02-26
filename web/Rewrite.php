@@ -11,14 +11,34 @@
  */
 class Ko_Web_Rewrite
 {
+	private static $s_sConfFilename = '';
+	private static $s_sCacheFilename = '';
+	
 	private static $s_aRules = array();
 	
 	private static $s_sRewrited = '';
 	private static $s_iHttpCode = 0;
 	
-	public static function VHandle($sConfFilename, $sCacheFilename)
+	public static function VSetConf($sConfFilename, $sCacheFilename)
 	{
-		self::VLoadCacheFile($sConfFilename, $sCacheFilename);
+		self::$s_sConfFilename = $sConfFilename;
+		self::$s_sCacheFilename = $sCacheFilename;
+	}
+	
+	public static function VHandle()
+	{
+		if ('' === self::$s_sConfFilename)
+		{
+			return;
+		}
+		if ('' === self::$s_sCacheFilename)
+		{
+			self::VLoadFile(self::$s_sConfFilename);
+		}
+		else
+		{
+			self::VLoadCacheFile(self::$s_sConfFilename, self::$s_sCacheFilename);
+		}
 		list($rewrited, $httpcode) = self::AGet();
 		if ($httpcode)
 		{
