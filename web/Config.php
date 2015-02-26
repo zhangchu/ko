@@ -26,15 +26,14 @@ class Ko_Web_Config
 	{
 		if ('' === self::$s_sConfFilename)
 		{
-			return;
-		}
-		if ('' === self::$s_sCacheFilename)
-		{
-			self::ALoadFile(self::$s_sCacheFilename);
-		}
-		else
-		{
-			self::VLoadCacheFile(self::$s_sConfFilename, self::$s_sCacheFilename);
+			if ('' === self::$s_sCacheFilename)
+			{
+				self::ALoadFile(self::$s_sCacheFilename);
+			}
+			else
+			{
+				self::VLoadCacheFile(self::$s_sConfFilename, self::$s_sCacheFilename);
+			}
 		}
 	}
 	
