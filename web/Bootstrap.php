@@ -13,6 +13,8 @@ class Ko_Web_Bootstrap
 		Ko_Web_Event::Trigger('ko.bootstrap', 'before');
 		
 		Ko_Web_Config::VLoad();
+		Ko_Web_Event::Trigger('ko.config', 'after');
+		
 		Ko_Web_Error::VHandle();
 		Ko_Web_Rewrite::VHandle();
 
