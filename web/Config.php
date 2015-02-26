@@ -24,7 +24,7 @@ class Ko_Web_Config
 	
 	public static function VLoad()
 	{
-		if ('' === self::$s_sConfFilename)
+		if ('' !== self::$s_sConfFilename)
 		{
 			if ('' === self::$s_sCacheFilename)
 			{
