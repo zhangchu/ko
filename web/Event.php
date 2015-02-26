@@ -33,7 +33,9 @@ class Ko_Web_Event
 	public static function Trigger($group, $name)
 	{
 		$obj = self::_OGetEventObj($group);
-		$obj->oTrigger($name);
+		$args = func_get_args();
+		array_shift($args);
+		call_user_func_array(array($obj, 'oTrigger'), $args);
 	}
 	
 	private static function _OGetEventObj($group)
