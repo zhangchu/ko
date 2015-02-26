@@ -82,11 +82,11 @@ class Ko_Web_Route
 	
 	public static function V404()
 	{
-		$error = "File: ".self::$s_sFile."\n"
-			."Func: ".self::$s_sFunc."\n"
-			."Method: ".self::$s_sMethod."\n"
-			."Errno: ".self::$s_iErrno."\n"
-			."Error: ".self::$s_aError[self::$s_iErrno]."\n";
+		$error = 'File: '.self::$s_sFile."\n"
+			.'Func: '.self::$s_sFunc."\n"
+			.'Method: '.self::$s_sMethod."\n"
+			.'Errno: '.self::$s_iErrno."\n"
+			.'Error: '.self::$s_aError[self::$s_iErrno]."\n";
 		$render = new Ko_View_Render_TEXT;
 		$render->oSetData('error', $error);
 		
