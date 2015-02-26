@@ -44,7 +44,7 @@ class Ko_Web_Error
 
 	public static function VHandleException(Exception $ex)
 	{
-		$error = E_USER_ERROR;
+		$errno = E_USER_ERROR;
 		$errstr = 'Caught Exception: '.$ex->getMessage();
 		$errfile = $ex->getFile();
 		$errline = $ex->getLine();
