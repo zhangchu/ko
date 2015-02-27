@@ -9,7 +9,7 @@
 /**
  * 根据 SCRIPT_FILENAME & REQUEST_METHOD 来决定路由结果
  *
- * 1. .php 结尾的直接路由
+ * 1. .php 结尾的不在内部进行路由，交给外部路由
  *    /path/abc/xyz.php
  * 2. 非 .php 结尾的
  *    /path/abc/index => /path/abc.php 并执行注册为 index 的函数
@@ -33,25 +33,26 @@ class Ko_Web_Route
 	private static $s_sFunc = '';
 	private static $s_sMethod = '';
 	
-	public static function IDispatch()
+	public static function IDispatch(&$phpFilename)
 	{
 		$scriptFilename = Ko_Web_Request::SScriptFilename();
 		$requestMethod = Ko_Web_Request::SRequestMethod(true);
-		return self::_IDispatch($scriptFilename, $requestMethod);
+		return self::_IDispatch($scriptFilename, $requestMethod, $phpFilename);
 	}
 	
-	private static function _IDispatch($scriptFilename, $requestMethod)
+	private static function _IDispatch($scriptFilename, $requestMethod, &$phpFilename)
 	{
 		self::$s_sFile = $scriptFilename;
 		self::$s_sFunc = '';
 		self::$s_sMethod = $requestMethod;
+		$phpFilename = '';
 		if ('.php' === substr(self::$s_sFile, -4))
 		{
 			if (!is_file(self::$s_sFile))
 			{
 				return self::$s_iErrno = self::ERR_FILE;
 			}
-			self::_VRequireFile(self::$s_sFile);
+			$phpFilename = self::$s_sFile;
 		}
 		else
 		{
