@@ -22,7 +22,7 @@ class Ko_Web_RewriteParser
         $rules = array();
         foreach (self::_aText2Array($sText) as $pattern => $rewrited)
         {
-             Ko_Tool_Array::VOffsetSet($rules, $pattern, $rewrited, '/');
+            Ko_Tool_Array::VOffsetSet($rules, $pattern, $rewrited, '/');
         }
         return $rules;
     }
@@ -56,7 +56,7 @@ class Ko_Web_RewriteParser
             {
                 $tag = '*';
             }
-            if ('/' !== substr($pattern, -1))
+            if (strlen($pattern) && '/' !== substr($pattern, -1))
             {
                 $pattern .= '/';
             }
