@@ -97,7 +97,7 @@ if (!defined('KO_DB_ENGINE'))
 	/**
 	 * 配置数据库连接使用哪种引擎，如：kproxy/mysql
 	 */
-	define('KO_DB_ENGINE', 'kproxy');
+	define('KO_DB_ENGINE', 'mysql');
 }
 if (!defined('KO_DB_HOST'))
 {
@@ -176,7 +176,7 @@ if (!defined('KO_ENC'))
 	/**
 	 * 使用的序列化编码算法，Vbs/Serialize/IgBinary
 	 */
-	define('KO_ENC', 'IgBinary');
+	define('KO_ENC', 'Serialize');
 }
 
 if (!defined('KO_IMAGE'))
@@ -192,7 +192,7 @@ if (!defined('KO_MC_ENGINE'))
 	/**
 	 * 配置使用的 memcache 的连接方式，kproxy/memcache/saemc
 	 */
-	define('KO_MC_ENGINE', 'kproxy');
+	define('KO_MC_ENGINE', 'memcache');
 }
 if (!defined('KO_MC_HOST'))
 {
@@ -213,7 +213,7 @@ if (!defined('KO_REDIS_ENGINE'))
 	/**
 	 * 配置使用的 redis 的连接方式，kproxy/redis
 	 */
-	define('KO_REDIS_ENGINE', 'kproxy');
+	define('KO_REDIS_ENGINE', 'redis');
 }
 if (!defined('KO_REDIS_HOST'))
 {
