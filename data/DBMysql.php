@@ -30,21 +30,22 @@ class Ko_Data_DBMysql
 	 */
 	public function aSingleQuery($sKind, $iHintId, $sSql, $iCacheTime, $bMaster)
 	{
-		if (!$this->_oGetMysql()->bQuery($sSql))
+		$mysql = $this->_oGetMysql();
+		if (!$mysql->bQuery($sSql))
 		{
-			throw new Exception($this->_oGetMysql()->sError(), $this->_oGetMysql()->iErrno());
+			throw new Exception($mysql->sError(), $mysql->iErrno());
 		}
 		$data = array();
 		$rownum = 0;
-		while ($info = $this->_oGetMysql()->aFetchAssoc())
+		while ($info = $mysql->aFetchAssoc())
 		{
 			$rownum ++;
 			$data[] = $info;
 		}
 		return array('data' => $data,
 			'rownum' => $rownum,
-			'insertid' => $this->_oGetMysql()->iInsertId(),
-			'affectedrows' => $this->_oGetMysql()->iAffectedRows(),
+			'insertid' => $mysql->iInsertId(),
+			'affectedrows' => $mysql->iAffectedRows(),
 			);
 	}
 
