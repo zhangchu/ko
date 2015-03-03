@@ -42,7 +42,7 @@ class Ko_Data_DBPDO
 		$data = $pdos->fetchAll(PDO::FETCH_ASSOC);
 		return array('data' => $data,
 			'rownum' => count($data),
-			'insertid' => $pdo->lastInsertId(),
+			'insertid' => intval($pdo->lastInsertId()),
 			'affectedrows' => $pdos->rowCount(),
 			);
 	}
