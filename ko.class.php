@@ -95,9 +95,9 @@ if (!defined('KO_PROXY'))
 if (!defined('KO_DB_ENGINE'))
 {
 	/**
-	 * 配置数据库连接使用哪种引擎，如：kproxy/mysql
+	 * 配置数据库连接使用哪种引擎，如：kproxy/mysql/mysql-pdo
 	 */
-	define('KO_DB_ENGINE', 'mysql');
+	define('KO_DB_ENGINE', 'mysql-pdo');
 }
 if (!defined('KO_DB_HOST'))
 {

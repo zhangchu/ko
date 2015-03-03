@@ -80,6 +80,9 @@ class Ko_Data_SqlAgent
 			case 'mysql':
 				$this->_oEngine = Ko_Data_DBMysql::OInstance($this->_sTag);
 				break;
+			case 'mysql-pdo':
+				$this->_oEngine = Ko_Data_DBPDO::OInstance($this->_sTag);
+				break;
 			default:
 				assert(0);
 			}
