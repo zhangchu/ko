@@ -76,7 +76,7 @@ class Ko_Web_Config
 	
 	public static function VLoadConfig($aConfig)
 	{
-		$host = Ko_Web_Request::SServerName();
+		$host = Ko_Web_Request::SHttpHost();
 		if (isset($aConfig['global'][$host]))
 		{
 			self::$s_sAppName = $aConfig['global'][$host];
