@@ -6,6 +6,9 @@
  * @author zhangchu
  */
 
+/**
+ * 浣跨敤PDO鐨勬柟寮忔潵杩炴帴Mysql
+ */
 class Ko_Data_DBPDO
 {
 	private static $s_AInstance = array();
@@ -26,7 +29,7 @@ class Ko_Data_DBPDO
 	}
 
 	/**
-	 * 一条sql查询
+	 * 涓�鏉ql鏌ヨ
 	 */
 	public function aSingleQuery($sKind, $iHintId, $sSql, $iCacheTime, $bMaster)
 	{
@@ -45,7 +48,7 @@ class Ko_Data_DBPDO
 	}
 
 	/**
-	 * 多条sql查询
+	 * 澶氭潯sql鏌ヨ
 	 */
 	public function aMultiQuery($sKind, $iHintId, $aSqls, $iCacheTime, $bMaster)
 	{
