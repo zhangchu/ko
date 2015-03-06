@@ -136,7 +136,7 @@ class Ko_Web_Response
      */
     public static function VAppendBody(Ko_View_Render_Base $oBody)
     {
-        if (null === self::$s_oBody)
+        if (null === self::$s_oBody || !($oBody INSTANCEOF Ko_View_Render_List))
         {
             self::$s_oBody = $oBody;
         }
