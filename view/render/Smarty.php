@@ -19,7 +19,7 @@ class Ko_View_Render_Smarty extends Ko_View_Render_List
 	{
 		if (null === $oSmarty)
 		{
-			$this->_oSmarty = new Ko_View_Smarty();
+			$this->_oSmarty = Ko_Tool_Singleton::OInstance('Ko_View_Smarty');
 		}
 		else
 		{
