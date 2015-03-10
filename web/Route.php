@@ -11,7 +11,9 @@
  *
  * 1. .php 结尾的不在内部进行路由，交给外部路由
  *    /path/abc/xyz.php
- * 2. 非 .php 结尾的
+ * 2. 其他文件如果存在，直接输出文件
+ *    /path/abc/xyz.txt
+ * 3. 其他
  *    /path/abc/index => /path/abc.php 并执行注册为 index 的函数
  */
 class Ko_Web_Route
@@ -56,22 +58,34 @@ class Ko_Web_Route
 		}
 		else
 		{
-			self::$s_sFunc = basename(self::$s_sFile);
-			$dirname = dirname(self::$s_sFile).'.php';
-			if (!is_file($dirname))
+			$pathinfo = pathinfo(self::$s_sFile);
+			if (is_file(self::$s_sFile))
 			{
-				return self::$s_iErrno = self::ERR_FILE;
+				$render = new Ko_View_Render_FILE;
+				$render->oSetData('filename', self::$s_sFile);
+				Ko_Web_Response::VSetContentType($pathinfo['extension']);
+				Ko_Web_Response::VAppendBody($render);
+				Ko_Web_Response::VSend();
 			}
-			self::_VRequireFile($dirname);
-			if (!isset(self::$s_aRoute[self::$s_sFunc]))
+			else
 			{
-				return self::$s_iErrno = self::ERR_FUNC;
+				self::$s_sFunc = $pathinfo['basename'];
+				self::$s_sFile = $pathinfo['dirname'].'.php';
+				if (!is_file(self::$s_sFile))
+				{
+					return self::$s_iErrno = self::ERR_FILE;
+				}
+				self::_VRequireFile(self::$s_sFile);
+				if (!isset(self::$s_aRoute[self::$s_sFunc]))
+				{
+					return self::$s_iErrno = self::ERR_FUNC;
+				}
+				if (!isset(self::$s_aRoute[self::$s_sFunc][self::$s_sMethod]))
+				{
+					return self::$s_iErrno = self::ERR_METHOD;
+				}
+				call_user_func(self::$s_aRoute[self::$s_sFunc][self::$s_sMethod]);
 			}
-			if (!isset(self::$s_aRoute[self::$s_sFunc][self::$s_sMethod]))
-			{
-				return self::$s_iErrno = self::ERR_METHOD;
-			}
-			call_user_func(self::$s_aRoute[self::$s_sFunc][self::$s_sMethod]);
 		}
 		return self::$s_iErrno = 0;
 	}
