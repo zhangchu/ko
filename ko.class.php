@@ -54,21 +54,6 @@ if (!defined('KO_INCLUDE_DIR'))
 	define('KO_INCLUDE_DIR', dirname(KO_DIR).DS);
 }
 
-if (!defined('KO_SMARTY_INC'))
-{
-	/**
-	 * Smarty 类文件定义
-	 */
-	define('KO_SMARTY_INC', KO_DIR.DS.'vendor'.DS.'Smarty-3.1.18'.DS.'Smarty.class.php');
-}
-if (!defined('KO_SMARTY_PLUGINS'))
-{
-	/**
-	 * Smarty 自定义插件目录定义
-	 */
-	define('KO_SMARTY_PLUGINS', dirname(KO_SMARTY_INC).DS.'plugins'.DS);
-}
-
 if (!defined('KO_CHARSET'))
 {
 	/**

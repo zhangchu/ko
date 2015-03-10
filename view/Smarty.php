@@ -6,16 +6,36 @@
  * @author zhangchu
  */
 
-include_once(KO_SMARTY_INC);
-
+if (!defined('KO_SMARTY_INC'))
+{
+	/**
+	 * Smarty 类文件定义
+	 */
+	define('KO_SMARTY_INC', KO_DIR.DS.'vendor'.DS.'Smarty-3.1.21'.DS.'Smarty.class.php');
+}
+if (!defined('KO_SMARTY_PLUGINS'))
+{
+	/**
+	 * Smarty 自定义插件目录定义
+	 */
+	define('KO_SMARTY_PLUGINS', dirname(KO_SMARTY_INC).DS.'plugins'.DS);
+}
 if (!defined('KO_TEMPLATE_DIR'))
 {
+	/**
+	 * 模板路径
+	 */
 	define('KO_TEMPLATE_DIR', dirname(KO_INCLUDE_DIR).DS.'templates'.DS);
 }
 if (!defined('KO_TEMPLATE_C_DIR'))
 {
+	/**
+	 * 模板编译路径
+	 */
 	define('KO_TEMPLATE_C_DIR', dirname(KO_INCLUDE_DIR).DS.'templates_c'.DS);
 }
+
+include_once(KO_SMARTY_INC);
 
 /**
  * Smarty操作封装
