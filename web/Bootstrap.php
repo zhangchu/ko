@@ -9,6 +9,7 @@
 if (!defined('KO_WEB_BOOTSTRAP'))
 {
 	define('KO_WEB_BOOTSTRAP', 1);
+	Ko_Tool_Xhprof::VStart();
 	
 	Ko_Web_Event::Trigger('ko.bootstrap', 'before');
 
