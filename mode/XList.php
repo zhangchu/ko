@@ -1239,7 +1239,8 @@ class Ko_Mode_XList extends Ko_Busi_Api
 				}
 				else
 				{
-					$fileext = Ko_Tool_Image::VValidImageType($aReq[$cginame]['tmp_name']);
+					$fileinfo = Ko_Tool_Image::VInfo($aReq[$cginame]['tmp_name']);
+					$fileext = (false === $fileinfo) ? false : $fileinfo['type'];
 				}
 				if (false !== $fileext
 					&& false !== $this->_oStorage->bWrite(file_get_contents($aReq[$cginame]['tmp_name']), $fileext, $this->_aConf['field'][$sField]['editinfo']['domain'], $dest))

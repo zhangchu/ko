@@ -20,26 +20,6 @@ class Ko_Tool_Image
 	const XYFLAG_Y_BOTTOM = 0x8;
 	
 	/**
-	 * 获取文件的类型
-	 *
-	 * @return string|boolean 返回 false 表示不支持的文件类型
-	 */
-	public static function VValidImageType($sFile)
-	{
-		$type = exif_imagetype($sFile);
-		switch ($type)
-		{
-		case IMAGETYPE_GIF:
-			return 'gif';
-		case IMAGETYPE_JPEG:
-			return 'jpg';
-		case IMAGETYPE_PNG:
-			return 'png';
-		}
-		return false;
-	}
-	
-	/**
 	 * 计算 VResize 生成图片的尺寸
 	 *
 	 * @return array array($realwidth, $realheight)
