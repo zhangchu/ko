@@ -14,6 +14,31 @@ class Ko_Tool_Image_Gd
 		'jpg' => array('imagejpeg', 90, 98),
 	);
 	
+	public static function VInfo($sSrc, $iFlag = 0)
+	{
+		if ($iFlag & Ko_Tool_Image::FLAG_SRC_BLOB)
+		{
+			$tmpfile = tempnam(KO_TEMPDIR, '');
+			file_put_contents($tmpfile, $sSrc);
+			$arr = getimagesize($tmpfile);
+			unlink($tmpfile);
+		}
+		else
+		{
+			$arr = getimagesize($sSrc);
+		}
+		$info = array(
+			'width' => intval($arr[0]),
+			'height' => intval($arr[1]),
+			'type' => image_type_to_extension($arr[2], false),
+		);
+		if ($info['width'] && $info['height'])
+		{
+			return $info;
+		}
+		return false;
+	}
+	
 	public static function VCrop($sSrc, $sDst, $iWidth, $iHeight, $iFlag = 0, $aOption = array())
 	{
 		$imgsrc = self::_VCreateImage($sSrc, $iFlag);

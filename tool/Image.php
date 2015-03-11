@@ -67,6 +67,16 @@ class Ko_Tool_Image
 	}
 	
 	/**
+	 * 获取图片文件信息, width, height, type
+	 *
+	 * @return boolean|array
+	 */
+	public static function VInfo($sSrc, $iFlag = 0)
+	{
+		return call_user_func(array('Ko_Tool_Image_'.KO_IMAGE, 'VInfo'), $sSrc, $iFlag);
+	}
+	
+	/**
 	 * 保证生成的图片宽度为 iWidth，高度为 iHeight
 	 *
 	 * @param array $aOption srcx srcy srcw srch 在原图的指定部分基础上进行裁剪

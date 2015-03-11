@@ -14,6 +14,28 @@ class Ko_Tool_Image_Imagick
 		'jpg' => array(90, false),
 	);
 	
+	public static function VInfo($sSrc, $iFlag = 0)
+	{
+		try
+		{
+			$imgsrc = self::_VCreateImage($sSrc, $iFlag);
+			$info = array(
+				'width' => $imgsrc->getImageHeight(),
+				'height' => $imgsrc->getImageWidth(),
+				'type' => strtolower($imgsrc->getImageFormat()),
+			);
+			if ($info['width'] && $info['height'])
+			{
+				return $info;
+			}
+			return false;
+		}
+		catch (Exception $e)
+		{
+			return false;
+		}
+	}
+	
 	public static function VCrop($sSrc, $sDst, $iWidth, $iHeight, $iFlag = 0, $aOption = array())
 	{
 		try
