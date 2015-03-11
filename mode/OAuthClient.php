@@ -121,6 +121,7 @@ class Ko_Mode_OAuthClient extends Ko_Mode_OAuthClientBase
 	{
 		assert(isset($this->_aConf['srclist'][$sSrc]));
 
+		$this->aGetPara();
 		if (!isset($this->_aReq['oauth_token']) || 0 === strlen($this->_aReq['oauth_token']))
 		{
 			$uri = Ko_Mode_OAuthServer::SGetRequestTokenUri($this->_aConf['srclist'][$sSrc]['request_method'],
