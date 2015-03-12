@@ -8,15 +8,22 @@
 
 class Ko_Data_SaeStorage extends Ko_Data_Storage
 {
-	protected function _bWrite($sContent, $sExt, $sDomain, &$sDest)
+	private $_sDomain;
+	
+	public function __construct($sDomain)
 	{
-		$sDest = str_replace('.', '_', uniqid('', true)).'.'.trim($sExt, '.');
-		return false !== Ko_Tool_Singleton::OInstance('SaeStorage')->write($sDomain, $sDest, $sContent);
+		$this->_sDomain = $sDomain;
 	}
 	
-	public function sRead($sDomain, $sDest)
+	protected function _bWrite($sContent, $sExt, &$sDest)
 	{
-		$ret = Ko_Tool_Singleton::OInstance('SaeStorage')->read($sDomain, $sDest);
+		$sDest = str_replace('.', '_', uniqid('', true)).'.'.trim($sExt, '.');
+		return false !== Ko_Tool_Singleton::OInstance('SaeStorage')->write($this->_sDomain, $sDest, $sContent);
+	}
+	
+	public function sRead($sDest)
+	{
+		$ret = Ko_Tool_Singleton::OInstance('SaeStorage')->read($this->_sDomain, $sDest);
 		if (false === $ret)
 		{
 			return '';
@@ -24,36 +31,34 @@ class Ko_Data_SaeStorage extends Ko_Data_Storage
 		return $ret;
 	}
 	
-	public function sGetUrl($sDomain, $sDest, $sBriefTag)
+	public function sGetUrl($sDest, $sBriefTag)
 	{
 		$sBriefTag = trim($sBriefTag, '.');
 		if (0 == strlen($sBriefTag))
 		{
-			return Ko_Tool_Singleton::OInstance('SaeStorage')->getUrl($sDomain, $sDest);
+			return Ko_Tool_Singleton::OInstance('SaeStorage')->getUrl($this->_sDomain, $sDest);
 		}
 		list($type, $brief) = explode('.', $sBriefTag, 2);
 		assert(isset($this->_aBriefConf[$type][$brief]));
 		list($name, $ext) = explode('.', $sDest, 2);
 		$dest = $name.'.'.$sBriefTag.'.'.$ext;
-		if (false === Ko_Tool_Singleton::OInstance('SaeStorage')->fileExists($sDomain, $dest))
+		if (false === Ko_Tool_Singleton::OInstance('SaeStorage')->fileExists($this->_sDomain, $dest))
 		{
-			$this->bGenBrief($sDomain, $sDest, $sBriefTag);
+			$this->bGenBrief($sDest, $sBriefTag);
 		}
-		return Ko_Tool_Singleton::OInstance('SaeStorage')->getUrl($sDomain, $dest);
+		return Ko_Tool_Singleton::OInstance('SaeStorage')->getUrl($this->_sDomain, $dest);
 	}
 	
 	public function aParseUrl($sUrl)
 	{
 		$info = parse_url($sUrl);
-		list($subdomain, $tmp) = explode('.', $info['host'], 2);
-		list($appname, $domain) = explode('-', $subdomain, 2);
 		$arr = explode('.', ltrim($info['path'], '/'));
 		assert(count($arr) >= 2);
 		$sDest = array_shift($arr).'.'.array_pop($arr);
-		return array($domain, $sDest, implode('.', $arr));
+		return array($sDest, implode('.', $arr));
 	}
 	
-	public function bGenBrief($sDomain, $sDest, $sBriefTag)
+	public function bGenBrief($sDest, $sBriefTag)
 	{
 		$sBriefTag = trim($sBriefTag, '.');
 		if (0 == strlen($sBriefTag))
@@ -62,7 +67,7 @@ class Ko_Data_SaeStorage extends Ko_Data_Storage
 		}
 		list($type, $brief) = explode('.', $sBriefTag, 2);
 		assert(isset($this->_aBriefConf[$type][$brief]));
-		$master = Ko_Tool_Singleton::OInstance('SaeStorage')->read($sDomain, $sDest);
+		$master = Ko_Tool_Singleton::OInstance('SaeStorage')->read($this->_sDomain, $sDest);
 		if (false === $master)
 		{
 			return false;
@@ -75,7 +80,7 @@ class Ko_Data_SaeStorage extends Ko_Data_Storage
 			return false;
 		}
 		list($name, $ext) = explode('.', $sDest, 2);
-		$ret = Ko_Tool_Singleton::OInstance('SaeStorage')->write($sDomain, $name.'.'.$sBriefTag.'.'.$ext, $slave);
+		$ret = Ko_Tool_Singleton::OInstance('SaeStorage')->write($this->_sDomain, $name.'.'.$sBriefTag.'.'.$ext, $slave);
 		if (false === $ret)
 		{
 			return false;

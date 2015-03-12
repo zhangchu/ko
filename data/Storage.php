@@ -33,7 +33,9 @@ class Ko_Data_Storage extends Ko_Busi_Api
 	 *
 	 * <pre>
 	 * array(
-	 *   'uni' => 文件排重表，在domain内部排重
+	 *   'uni' => 文件排重表
+	 *   'urlmap' => url映射表，将外部网络文件转换为内部文件
+	 *   'size' => 图片尺寸表
 	 * )
 	 * </pre>
 	 *
@@ -41,106 +43,245 @@ class Ko_Data_Storage extends Ko_Busi_Api
 	 * <pre>
 	 *   CREATE TABLE s_image_uni (
 	 *     md5 BINARY(16) not null default '',
-	 *     domain varchar(32) not null default '',
 	 *     dest varchar(128) not null default '',
 	 *     ref int unsigned not null default 0,
-	 *     UNIQUE KEY (md5, domain)
-	 *   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+	 *     UNIQUE KEY (md5)
+	 *   ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+	 *   CREATE TABLE `s_image_urlmap` (
+	 *     `url` varchar(512) NOT NULL DEFAULT '',
+	 *     `dest` varchar(128) NOT NULL DEFAULT '',
+	 *     UNIQUE KEY (`url`)
+	 *   ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+	 *   CREATE TABLE `s_image_size` (
+	 *     `dest` varchar(128) NOT NULL DEFAULT '',
+	 *     width int unsigned not null default 0,
+	 *     height int unsigned not null default 0,
+	 *     UNIQUE KEY (`dest`)
+	 *   ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 	 * </pre>
 	 *
 	 * @var array
 	 */
 	protected $_aConf = array();
 	
-	public function bWrite($sContent, $sExt, $sDomain, &$sDest)
+	public function AGetImageSize($sDest)
 	{
-		if (strlen($this->_aConf['uni']))
-		{
-			$md5 = md5($sContent, true);
-			if ($this->_bIsMd5Exist($md5, $sDomain, $sDest))
-			{
-				return true;
-			}
-		}
-		$ret = $this->_bWrite($sContent, $sExt, $sDomain, $sDest);
-		if ($ret && strlen($this->_aConf['uni']))
-		{
-			$this->_vSetMd5($md5, $sDomain, $sDest);
-		}
-		return $ret;
+		assert(strlen($this->_aConf['size']));
+		
+		$sizeDao = $this->_aConf['size'].'Dao';
+		return $this->$sizeDao->aGet($sDest);
 	}
 	
-	public function bWriteFile($sFilename, $sExt, $sDomain, &$sDest)
+	public function AGetImagesSize($aDest)
 	{
-		if (strlen($this->_aConf['uni']))
-		{
-			$md5 = md5_file($sFilename, true);
-			if ($this->_bIsMd5Exist($md5, $sDomain, $sDest))
-			{
-				return true;
-			}
-		}
-		$ret = $this->_bWriteFile($sFilename, $sExt, $sDomain, $sDest);
-		if ($ret && strlen($this->_aConf['uni']))
-		{
-			$this->_vSetMd5($md5, $sDomain, $sDest);
-		}
-		return $ret;
+		assert(strlen($this->_aConf['size']));
+		
+		$sizeDao = $this->_aConf['size'].'Dao';
+		return $this->$sizeDao->aGetListByKeys($aDest);
 	}
 	
-	private function _bIsMd5Exist($md5, $sDomain, &$sDest)
+	public function BImage2Storage($sContent, &$sDest)
 	{
-		$uniDao = $this->_aConf['uni'].'Dao';
-		$key = array('md5' => $md5, 'domain' => $sDomain);
-		$info = $this->$uniDao->aGet($key);
-		if (!empty($info))
+		$imginfo = Ko_Tool_Image::VInfo($sContent, Ko_Tool_Image::FLAG_SRC_BLOB);
+		if (false !== $imginfo)
 		{
-			$this->$uniDao->iUpdate($key, array(), array('ref' => 1));
-			$sDest = $info['dest'];
-			return true;
+			$ret = $this->bWrite($sContent, $imginfo['type'], $sDest);
+			if ($ret)
+			{
+				$this->_vSetSize($sDest, $imginfo['width'], $imginfo['height']);
+			}
+			return $ret;
 		}
 		return false;
 	}
 	
-	private function _vSetMd5($md5, $sDomain, $sDest)
+	public function BWebUrl2Storage($sUrl, &$sDest, $bOnlyImage = true)
 	{
-		$uniDao = $this->_aConf['uni'].'Dao';
-		$aData = array(
-			'md5' => $md5,
-			'domain' => $sDomain,
-			'dest' => $sDest,
-			'ref' => 1,
-		);
-		$this->$uniDao->aInsert($aData, array(), array('ref' => 1));
+		if ($this->_bIsUrlExist($sUrl, $sDest))
+		{
+			return true;
+		}
+		
+		$content = file_get_contents($sUrl);
+		if (false !== $content)
+		{
+			$imginfo = Ko_Tool_Image::VInfo($content, Ko_Tool_Image::FLAG_SRC_BLOB);
+			if (false !== $imginfo)
+			{
+				$ret = $this->bWrite($content, $imginfo['type'], $sDest);
+				if ($ret)
+				{
+					$this->_vSetSize($sDest, $imginfo['width'], $imginfo['height']);
+				}
+			}
+			else if (!$bOnlyImage)
+			{
+				$ret = $this->bWrite($content, '', $sDest);
+			}
+			else
+			{
+				$ret = false;
+			}
+			if ($ret)
+			{
+				$this->_vSetUrl($sUrl, $sDest);
+			}
+			return $ret;
+		}
+		return false;
 	}
 	
-	protected function _bWrite($sContent, $sExt, $sDomain, &$sDest)
+	public function bWrite($sContent, $sExt, &$sDest)
 	{
-		assert(0);
+		if (strlen($this->_aConf['uni']))
+		{
+			$md5 = md5($sContent, true);
+			if ($this->_bIsMd5Exist($md5, $sDest))
+			{
+				return true;
+			}
+		}
+		$ret = $this->_bWrite($sContent, $sExt, $sDest);
+		if ($ret)
+		{
+			$this->_vSetMd5($md5, $sDest);
+		}
+		return $ret;
 	}
 	
-	protected function _bWriteFile($sFilename, $sExt, $sDomain, &$sDest)
+	public function bWriteFile($sFilename, $sExt, &$sDest)
 	{
-		assert(0);
+		if (strlen($this->_aConf['uni']))
+		{
+			$md5 = md5_file($sFilename, true);
+			if ($this->_bIsMd5Exist($md5, $sDest))
+			{
+				return true;
+			}
+		}
+		$ret = $this->_bWriteFile($sFilename, $sExt, $sDest);
+		if ($ret)
+		{
+			$this->_vSetMd5($md5, $sDest);
+		}
+		return $ret;
 	}
 	
-	public function sRead($sDomain, $sDest)
+	private function _vSetSize($sDest, $width, $height)
+	{
+		if (strlen($this->_aConf['size']))
+		{
+			$sizeDao = $this->_aConf['size'].'Dao';
+			$data = array(
+				'dest' => $sDest,
+				'width' => $width,
+				'height' => $height,
+			);
+			try
+			{
+				$this->$sizeDao->aInsert($data);
+			}
+			catch (Exception $e)
+			{
+			}
+		}
+	}
+	
+	private function _bIsUrlExist($url, &$sDest)
+	{
+		if (strlen($this->_aConf['urlmap']))
+		{
+			$urlmapDao = $this->_aConf['urlmap'].'Dao';
+			$info = $this->$urlmapDao->aGet($url);
+			if (!empty($info))
+			{
+				$sDest = $info['dest'];
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private function _vSetUrl($url, $sDest)
+	{
+		if (strlen($this->_aConf['urlmap']))
+		{
+			$urlmapDao = $this->_aConf['urlmap'].'Dao';
+			$aData = array(
+				'url' => $url,
+				'dest' => $sDest,
+			);
+			try
+			{
+				$this->$urlmapDao->aInsert($aData);
+			}
+			catch (Exception $e)
+			{
+			}
+		}
+	}
+	
+	private function _bIsMd5Exist($md5, &$sDest)
+	{
+		if (strlen($this->_aConf['uni']))
+		{
+			$uniDao = $this->_aConf['uni'].'Dao';
+			$info = $this->$uniDao->aGet($md5);
+			if (!empty($info))
+			{
+				$this->$uniDao->iUpdate($md5, array(), array('ref' => 1));
+				$sDest = $info['dest'];
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private function _vSetMd5($md5, $sDest)
+	{
+		if (strlen($this->_aConf['uni']))
+		{
+			$uniDao = $this->_aConf['uni'].'Dao';
+			$aData = array(
+				'md5' => $md5,
+				'dest' => $sDest,
+				'ref' => 1,
+			);
+			$this->$uniDao->aInsert($aData, array(), array('ref' => 1));
+		}
+	}
+	
+	protected function _bWrite($sContent, $sExt, &$sDest)
+	{
+		$tmpfile = tempnam(KO_TEMPDIR, '');
+		file_put_contents($tmpfile, $sContent);
+		$ret = $this->_bWriteFile($tmpfile, $sExt, $sDest);
+		unlink($tmpfile);
+		return $ret;
+	}
+	
+	protected function _bWriteFile($sFilename, $sExt, &$sDest)
+	{
+		return $this->_bWrite(file_get_contents($sFilename), $sExt, $sDest);
+	}
+	
+	public function sRead($sDest)
 	{
 		assert(0);
 	}
 
-	public function sGetUniqStr($sDomain, $sDest, $iSize, $sMimetype, $sFilename)
+	public function sGetUniqStr($sDest, $iSize, $sMimetype, $sFilename)
 	{
-		return urlencode($sDomain).'&'.urlencode($sDest).'&'.urlencode($iSize).'&'.urlencode($sMimetype).'&'.urlencode($sFilename);
+		return urlencode($sDest).'&'.urlencode($iSize).'&'.urlencode($sMimetype).'&'.urlencode($sFilename);
 	}
 	
 	public function aParseUniqStr($sUniqStr)
 	{
-		list($sDomain, $sDest, $iSize, $sMimetype, $sFilename) = explode('&', $sUniqStr, 5);
-		return array(urldecode($sDomain), urldecode($sDest), urldecode($iSize), urldecode($sMimetype), urldecode($sFilename));
+		list($sDest, $iSize, $sMimetype, $sFilename) = explode('&', $sUniqStr, 4);
+		return array(urldecode($sDest), urldecode($iSize), urldecode($sMimetype), urldecode($sFilename));
 	}
 	
-	public function sGetUrl($sDomain, $sDest, $sBriefTag)
+	public function sGetUrl($sDest, $sBriefTag)
 	{
 		assert(0);
 	}
@@ -150,7 +291,7 @@ class Ko_Data_Storage extends Ko_Busi_Api
 		assert(0);
 	}
 	
-	public function bGenBrief($sDomain, $sDest, $sBriefTag)
+	public function bGenBrief($sDest, $sBriefTag)
 	{
 		assert(0);
 	}

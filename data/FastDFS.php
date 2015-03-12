@@ -11,7 +11,7 @@
 
 class Ko_Data_FastDFS extends Ko_Data_Storage
 {
-	protected function _bWrite($sContent, $sExt, $sDomain, &$sDest)
+	protected function _bWrite($sContent, $sExt, &$sDest)
 	{
 		$ret = fastdfs_storage_upload_by_filebuff1($sContent, trim($sExt, '.'));
 		if (false === $ret)
@@ -22,7 +22,7 @@ class Ko_Data_FastDFS extends Ko_Data_Storage
 		return true;
 	}
 	
-	public function sRead($sDomain, $sDest)
+	public function sRead($sDest)
 	{
 		$ret = fastdfs_storage_download_file_to_buff1($sDest);
 		if (false === $ret)
@@ -32,7 +32,7 @@ class Ko_Data_FastDFS extends Ko_Data_Storage
 		return $ret;
 	}
 	
-	public function sGetUrl($sDomain, $sDest, $sBriefTag)
+	public function sGetUrl($sDest, $sBriefTag)
 	{
 		$sBriefTag = trim($sBriefTag, '.');
 		if (0 == strlen($sBriefTag))
@@ -52,7 +52,7 @@ class Ko_Data_FastDFS extends Ko_Data_Storage
 		return array(null, $sDest, implode('.', $arr));
 	}
 	
-	public function bGenBrief($sDomain, $sDest, $sBriefTag)
+	public function bGenBrief($sDest, $sBriefTag)
 	{
 		$sBriefTag = trim($sBriefTag, '.');
 		if (0 == strlen($sBriefTag))
