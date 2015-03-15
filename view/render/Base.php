@@ -16,7 +16,10 @@ class Ko_View_Render_Base
 		{
 			$vName = array($vName => $vValue);
 		}
-		$this->_aData = array_merge($this->_aData, $vName);
+		foreach ($vName as $k => $v)
+		{
+			$this->_aData[$k] = $v;
+		}
 		return $this;
 	}
 
