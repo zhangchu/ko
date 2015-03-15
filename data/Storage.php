@@ -106,15 +106,14 @@ class Ko_Data_Storage extends Ko_Busi_Api
 		return $this->$sizeDao->aGetListByKeys($aDest);
 	}
 	
-	public function bUpload2Storage($sVarname, &$sDest, $bOnlyImage = true)
+	public function bUpload2Storage($aFile, &$sDest, $bOnlyImage = true)
 	{
-		$file = Ko_Web_Request::AFile($sVarname);
-		if (UPLOAD_ERR_OK  === $file['error'] && $file['size'])
+		if (UPLOAD_ERR_OK  === $aFile['error'] && $aFile['size'])
 		{
-			$ret = $this->_bContent2Storage(file_get_contents($file['tmp_name']), $sDest, $bOnlyImage);
+			$ret = $this->_bContent2Storage(file_get_contents($aFile['tmp_name']), $sDest, $bOnlyImage);
 			if ($ret)
 			{
-				$this->_vSetFileinfo($sDest, $file['type'], $file['name']);
+				$this->_vSetFileinfo($sDest, $aFile['type'], $aFile['name']);
 			}
 		}
 		return false;
