@@ -110,7 +110,7 @@ class Ko_Data_Storage extends Ko_Busi_Api
 	{
 		if (UPLOAD_ERR_OK  === $aFile['error'] && $aFile['size'])
 		{
-			$ret = $this->_bContent2Storage(file_get_contents($aFile['tmp_name']), $sDest, $bOnlyImage);
+			$ret = $this->bContent2Storage(file_get_contents($aFile['tmp_name']), $sDest, $bOnlyImage);
 			if ($ret)
 			{
 				$this->_vSetFileinfo($sDest, $aFile['type'], $aFile['name']);
@@ -130,7 +130,7 @@ class Ko_Data_Storage extends Ko_Busi_Api
 		$content = file_get_contents($sUrl);
 		if (false !== $content)
 		{
-			$ret = $this->_bContent2Storage($content, $sDest, $bOnlyImage);
+			$ret = $this->bContent2Storage($content, $sDest, $bOnlyImage);
 			if ($ret)
 			{
 				$this->_vSetUrl($sUrl, $sDest);
@@ -140,7 +140,7 @@ class Ko_Data_Storage extends Ko_Busi_Api
 		return false;
 	}
 	
-	private function _bContent2Storage($sContent, &$sDest, $bOnlyImage)
+	public function bContent2Storage($sContent, &$sDest, $bOnlyImage = true)
 	{
 		$imginfo = Ko_Tool_Image::VInfo($sContent, Ko_Tool_Image::FLAG_SRC_BLOB);
 		if (false !== $imginfo)
