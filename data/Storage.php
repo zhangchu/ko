@@ -36,26 +36,32 @@ class Ko_Data_Storage extends Ko_Busi_Api
 	 *   'uni' => 文件排重表
 	 *   'urlmap' => url映射表，将外部网络文件转换为内部文件
 	 *   'size' => 图片尺寸表
+	 *   'filesize' => 文件尺寸表
 	 * )
 	 * </pre>
 	 *
 	 * <b>数据库例表</b>
 	 * <pre>
-	 *   CREATE TABLE s_image_uni (
+	 *   CREATE TABLE s_file_uni (
 	 *     md5 BINARY(16) not null default '',
 	 *     dest varchar(128) not null default '',
 	 *     ref int unsigned not null default 0,
 	 *     UNIQUE KEY (md5)
 	 *   ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-	 *   CREATE TABLE `s_image_urlmap` (
+	 *   CREATE TABLE `s_file_urlmap` (
 	 *     `url` varchar(512) NOT NULL DEFAULT '',
 	 *     `dest` varchar(128) NOT NULL DEFAULT '',
 	 *     UNIQUE KEY (`url`)
 	 *   ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-	 *   CREATE TABLE `s_image_size` (
+	 *   CREATE TABLE `s_file_size` (
 	 *     `dest` varchar(128) NOT NULL DEFAULT '',
 	 *     width int unsigned not null default 0,
 	 *     height int unsigned not null default 0,
+	 *     UNIQUE KEY (`dest`)
+	 *   ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+	 *   CREATE TABLE `s_file_filesize` (
+	 *     `dest` varchar(128) NOT NULL DEFAULT '',
+	 *     size int unsigned not null default 0,
 	 *     UNIQUE KEY (`dest`)
 	 *   ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 	 * </pre>
@@ -63,6 +69,22 @@ class Ko_Data_Storage extends Ko_Busi_Api
 	 * @var array
 	 */
 	protected $_aConf = array();
+	
+	public function AGetFileSize($sDest)
+	{
+		assert(strlen($this->_aConf['filesize']));
+		
+		$filesizeDao = $this->_aConf['filesize'].'Dao';
+		return $this->$filesizeDao->aGet($sDest);
+	}
+	
+	public function AGetFilesSize($aDest)
+	{
+		assert(strlen($this->_aConf['filesize']));
+		
+		$filesizeDao = $this->_aConf['filesize'].'Dao';
+		return $this->$filesizeDao->aGetListByKeys($aDest);
+	}
 	
 	public function AGetImageSize($sDest)
 	{
@@ -145,6 +167,7 @@ class Ko_Data_Storage extends Ko_Busi_Api
 		if ($ret)
 		{
 			$this->_vSetMd5($md5, $sDest);
+			$this->_vSetFilesize($sDest, strlen($sContent));
 		}
 		return $ret;
 	}
@@ -163,8 +186,28 @@ class Ko_Data_Storage extends Ko_Busi_Api
 		if ($ret)
 		{
 			$this->_vSetMd5($md5, $sDest);
+			$this->_vSetFilesize($sDest, filesize($sFilename));
 		}
 		return $ret;
+	}
+	
+	private function _vSetFilesize($sDest, $filesize)
+	{
+		if (strlen($this->_aConf['filesize']))
+		{
+			$filesizeDao = $this->_aConf['filesize'].'Dao';
+			$data = array(
+				'dest' => $sDest,
+				'size' => $filesize,
+			);
+			try
+			{
+				$this->$filesizeDao->aInsert($data);
+			}
+			catch (Exception $e)
+			{
+			}
+		}
 	}
 	
 	private function _vSetSize($sDest, $width, $height)
