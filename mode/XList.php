@@ -51,7 +51,6 @@ class Ko_Mode_XList extends Ko_Busi_Api
 	 *         'rows' => 5,
 	 *         'cols' => 60,
 	 *         'values' => array(...),
-	 *         'domain' => null,
 	 *         'brief' => '',
 	 *       ),
 	 *       'queryinfo' => array(
@@ -1053,8 +1052,7 @@ class Ko_Mode_XList extends Ko_Busi_Api
 			$sContent = $this->_sGetErrorHtml($sError);
 			return false;
 		}
-		list($sDomain, $sDest, $iSize, $sMimetype, $sFilename) = $this->_oStorage->aParseUniqStr($info[$aReq['sXSField']]);
-		$sContent = $this->_oStorage->sRead($sDomain, $sDest);
+		$sContent = $this->_oStorage->sRead($info[$aReq['sXSField']]);
 		return false !== $sContent;
 	}
 
@@ -1231,22 +1229,9 @@ class Ko_Mode_XList extends Ko_Busi_Api
 		$cginame = $this->_sGetFieldCginame($sField);
 		if ($this->_bIsFieldFileOrImage($sField))
 		{
-			if (UPLOAD_ERR_OK == $aReq[$cginame]['error'] && $aReq[$cginame]['size'])
+			if ($this->_oStorage->bUpload2Storage($aReq[$cginame], $dest, $this->_bIsFieldImage($sField)))
 			{
-				if ($this->_bIsFieldFile($sField))
-				{
-					$fileext = pathinfo($aReq[$cginame]['name'], PATHINFO_EXTENSION);
-				}
-				else
-				{
-					$fileinfo = Ko_Tool_Image::VInfo($aReq[$cginame]['tmp_name']);
-					$fileext = (false === $fileinfo) ? false : $fileinfo['type'];
-				}
-				if (false !== $fileext
-					&& false !== $this->_oStorage->bWrite(file_get_contents($aReq[$cginame]['tmp_name']), $fileext, $this->_aConf['field'][$sField]['editinfo']['domain'], $dest))
-				{
-					return $this->_oStorage->sGetUniqStr($this->_aConf['field'][$sField]['editinfo']['domain'], $dest, $aReq[$cginame]['size'], $aReq[$cginame]['type'], $aReq[$cginame]['name']);
-				}
+				return $dest;
 			}
 			$removeCginame = $this->_sGetFieldRemoveCginame($sField);
 			if ($aReq[$removeCginame])
@@ -1495,8 +1480,8 @@ class Ko_Mode_XList extends Ko_Busi_Api
 		if (strlen($sValue))
 		{
 			$removeCginame = $this->_sGetFieldRemoveCginame($sField);
-			list($sDomain, $sDest, $iSize, $sMimetype, $sFilename) = $this->_oStorage->aParseUniqStr($sValue);
-			$html .= '<label><input type=radio name="'.$removeCginame.'" value="1">remove file</label> <label><input type=radio name="'.$removeCginame.'" value="0">'.htmlspecialchars($sFilename.'('.$iSize.')').'</label><br>';
+			$fileinfo = $this->_oStorage->aGetFileInfo($sValue);
+			$html .= '<label><input type=radio name="'.$removeCginame.'" value="1">remove file</label> <label><input type=radio name="'.$removeCginame.'" value="0">'.htmlspecialchars($fileinfo['filename'].'('.$fileinfo['size'].')').'</label><br>';
 		}
 		$attr = '';
 		if ($aPara['size'])
@@ -1513,8 +1498,7 @@ class Ko_Mode_XList extends Ko_Busi_Api
 		if (strlen($sValue))
 		{
 			$removeCginame = $this->_sGetFieldRemoveCginame($sField);
-			list($sDomain, $sDest, $iSize, $sMimetype, $sFilename) = $this->_oStorage->aParseUniqStr($sValue);
-			$image = $this->_oStorage->sGetUrl($sDomain, $sDest, $aPara['brief']);
+			$image = $this->_oStorage->sGetUrl($sValue, $aPara['brief']);
 			$html .= '<label><input type=radio name="'.$removeCginame.'" value="1">remove image</label> <label><input type=radio name="'.$removeCginame.'" value="0"><img src="'.htmlspecialchars($image).'"></label><br>';
 		}
 		$attr = '';
@@ -1592,5 +1576,3 @@ class Ko_Mode_XList extends Ko_Busi_Api
 		return '<input type=hidden name="'.$sName.'" value="'.htmlspecialchars($sValue).'">'."\n";
 	}
 }
-
-?>

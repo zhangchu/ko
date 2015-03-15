@@ -35,13 +35,12 @@ class Ko_Mode_XIUI extends Ko_Busi_Api
 			switch ($this->_aTypeinfo['editinfo']['type'])
 			{
 			case 'file':
-				list($sDomain, $sDest, $iSize, $sMimetype, $sFilename) = $this->_oStorage->aParseUniqStr($aValue[$sField]);
-				$html = htmlspecialchars($sFilename.'('.$iSize.')');
+				$fileinfo = $this->_oStorage->aGetFileInfo($aValue[$sField]);
+				$html = htmlspecialchars($fileinfo['filename'].'('.$fileinfo['size'].')');
 				break;
 			case 'image':
-				list($sDomain, $sDest, $iSize, $sMimetype, $sFilename) = $this->_oStorage->aParseUniqStr($aValue[$sField]);
-				$big = $this->_oStorage->sGetUrl($sDomain, $sDest, '');
-				$image = $this->_oStorage->sGetUrl($sDomain, $sDest, $this->_aTypeinfo['cellinfo']['brief']);
+				$big = $this->_oStorage->sGetUrl($aValue[$sField], '');
+				$image = $this->_oStorage->sGetUrl($aValue[$sField], $this->_aTypeinfo['cellinfo']['brief']);
 				$html = '<a href="'.htmlspecialchars($big).'" target="_blank"><img src="'.htmlspecialchars($image).'"></a>';
 				break;
 			default:
@@ -63,13 +62,12 @@ class Ko_Mode_XIUI extends Ko_Busi_Api
 			switch ($this->_aTypeinfo['editinfo']['type'])
 			{
 			case 'file':
-				list($sDomain, $sDest, $iSize, $sMimetype, $sFilename) = $this->_oStorage->aParseUniqStr($aValue[$sField]);
-				$html = htmlspecialchars($sFilename.'('.$iSize.')').'<br>'.htmlspecialchars($aValue[$sField]);
+				$fileinfo = $this->_oStorage->aGetFileInfo($aValue[$sField]);
+				$html = htmlspecialchars($fileinfo['filename'].'('.$fileinfo['size'].')').'<br>'.htmlspecialchars($aValue[$sField]);
 				break;
 			case 'image':
-				list($sDomain, $sDest, $iSize, $sMimetype, $sFilename) = $this->_oStorage->aParseUniqStr($aValue[$sField]);
-				$big = $this->_oStorage->sGetUrl($sDomain, $sDest, '');
-				$image = $this->_oStorage->sGetUrl($sDomain, $sDest, $this->_aTypeinfo['editinfo']['brief']);
+				$big = $this->_oStorage->sGetUrl($aValue[$sField], '');
+				$image = $this->_oStorage->sGetUrl($aValue[$sField], $this->_aTypeinfo['editinfo']['brief']);
 				$html = '<a href="'.htmlspecialchars($big).'" target="_blank"><img src="'.htmlspecialchars($image).'"></a><br>'.htmlspecialchars($aValue[$sField]);
 				break;
 			case 'textarea':
@@ -83,5 +81,3 @@ class Ko_Mode_XIUI extends Ko_Busi_Api
 		return $html;
 	}
 }
-
-?>
