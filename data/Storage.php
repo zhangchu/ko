@@ -33,10 +33,10 @@ class Ko_Data_Storage extends Ko_Busi_Api
 	 *
 	 * <pre>
 	 * array(
-	 *   'uni' => 文件排重表
 	 *   'urlmap' => url映射表，将外部网络文件转换为内部文件
+	 *   'uni' => 文件排重表
 	 *   'size' => 图片尺寸表
-	 *   'filesize' => 文件尺寸表
+	 *   'fileinfo' => 文件信息表，包括文件尺寸，mimetype, 真实文件名，创建时间等
 	 * )
 	 * </pre>
 	 *
@@ -51,6 +51,7 @@ class Ko_Data_Storage extends Ko_Busi_Api
 	 *   CREATE TABLE `s_file_urlmap` (
 	 *     `url` varchar(512) NOT NULL DEFAULT '',
 	 *     `dest` varchar(128) NOT NULL DEFAULT '',
+	 *     `ref` int unsigned not null default 0,
 	 *     UNIQUE KEY (`url`)
 	 *   ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 	 *   CREATE TABLE `s_file_size` (
@@ -59,34 +60,37 @@ class Ko_Data_Storage extends Ko_Busi_Api
 	 *     height int unsigned not null default 0,
 	 *     UNIQUE KEY (`dest`)
 	 *   ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-	 *   CREATE TABLE `s_file_filesize` (
+	 *   CREATE TABLE `s_file_fileinfo` (
 	 *     `dest` varchar(128) NOT NULL DEFAULT '',
-	 *     size int unsigned not null default 0,
+	 *     `size` int unsigned not null default 0,
+	 *     `mimetype` varchar(64) NOT NULL DEFAULT '',
+	 *     `filename` varchar(256) NOT NULL DEFAULT '',
+	 *     `ctime` timestamp NOT NULL DEFAULT 0,
 	 *     UNIQUE KEY (`dest`)
-	 *   ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+	 *   ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 	 * </pre>
 	 *
 	 * @var array
 	 */
 	protected $_aConf = array();
 	
-	public function AGetFileSize($sDest)
+	public function aGetFileInfo($sDest)
 	{
-		assert(strlen($this->_aConf['filesize']));
+		assert(strlen($this->_aConf['fileinfo']));
 		
-		$filesizeDao = $this->_aConf['filesize'].'Dao';
-		return $this->$filesizeDao->aGet($sDest);
+		$fileinfoDao = $this->_aConf['fileinfo'].'Dao';
+		return $this->$fileinfoDao->aGet($sDest);
 	}
 	
-	public function AGetFilesSize($aDest)
+	public function aGetFilesInfo($aDest)
 	{
-		assert(strlen($this->_aConf['filesize']));
+		assert(strlen($this->_aConf['fileinfo']));
 		
-		$filesizeDao = $this->_aConf['filesize'].'Dao';
-		return $this->$filesizeDao->aGetListByKeys($aDest);
+		$fileinfoDao = $this->_aConf['fileinfo'].'Dao';
+		return $this->$fileinfoDao->aGetListByKeys($aDest);
 	}
 	
-	public function AGetImageSize($sDest)
+	public function aGetImageSize($sDest)
 	{
 		assert(strlen($this->_aConf['size']));
 		
@@ -94,7 +98,7 @@ class Ko_Data_Storage extends Ko_Busi_Api
 		return $this->$sizeDao->aGet($sDest);
 	}
 	
-	public function AGetImagesSize($aDest)
+	public function aGetImagesSize($aDest)
 	{
 		assert(strlen($this->_aConf['size']));
 		
@@ -102,22 +106,21 @@ class Ko_Data_Storage extends Ko_Busi_Api
 		return $this->$sizeDao->aGetListByKeys($aDest);
 	}
 	
-	public function BImage2Storage($sContent, &$sDest)
+	public function bUpload2Storage($sVarname, &$sDest, $bOnlyImage = true)
 	{
-		$imginfo = Ko_Tool_Image::VInfo($sContent, Ko_Tool_Image::FLAG_SRC_BLOB);
-		if (false !== $imginfo)
+		$file = Ko_Web_Request::AFile($sVarname);
+		if (UPLOAD_ERR_OK  === $file['error'] && $file['size'])
 		{
-			$ret = $this->bWrite($sContent, $imginfo['type'], $sDest);
+			$ret = $this->_bContent2Storage(file_get_contents($file['tmp_name']), $sDest, $bOnlyImage);
 			if ($ret)
 			{
-				$this->_vSetSize($sDest, $imginfo['width'], $imginfo['height']);
+				$this->_vSetFileinfo($sDest, $file['type'], $file['name']);
 			}
-			return $ret;
 		}
 		return false;
 	}
 	
-	public function BWebUrl2Storage($sUrl, &$sDest, $bOnlyImage = true)
+	public function bWebUrl2Storage($sUrl, &$sDest, $bOnlyImage = true)
 	{
 		if ($this->_bIsUrlExist($sUrl, $sDest))
 		{
@@ -127,23 +130,7 @@ class Ko_Data_Storage extends Ko_Busi_Api
 		$content = file_get_contents($sUrl);
 		if (false !== $content)
 		{
-			$imginfo = Ko_Tool_Image::VInfo($content, Ko_Tool_Image::FLAG_SRC_BLOB);
-			if (false !== $imginfo)
-			{
-				$ret = $this->bWrite($content, $imginfo['type'], $sDest);
-				if ($ret)
-				{
-					$this->_vSetSize($sDest, $imginfo['width'], $imginfo['height']);
-				}
-			}
-			else if (!$bOnlyImage)
-			{
-				$ret = $this->bWrite($content, '', $sDest);
-			}
-			else
-			{
-				$ret = false;
-			}
+			$ret = $this->_bContent2Storage($content, $sDest, $bOnlyImage);
 			if ($ret)
 			{
 				$this->_vSetUrl($sUrl, $sDest);
@@ -151,6 +138,28 @@ class Ko_Data_Storage extends Ko_Busi_Api
 			return $ret;
 		}
 		return false;
+	}
+	
+	private function _bContent2Storage($sContent, &$sDest, $bOnlyImage)
+	{
+		$imginfo = Ko_Tool_Image::VInfo($sContent, Ko_Tool_Image::FLAG_SRC_BLOB);
+		if (false !== $imginfo)
+		{
+			$ret = $this->bWrite($sContent, $imginfo['type'], $sDest);
+			if ($ret)
+			{
+				$this->_vSetSize($sDest, $imginfo['width'], $imginfo['height']);
+			}
+		}
+		else if (!$bOnlyImage)
+		{
+			$ret = $this->bWrite($sContent, '', $sDest);
+		}
+		else
+		{
+			$ret = false;
+		}
+		return $ret;
 	}
 	
 	public function bWrite($sContent, $sExt, &$sDest)
@@ -191,22 +200,39 @@ class Ko_Data_Storage extends Ko_Busi_Api
 		return $ret;
 	}
 	
+	private function _vSetFileinfo($sDest, $mimetype, $filename)
+	{
+		if (strlen($this->_aConf['fileinfo']))
+		{
+			$fileinfoDao = $this->_aConf['fileinfo'].'Dao';
+			$data = array(
+				'dest' => $sDest,
+				'mimetype' => $mimetype,
+				'filename' => $filename,
+				'ctime' => date('Y-m-d H:i:s'),
+			);
+			$update = array(
+				'mimetype' => $mimetype,
+				'filename' => $filename,
+			);
+			$this->$fileinfoDao->aInsert($data, $update);
+		}
+	}
+	
 	private function _vSetFilesize($sDest, $filesize)
 	{
-		if (strlen($this->_aConf['filesize']))
+		if (strlen($this->_aConf['fileinfo']))
 		{
-			$filesizeDao = $this->_aConf['filesize'].'Dao';
+			$fileinfoDao = $this->_aConf['fileinfo'].'Dao';
 			$data = array(
 				'dest' => $sDest,
 				'size' => $filesize,
+				'ctime' => date('Y-m-d H:i:s'),
 			);
-			try
-			{
-				$this->$filesizeDao->aInsert($data);
-			}
-			catch (Exception $e)
-			{
-			}
+			$update = array(
+				'size' => $filesize,
+			);
+			$this->$fileinfoDao->aInsert($data, $update);
 		}
 	}
 	
@@ -220,13 +246,11 @@ class Ko_Data_Storage extends Ko_Busi_Api
 				'width' => $width,
 				'height' => $height,
 			);
-			try
-			{
-				$this->$sizeDao->aInsert($data);
-			}
-			catch (Exception $e)
-			{
-			}
+			$update = array(
+				'width' => $width,
+				'height' => $height,
+			);
+			$this->$sizeDao->aInsert($data, $update);
 		}
 	}
 	
@@ -238,6 +262,7 @@ class Ko_Data_Storage extends Ko_Busi_Api
 			$info = $this->$urlmapDao->aGet($url);
 			if (!empty($info))
 			{
+				$this->$urlmapDao->iUpdate($url, array(), array('ref' => 1));
 				$sDest = $info['dest'];
 				return true;
 			}
@@ -253,14 +278,9 @@ class Ko_Data_Storage extends Ko_Busi_Api
 			$aData = array(
 				'url' => $url,
 				'dest' => $sDest,
+				'ref' => 1,
 			);
-			try
-			{
-				$this->$urlmapDao->aInsert($aData);
-			}
-			catch (Exception $e)
-			{
-			}
+			$this->$urlmapDao->aInsert($aData, array(), array('ref' => 1));
 		}
 	}
 	
@@ -313,17 +333,6 @@ class Ko_Data_Storage extends Ko_Busi_Api
 		assert(0);
 	}
 
-	public function sGetUniqStr($sDest, $iSize, $sMimetype, $sFilename)
-	{
-		return urlencode($sDest).'&'.urlencode($iSize).'&'.urlencode($sMimetype).'&'.urlencode($sFilename);
-	}
-	
-	public function aParseUniqStr($sUniqStr)
-	{
-		list($sDest, $iSize, $sMimetype, $sFilename) = explode('&', $sUniqStr, 4);
-		return array(urldecode($sDest), urldecode($iSize), urldecode($sMimetype), urldecode($sFilename));
-	}
-	
 	public function sGetUrl($sDest, $sBriefTag)
 	{
 		assert(0);
