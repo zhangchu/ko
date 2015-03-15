@@ -115,6 +115,7 @@ class Ko_Data_Storage extends Ko_Busi_Api
 			{
 				$this->_vSetFileinfo($sDest, $aFile['type'], $aFile['name']);
 			}
+			return $ret;
 		}
 		return false;
 	}
