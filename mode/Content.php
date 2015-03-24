@@ -50,14 +50,19 @@ class Ko_Mode_Content extends Ko_Busi_Api
 	public function bSet($iAid, $iId, $sContent)
 	{
 		assert($iId > 0 && isset($this->_aConf['app'][$iAid]));
-		$classname = 'Ko_Mode_Content_'.ucfirst($this->_aConf['app'][$iAid]['type']);
 		
 		$contentApi = $this->_aConf['contentApi'];
 		$aData = array(
 			'aid' => $iAid,
 			'id' => $iId,
-			'content' => $classname::S2Valid($sContent, $this->_iGetAidMaxLength($iAid)),
 		);
+		if ('' === $sContent)
+		{
+			$this->$contentApi->iDelete($aData);
+			return '';
+		}
+		$classname = 'Ko_Mode_Content_'.ucfirst($this->_aConf['app'][$iAid]['type']);
+		$aData['content'] = $classname::S2Valid($sContent, $this->_iGetAidMaxLength($iAid));
 		$aUpdate = array(
 			'content' => $aData['content'],
 		);
