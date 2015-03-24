@@ -46,7 +46,8 @@ class Ko_Html_MsgFilter implements IKo_Html_Filter
 
 	public function bFilterAttr($oNode, $oAttr)
 	{
-		return Ko_Html_FilterHandle::BFilterAttr($oNode, $oAttr, self::$s_aAllowAttr, self::$s_aCheckProtocolsAttr, self::$s_aAllowProtocols);
+		return Ko_Html_FilterHandle::BFilterAttr($oNode, $oAttr, self::$s_aAllowAttr,
+			self::$s_aCheckProtocolsAttr, self::$s_aAllowProtocols);
 	}
 
 	public function bFilterChild($oNode, $oChild)
@@ -64,27 +65,3 @@ class Ko_Html_MsgFilter implements IKo_Html_Filter
 		return Ko_Html_FilterHandle::SFilterHtml($sHtml);
 	}
 }
-
-/*
-
-if ($argc != 2)
-{
-	echo "Usage: ".$argv[0]." <filename>\n";
-	exit;
-}
-$filename = $argv[1];
-
-$content = file_get_contents($filename);
-
-$str = new Ko_Html_Str($content);
-$filter = new Ko_Html_MsgFilter;
-
-$node = new Ko_Html_Node;
-$ret = $node->bParse($str);
-$node->vAddFilter($filter);
-$ret = $node->sHtml();
-$node->vFreeParent();
-echo $ret;
-
-*/
-?>

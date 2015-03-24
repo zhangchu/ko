@@ -40,7 +40,8 @@ class Ko_Html_ImgFilter implements IKo_Html_Filter
 
 	public function bFilterAttr($oNode, $oAttr)
 	{
-		return Ko_Html_FilterHandle::BFilterAttr($oNode, $oAttr, self::$s_aAllowAttr, self::$s_aCheckProtocolsAttr, self::$s_aAllowProtocols);
+		return Ko_Html_FilterHandle::BFilterAttr($oNode, $oAttr, self::$s_aAllowAttr,
+			self::$s_aCheckProtocolsAttr, self::$s_aAllowProtocols);
 	}
 
 	public function bFilterChild($oNode, $oChild)
