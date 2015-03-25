@@ -165,7 +165,8 @@ class Ko_Web_Request
 	
 	public static function SRequestMethod($bOverride = false)
 	{
-		if ($bOverride)
+		$httpmethod = self::_VServer('REQUEST_METHOD');
+		if ($bOverride && 'POST' === $httpmethod)
 		{
 			$method = self::_VServer('HTTP_X_HTTP_METHOD_OVERRIDE');
 			if (null !== $method)
@@ -173,7 +174,7 @@ class Ko_Web_Request
 				return $method;
 			}
 		}
-		return self::_VServer('REQUEST_METHOD');
+		return $httpmethod;
 	}
 	
 	public static function SRequestUri()
