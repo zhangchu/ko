@@ -61,7 +61,13 @@ class Ko_Mode_Content extends Ko_Busi_Api
 			$this->$contentApi->iDelete($aData);
 			return '';
 		}
-		$classname = 'Ko_Mode_Content_'.ucfirst($this->_aConf['app'][$iAid]['type']);
+		$type = ucfirst($this->_aConf['app'][$iAid]['type']);
+		if ('Html' === $type)
+		{
+			$sContent = $this->_sReplaceDataUrl($sContent, '"');
+			$sContent = $this->_sReplaceDataUrl($sContent, "'");
+		}
+		$classname = 'Ko_Mode_Content_'.$type;
 		$aData['content'] = $classname::S2Valid($sContent, $this->_iGetAidMaxLength($iAid));
 		$aUpdate = array(
 			'content' => $aData['content'],
@@ -73,7 +79,8 @@ class Ko_Mode_Content extends Ko_Busi_Api
 	public function sGetText($iAid, $iId, $iMaxLength = 0, $sExt = '')
 	{
 		assert($iId > 0 && isset($this->_aConf['app'][$iAid]));
-		$classname = 'Ko_Mode_Content_'.ucfirst($this->_aConf['app'][$iAid]['type']);
+		$type = ucfirst($this->_aConf['app'][$iAid]['type']);
+		$classname = 'Ko_Mode_Content_'.$type;
 		
 		if ('' === ($content = $this->_aGetContent($iAid, $iId)))
 		{
@@ -85,7 +92,8 @@ class Ko_Mode_Content extends Ko_Busi_Api
 	public function sGetHtml($iAid, $iId, $iMaxLength = 0)
 	{
 		assert($iId > 0 && isset($this->_aConf['app'][$iAid]));
-		$classname = 'Ko_Mode_Content_'.ucfirst($this->_aConf['app'][$iAid]['type']);
+		$type = ucfirst($this->_aConf['app'][$iAid]['type']);
+		$classname = 'Ko_Mode_Content_'.$type;
 		
 		if ('' === ($content = $this->_aGetContent($iAid, $iId)))
 		{
@@ -173,6 +181,43 @@ class Ko_Mode_Content extends Ko_Busi_Api
 		return $map;
 	}
 	
+	protected function _sDataUrl2Link($sData)
+	{
+		return '';
+	}
+
+	private function _sReplaceDataUrl($sContent, $quote)
+	{
+		while (1)
+		{
+			$pos1 = stripos($sContent, 'src='.$quote.'data:');
+			if (false === $pos1)
+			{
+				break;
+			}
+			$pos2 = strpos($sContent, $quote, $pos1 + 10);
+			if (false !== $pos2)
+			{
+				$dataurl = substr($sContent, $pos1 + 5, $pos2 - $pos1 - 5);
+			}
+			else
+			{
+				$dataurl = substr($sContent, $pos1 + 5);
+			}
+			$data = file_get_contents($dataurl);
+			if (false !== $data)
+			{
+				$url = $this->_sDataUrl2Link($data);
+			}
+			else
+			{
+				$url = '';
+			}
+			$sContent = substr($sContent, 0, $pos1 + 5).$url.substr($sContent, $pos2);
+		}
+		return $sContent;
+	}
+	
 	private function _vNormalizeInfo(&$aInfo, &$objs)
 	{
 		$objs = array();
@@ -190,7 +235,8 @@ class Ko_Mode_Content extends Ko_Busi_Api
 			}
 			$info['maxlength'] = intval($info['maxlength']);
 			$info['ext'] = strval($info['ext']);
-			$info['classname'] = 'Ko_Mode_Content_'.ucfirst($this->_aConf['app'][$aid]['type']);
+			$type = ucfirst($this->_aConf['app'][$aid]['type']);
+			$info['classname'] = 'Ko_Mode_Content_'.$type;
 		}
 		unset($info);
 	}
