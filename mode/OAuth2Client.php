@@ -81,7 +81,8 @@ class Ko_Mode_OAuth2Client extends Ko_Mode_OAuthClientBase
 			$authorizeUri = Ko_Mode_OAuth2Server::SGetAuthorizeUri($this->_aConf['srclist'][$sSrc]['authorize_uri'],
 				$this->_aConf['srclist'][$sSrc]['client_id'],
 				$this->_aConf['srclist'][$sSrc]['redirect_uri']);
-			header('Location: '.$authorizeUri);
+			Ko_Web_Response::VSetRedirect($authorizeUri);
+			Ko_Web_Response::VSend();
 			exit;
 		}
 

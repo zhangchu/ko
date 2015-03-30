@@ -132,7 +132,8 @@ class Ko_Mode_OAuthClient extends Ko_Mode_OAuthClientBase
 			$response = call_user_func($fnGetRequestToken, $uri);
 			$arr = $this->aSaveTempToken($sSrc, $response);
 			$authorizeUri = Ko_Mode_OAuthServer::SGetAuthorizeUri($this->_aConf['srclist'][$sSrc]['authorize_uri'], $arr['oauth_token']);
-			header('Location: '.$authorizeUri);
+			Ko_Web_Response::VSetRedirect($authorizeUri);
+			Ko_Web_Response::VSend();
 			exit;
 		}
 
