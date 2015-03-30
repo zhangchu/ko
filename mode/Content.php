@@ -59,7 +59,7 @@ class Ko_Mode_Content extends Ko_Busi_Api
 		if ('' === $sContent)
 		{
 			$this->$contentApi->iDelete($aData);
-			return '';
+			return true;
 		}
 		$type = ucfirst($this->_aConf['app'][$iAid]['type']);
 		if ('Html' === $type)
