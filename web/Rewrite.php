@@ -106,9 +106,8 @@ class Ko_Web_Rewrite
 	private static function _AGet($sRequestUri)
 	{
 		list($path, $query) = explode('?', $sRequestUri, 2);
-		$paths = explode('/', $path);
-		$paths = array_values(array_diff($paths, array('')));
-		
+		$paths = explode('/', ltrim($path, '/'));
+
 		$keys = array();
 		$matched = self::_SMatchPath($paths, self::$s_aRules, $keys);
 		if (null === $matched)

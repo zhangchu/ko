@@ -56,11 +56,7 @@ class Ko_Web_RewriteParser
             {
                 $tag = '*';
             }
-            if (strlen($pattern) && '/' !== substr($pattern, -1))
-            {
-                $pattern .= '/';
-            }
-            $pattern .= $tag;
+            $pattern .= '/'.$tag;
             $arr[$pattern] = self::_SNormalizeRule($rewrited);
         }
         return $arr;
