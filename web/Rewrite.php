@@ -99,6 +99,28 @@ class Ko_Web_Rewrite
 		{
 			$uri = Ko_Web_Request::SRequestUri();
 			list(self::$s_sRewrited, self::$s_iHttpCode) = self::_AGet($uri);
+			if ($uri === self::$s_sRewrited)
+			{
+				if ('/' === substr($uri, -1))
+				{
+					$uri = rtrim($uri, '/');
+				}
+				else
+				{
+					$uri .= '/';
+				}
+				list($rewrited, $httpcode) = self::_AGet($uri);
+				if ($httpcode)
+				{
+					self::$s_sRewrited = $rewrited;
+					self::$s_iHttpCode = $httpcode;
+				}
+				else if ($uri !== $rewrited)
+				{
+					self::$s_sRewrited = $uri;
+					self::$s_iHttpCode = 301;
+				}
+			}
 		}
 		return array(self::$s_sRewrited, self::$s_iHttpCode);
 	}

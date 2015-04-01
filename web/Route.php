@@ -13,7 +13,9 @@
  *    /path/abc/xyz.php
  * 2. 其他文件如果存在，直接输出文件
  *    /path/abc/xyz.txt
- * 3. 其他
+ * 3. 如果目录存在，直接跳转到目录
+ *    /path/abc/index => /path/abc/index/
+ * 4. 其他
  *    /path/abc/index => /path/abc.php 并执行注册为 index 的函数
  */
 class Ko_Web_Route
@@ -65,6 +67,12 @@ class Ko_Web_Route
 				$render->oSetData('filename', self::$s_sFile);
 				Ko_Web_Response::VSetContentType($pathinfo['extension']);
 				Ko_Web_Response::VAppendBody($render);
+				Ko_Web_Response::VSend();
+			}
+			else if (is_dir(self::$s_sFile))
+			{
+				list($rewrite, $httpcode) = Ko_Web_Rewrite::AGet();
+				Ko_Web_Response::VSetRedirect($rewrite.'/');
 				Ko_Web_Response::VSend();
 			}
 			else
