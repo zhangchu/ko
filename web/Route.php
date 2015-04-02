@@ -72,7 +72,12 @@ class Ko_Web_Route
 			else if (is_dir(self::$s_sFile))
 			{
 				list($rewrite, $httpcode) = Ko_Web_Rewrite::AGet();
-				Ko_Web_Response::VSetRedirect($rewrite.'/');
+				list($path, $query) = explode('?', $rewrite, 2);
+				if (isset($query))
+				{
+					$query = '?'.$query;
+				}
+				Ko_Web_Response::VSetRedirect($path.'/'.$query);
 				Ko_Web_Response::VSend();
 			}
 			else

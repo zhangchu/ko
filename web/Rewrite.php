@@ -12,10 +12,10 @@
 class Ko_Web_Rewrite
 {
 	private static $s_aRules = array();
-	
+
 	private static $s_sRewrited = '';
 	private static $s_iHttpCode = 0;
-	
+
 	public static function VHandle()
 	{
 		$confFilename = Ko_Web_Config::SGetRewriteConf();
@@ -41,7 +41,7 @@ class Ko_Web_Rewrite
 		}
 		Ko_Web_Utils::VResetEnv($rewrited);
 	}
-	
+
 	public static function VLoadCacheFile($sConfFilename, $sCacheFilename)
 	{
 		if (!is_file($sConfFilename))
@@ -71,7 +71,7 @@ class Ko_Web_Rewrite
 			require_once($sCacheFilename);
 		}
 	}
-	
+
 	public static function VLoadFile($sFilename)
 	{
 		$content = file_get_contents($sFilename);
@@ -81,121 +81,123 @@ class Ko_Web_Rewrite
 		}
 		return self::VLoadConf($content);
 	}
-	
+
 	public static function VLoadConf($sContent)
 	{
 		$rules = Ko_Web_RewriteParser::AProcess($sContent);
 		return self::VLoadRules($rules);
 	}
-	
+
 	public static function VLoadRules($aRules)
 	{
 		self::$s_aRules = $aRules;
 	}
-	
+
 	public static function AGet()
 	{
 		if ('' === self::$s_sRewrited)
 		{
 			$uri = Ko_Web_Request::SRequestUri();
 			list(self::$s_sRewrited, self::$s_iHttpCode) = self::_AGet($uri);
-			if ($uri === self::$s_sRewrited)
-			{
-				if ('/' === substr($uri, -1))
-				{
-					$uri = rtrim($uri, '/');
-				}
-				else
-				{
-					$uri .= '/';
-				}
-				list($rewrited, $httpcode) = self::_AGet($uri);
-				if ($httpcode)
-				{
-					self::$s_sRewrited = $rewrited;
-					self::$s_iHttpCode = $httpcode;
-				}
-				else if ($uri !== $rewrited)
-				{
-					self::$s_sRewrited = $uri;
-					self::$s_iHttpCode = 301;
-				}
-			}
 		}
 		return array(self::$s_sRewrited, self::$s_iHttpCode);
 	}
-	
-	private static function _AGet($sRequestUri)
-	{
-		list($path, $query) = explode('?', $sRequestUri, 2);
-		$paths = explode('/', ltrim($path, '/'));
 
+	private static function _AGet($sUri)
+	{
+		list($path, $query) = explode('?', $sUri, 2);
+
+		$paths = self::_ASplitPath($path);
 		$keys = array();
-		$matched = self::_SMatchPath($paths, self::$s_aRules, $keys);
-		if (null === $matched)
+		if (is_null($matched = self::_VMatchPath($paths, self::$s_aRules, $keys)))
 		{
-			return array($sRequestUri, 0);
+			return array($sUri, 0);
 		}
 		$keys = array_reverse($keys);
 		list($location, $httpCode) = explode(' ', $matched, 2);
-		
-		$matchedPattern = '/^\/'.implode('\/', $keys).'/i';
-		$uri = '/'.implode('/', $paths);
-		if (!@preg_match($matchedPattern, $uri, $match))
-		{
-			return array($sRequestUri, 0);
+
+		$slashmismatch = false;
+		$keylen = count($keys);
+		$pathlen = count($paths);
+		if ($keylen === $pathlen + 1 && '' === $keys[$keylen - 1])
+		{	//规则: /a/b/   URI: /a/b
+			$slashmismatch = true;
+			$paths[] = '';
 		}
-		$location = @preg_replace($matchedPattern, $location, $match[0]);
-		if (false === $location)
-		{
-			return array($sRequestUri, 0);
+		elseif ($keylen + 1 === $pathlen && '' === $paths[$pathlen - 1])
+		{	//规则: /a/b   URI: /a/b/
+			$slashmismatch = true;
+			array_pop($paths);
 		}
-		$httpCode = intval($httpCode);
-		
+
+		if ($slashmismatch && 'GET' === Ko_Web_Request::SRequestMethod())
+		{
+			$location = '/'.implode('/', $paths);
+			$httpCode = 301;
+		}
+		else
+		{
+			$matchedPattern = '/^\/'.implode('\/', $keys).'/i';
+			$uri = '/'.implode('/', $paths);
+			if (!@preg_match($matchedPattern, $uri, $match) ||
+				false === ($location = @preg_replace($matchedPattern, $location, $match[0])))
+			{
+				return array($sUri, 0);
+			}
+		}
+
 		if (isset($query))
 		{
-			if (false === strpos($location, '?'))
-			{
-				$location .= '?'.$query;
-			}
-			else
-			{
-				$location .= '&'.$query;
-			}
+			$location .= (false === strpos($location, '?')) ? '?' : '&';
+			$location .= $query;
 		}
-		return array($location, $httpCode);
+		return array($location, intval($httpCode));
 	}
-	
-	private static function _SMatchPath($paths, $rules, &$aKeys)
+
+	private static function _VMatchPath($aPath, $aRule, &$aKeys)
 	{
-		$path = array_shift($paths);
+		$path = array_shift($aPath);
 		if (null === $path)
 		{
-			if (isset($rules['$']))
-			{
-				return $rules['$'];
+			if (isset($aRule['$']))
+			{	// 规则: /a/b$    URI: /a/b
+				return $aRule['$'];
 			}
-			return isset($rules['*']) ? $rules['*'] : null;
+			if (isset($aRule['']['$']))
+			{	// 规则: /a/b/$    URI: /a/b
+				$aKeys[] = '';
+				return $aRule['']['$'];
+			}
+			if (isset($aRule['*']))
+			{	// 规则: /a/b    URI: /a/b
+				return $aRule['*'];
+			}
+			if (isset($aRule['']['*']))
+			{	// 规则: /a/b/    URI: /a/b
+				$aKeys[] = '';
+				return $aRule['']['*'];
+			}
+			return null;
 		}
 		
-		if (isset($rules[$path]) && @preg_match ('/'.$path.'/', $path))
-		{
-			$matched = self::_SMatchPath($paths, $rules[$path], $aKeys);
+		if (isset($aRule[$path]) && @preg_match('/'.$path.'/', $path))
+		{	//精确匹配
+			$matched = self::_VMatchPath($aPath, $aRule[$path], $aKeys);
 			if (null !== $matched)
 			{
 				$aKeys[] = $path;
 				return $matched;
 			}
 		}
-		foreach ($rules as $pattern => $subrules)
+		foreach ($aRule as $pattern => $subrules)
 		{
 			if ('$' === $pattern || '*' === $pattern)
 			{
 				continue;
 			}
 			if (@preg_match('/^'.$pattern.'$/i', $path))
-			{
-				$matched = self::_SMatchPath($paths, $subrules, $aKeys);
+			{	//正则匹配
+				$matched = self::_VMatchPath($aPath, $subrules, $aKeys);
 				if (null !== $matched)
 				{
 					$aKeys[] = $pattern;
@@ -203,6 +205,26 @@ class Ko_Web_Rewrite
 				}
 			}
 		}
-		return isset($rules['*']) ? $rules['*'] : null;
+		
+		if (isset($aRule['']['*']))
+		{	// 规则: /a/b/    URI: /a/b/c    path: c
+			$aKeys[] = '';
+			return $aRule['']['*'];
+		}
+		if (isset($aRule['*']))
+		{	// 规则: /a/b    URI: /a/b/c    path: c
+			return $aRule['*'];
+		}
+		return null;
+	}
+
+	private static function _ASplitPath($sPath)
+	{
+		$paths = array_diff(explode('/', $sPath), array(''));
+		if ('/' === substr($sPath, -1))
+		{
+			$paths[] = '';
+		}
+		return array_values($paths);
 	}
 }
