@@ -5,7 +5,6 @@
  * <b>简介</b>
  * <pre>
  *   用来实现树形数据结构，如行政区划
- *   通常树形结构深度不会太深，并且更新不频繁
  * </pre>
  *
  * <b>数据库例表</b>
@@ -56,8 +55,9 @@ class Ko_Mode_Tree extends Ko_Busi_Api
 		);
 		try
 		{
-			$this->$treeApi->iInsert($aData);
-			$this->_vInvalidateCache($iId);
+			$this->$treeApi->aInsert($aData);
+			$parents = $this->aGetParent($iId, 0);
+			$this->_vInvalidateCache($parents);
 		}
 		catch (Exception $e)
 		{
@@ -72,10 +72,11 @@ class Ko_Mode_Tree extends Ko_Busi_Api
 	public function bDel($iId, $iPid)
 	{
 		$treeApi = $this->_aConf['treeApi'];
-		$this->_vInvalidateCache($iId);
+		$parents = $this->aGetParent($iId, 0);
 		$option = new Ko_Tool_SQL;
 		if ($this->$treeApi->iDelete($iId, $option->oWhere('pid = ?', $iPid)))
 		{
+			$this->_vInvalidateCache($parents);
 			return true;
 		}
 		return false;
@@ -142,12 +143,11 @@ class Ko_Mode_Tree extends Ko_Busi_Api
 		return $ret;
 	}
 	
-	private function _vInvalidateCache($iId)
+	private function _vInvalidateCache($aParent)
 	{
 		$mcDao = $this->_aConf['mc'].'Dao';
 		$maxDepth = $this->_iGetMaxDepth();
-		$parents = $this->aGetParent($iId, 0);
-		foreach ($parents as $k => $v)
+		foreach ($aParent as $k => $v)
 		{
 			for ($i=$k+1; $i<=$maxDepth; $i++)
 			{
@@ -221,7 +221,7 @@ class Ko_Mode_Tree extends Ko_Busi_Api
 		{
 			$treeApi = $this->_aConf['treeApi'];
 			$option = new Ko_Tool_SQL;
-			$list = $this->$treeApi->aGetList($option->oWhere('pid in (?)', $aId));
+			$list = $this->$treeApi->aGetList($option->oWhere('pid in (?)', $aId)->oForceMaster(true));
 			foreach ($list as $v)
 			{
 				$ret[$v['pid']][$v['id']] = array();
