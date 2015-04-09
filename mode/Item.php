@@ -47,6 +47,22 @@
 
 /**
  * 观察者模式
+ *
+ * @method int   iInsert($aData, $aUpdate = array(), $aChange = array())
+ * @method array aInsert($aData, $aUpdate = array(), $aChange = array())
+ * @method int   iUpdate($vKey, $aUpdate, $aChange=array(), $oOption=null)
+ * @method int   iUpdateByCond($oOption, $aUpdate, $aChange=array())  db_single
+ * @method int   iUpdateByCond($vHintId, $oOption, $aUpdate, $aChange=array())  db_split
+ * @method int   iDelete($vKey, $oOption=null)
+ * @method int   iDeleteByCond($oOption)  db_single
+ * @method int   iDeleteByCond($vHintId, $oOption)  db_split
+ * @method array aGet($vKey)
+ * @method array aGetListByKeys($aKey, $sKeyField = '')  db_single/db_one
+ * @method array aGetListByKeys($vHintId, $aKey, $sKeyField = '')  db_split
+ * @method array aGetList($oOption, $iCacheTime=0)  db_single
+ * @method array aGetList($vHintId, $oOption, $iCacheTime=0)  db_split
+ * @method array aGetDetails($oObjs, $sSplitField = '', $bRetmap = true)  db_one
+ * @method array aGetDetails($oObjs, $sSplitField = '', $sKeyField = '', $bRetmap = true)  db_split
  */
 class Ko_Mode_Item extends Ko_Busi_Api
 {
@@ -204,7 +220,6 @@ class Ko_Mode_Item extends Ko_Busi_Api
 	 * public function iUpdateByCond($oOption, $aUpdate, $aChange=array(), $vAdmin='')
 	 * public function iUpdateByCond($vHintId, $oOption, $aUpdate, $aChange=array(), $vAdmin='')
 	 *
-	 * @param Ko_Tool_SQL|Ko_Tool_MONGO|array $oOption
 	 * @return int
 	 */
 	public function iUpdateByCond()
@@ -267,7 +282,6 @@ class Ko_Mode_Item extends Ko_Busi_Api
 	 * public function iDeleteByCond($oOption, $vAdmin='')
 	 * public function iDeleteByCond($vHintId, $oOption, $vAdmin='')
 	 *
-	 * @param Ko_Tool_SQL|Ko_Tool_MONGO|array $oOption
 	 * @return int
 	 */
 	public function iDeleteByCond()

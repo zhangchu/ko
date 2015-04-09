@@ -8,6 +8,8 @@
 
 /**
  * 应用程序的基类
+ *
+ * @property Ko_View_Smarty $_smarty
  */
 class Ko_App_Base
 {

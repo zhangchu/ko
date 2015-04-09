@@ -10,7 +10,7 @@ class Ko_Tool_Array
 {
     /**
      * 挑选一个数组中特定的键值对，过滤掉其余字段
-     *   1. 如果源数组中不存在该字段，则返回的数组中该字段值为null
+     *   1. 如果源数组中不存在该字段，则返回的数组中也不包含该字段
      *   2. 支持简单映射，名称映射，自定义映射，用法见example
      * 补充说明：
      *   我们经常将数据库中的字段直接透传到前端，有时候会造成不必要的字段传递，
@@ -26,7 +26,7 @@ class Ko_Tool_Array
      *     array('newkey3', 'key3'),                   //名称映射（提取数据时修改键名）
      *     array('newkey2', function($data){return 'new_'.$data['key2'];})  //自定义映射（提取数据时修改键名和值）
      *   );
-     *   // $reserved : array('key1' => 'val1', 'key4' => null, 'newkey3' => 'val3', 'newkey2' => 'new_val2');
+     *   // $reserved : array('key1' => 'val1', 'newkey3' => 'val3', 'newkey2' => 'new_val2');
      *
      * @param $aData array
      * @return array
@@ -49,16 +49,20 @@ class Ko_Tool_Array
                 $srckey = isset($k[1]) ? $k[1] : $newkey;
                 if (is_object($srckey) || is_array($srckey))
                 {
-                    $reserved[$newkey] = call_user_func($srckey, $aData);
+                    $val = call_user_func($srckey, $aData);
+                    if (!is_null($val))
+                    {
+                        $reserved[$newkey] = $val;
+                    }
                 }
-                else
+                elseif (isset ($aData[$srckey]))
                 {
-                    $reserved[$newkey] = isset($aData[$srckey]) ? $aData[$srckey] : null;
+                    $reserved[$newkey] = $aData[$srckey];
                 }
             }
-            else
+            elseif (isset($aData[$k]))
             {
-                $reserved[$k] = isset($aData[$k]) ? $aData[$k] : null;
+                $reserved[$k] = $aData[$k];
             }
         }
         return $reserved;
