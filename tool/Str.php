@@ -27,6 +27,27 @@ class Ko_Tool_Str
 			? $sIn
 			: self::SConvert2UTF8($sIn);
 	}
+
+	/**
+	 * 无论输入是utf-8还是gb18030，都返回utf8
+	 */
+	public static function VForce2UTF8(&$aIn)
+	{
+		if (is_array($aIn))
+		{
+			foreach ($aIn as $k => $v)
+			{
+				if (is_array($v))
+				{
+					self::VForce2UTF8($aIn[$k]);
+				}
+				else if (is_string($v))
+				{
+					$aIn[$k] = self::SForce2UTF8($v);
+				}
+			}
+		}
+	}
 	
 	/**
 	 * 无论输入是utf-8还是gb18030，都返回gb18030
@@ -41,6 +62,27 @@ class Ko_Tool_Str
 			: self::SFilterErrorCode($sIn, 'GB18030');
 	}
 
+	/**
+	 * 无论输入是utf-8还是gb18030，都返回gb18030
+	 */
+	public static function VForce2GB18030(&$aIn)
+	{
+		if (is_array($aIn))
+		{
+			foreach ($aIn as $k => $v)
+			{
+				if (is_array($v))
+				{
+					self::VForce2GB18030($aIn[$k]);
+				}
+				else if (is_string($v))
+				{
+					$aIn[$k] = self::SForce2GB18030($v);
+				}
+			}
+		}
+	}
+	
 	/**
 	 * 判断字符串是utf-8编码还是gb18030编码
 	 *
