@@ -77,7 +77,8 @@ class Ko_Mode_Uuid extends Ko_Busi_Api
 	private static function _genUuid()
 	{
 		$chars = md5(uniqid(mt_rand(), true));
-		$uuid = substr($chars, 0, 8).'-'
+		$header = sprintf('%08x', time());
+		$uuid = $header.'-'
 			.substr($chars, 8, 4).'-'
 			.substr($chars, 12, 4).'-'
 			.substr($chars, 16, 4).'-'
