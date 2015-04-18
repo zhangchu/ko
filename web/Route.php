@@ -14,9 +14,9 @@
  * 2. 其他文件如果存在，直接输出文件
  *    /path/abc/xyz.txt
  * 3. 如果目录存在，直接跳转到目录
- *    /path/abc/index => /path/abc/index/
+ *    /path/abc/xyz => /path/abc/xyz/
  * 4. 其他
- *    /path/abc/index => /path/abc.php 并执行注册为 index 的函数
+ *    /path/abc/xyz => /path/abc.php 并执行注册为 xyz 的函数
  */
 class Ko_Web_Route
 {
