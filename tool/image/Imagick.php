@@ -20,8 +20,8 @@ class Ko_Tool_Image_Imagick
 		{
 			$imgsrc = self::_VCreateImage($sSrc, $iFlag);
 			$info = array(
-				'width' => $imgsrc->getImageHeight(),
-				'height' => $imgsrc->getImageWidth(),
+				'width' => $imgsrc->getImageWidth(),
+				'height' => $imgsrc->getImageHeight(),
 				'type' => strtolower($imgsrc->getImageFormat()),
 			);
 			if ($info['width'] && $info['height'])
