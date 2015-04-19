@@ -76,6 +76,10 @@ class Ko_Data_Qiniu extends Ko_Data_Storage
 	public function aParseUrl($sUrl)
 	{
 		$arr = parse_url($sUrl);
+		if ($arr['host'] !== $this->_sDomain)
+		{
+			return array('', '');
+		}
 		return array(substr($arr['path'], 1), $arr['query']);
 	}
 

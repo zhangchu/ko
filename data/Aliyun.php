@@ -90,6 +90,10 @@ class Ko_Data_Aliyun extends Ko_Data_Storage
 	{
 		list($url, $query) = explode('@', $sUrl, 2);
 		$arr = parse_url($url);
+		if ($arr['host'] !== $this->_aDomainList['cdn'])
+		{
+			return array('', '');
+		}
 		return array(substr($arr['path'], 1), $query);
 	}
 }
