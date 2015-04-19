@@ -49,7 +49,7 @@ class Ko_Data_FastDFS extends Ko_Data_Storage
 		$arr = explode('.', $sUrl);
 		assert(count($arr) >= 2);
 		$sDest = array_shift($arr).'.'.array_pop($arr);
-		return array(null, $sDest, implode('.', $arr));
+		return array($sDest, implode('.', $arr));
 	}
 	
 	public function bGenBrief($sDest, $sBriefTag)
