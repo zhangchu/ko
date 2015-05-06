@@ -236,7 +236,7 @@ class Ko_Web_Request
 	{
 		return self::_VServer('HTTP_X_FORWARDED_FOR');
 	}
-	
+
 	public static function SHttpXForwardedProto()
 	{
 		return self::_VServer('HTTP_X_FORWARDED_PROTO');
