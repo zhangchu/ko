@@ -12,9 +12,7 @@
 class Ko_Web_Rewrite
 {
 	private static $s_aRules = array();
-
-	private static $s_sRewrited = '';
-	private static $s_iHttpCode = 0;
+	private static $s_aResults = array();
 
 	public static function VHandle()
 	{
@@ -28,21 +26,20 @@ class Ko_Web_Rewrite
 		Ko_Web_Utils::VResetEnv($rewrited);
 	}
 
-	public static function AGet($sUrl = null)
+	public static function AGet($sUrl = '')
 	{
-		if (empty($sUrl)) {
-			if ('' === self::$s_sRewrited) {
+		if (!isset(self::$s_aResults[$sUrl])) {
+			if ('' === $sUrl) {
 				$host = Ko_Web_Request::SHttpHost();
 				$uri = Ko_Web_Request::SRequestUri();
-				list(self::$s_sRewrited, self::$s_iHttpCode) = self::_AGet($host, $uri);
+			} else {
+				$info = parse_url($sUrl);
+				$host = isset($info['port']) ? $info['host'] . ':' . $info['port'] : $info['host'];
+				$uri = isset($info['query']) ? $info['path'] . '?' . $info['query'] : $info['path'];
 			}
-			return array(self::$s_sRewrited, self::$s_iHttpCode);
-		} else {
-			$info = parse_url($sUrl);
-			$host = isset($info['port']) ? $info['host'] . ':' . $info['port'] : $info['host'];
-			$uri = isset($info['query']) ? $info['path'] . '?' . $info['query'] : $info['path'];
-			return self::_AGet($host, $uri);
+			self::$s_aResults[$sUrl] = self::_AGet($host, $uri);
 		}
+		return self::$s_aResults[$sUrl];
 	}
 
 	public static function VLoadCacheFile($sConfFilename, $sCacheFilename)
