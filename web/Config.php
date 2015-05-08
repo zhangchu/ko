@@ -11,8 +11,8 @@
  */
 class Ko_Web_Config
 {
-	private static $s_sConfFilename = '';
-	private static $s_sCacheFilename = '';
+	private static $s_sConfFile = '';
+	private static $s_sCacheFile = '';
 	private static $s_aConfig = array();
 	private static $s_aHostConfig = array();
 
@@ -21,52 +21,37 @@ class Ko_Web_Config
 	private $_sRewriteConf = '';
 	private $_sRewriteCache = '';
 
-	public static function VSetConf($sConfFilename, $sCacheFilename = '')
+	public static function VSetConf($sConfFile, $sCacheFile = '')
 	{
-		self::$s_sConfFilename = $sConfFilename;
-		self::$s_sCacheFilename = $sCacheFilename;
+		self::$s_sConfFile = $sConfFile;
+		self::$s_sCacheFile = $sCacheFile;
 	}
 
 	public static function VLoad()
 	{
-		if ('' !== self::$s_sConfFilename) {
-			if ('' === self::$s_sCacheFilename) {
-				self::ALoadFile(self::$s_sCacheFilename);
+		if (is_file(self::$s_sConfFile)) {
+			if ('' === self::$s_sCacheFile) {
+				self::$s_aConfig = parse_ini_file(self::$s_sConfFile, true);
 			} else {
-				self::VLoadCacheFile(self::$s_sConfFilename, self::$s_sCacheFilename);
+				$cacheDir = dirname(self::$s_sCacheFile);
+				if (!is_dir($cacheDir)) {
+					mkdir($cacheDir, 0777, true);
+					if (!is_dir($cacheDir)) {
+						self::$s_aConfig = parse_ini_file(self::$s_sConfFile, true);
+						return;
+					}
+				}
+				if (!is_file(self::$s_sCacheFile) || filemtime(self::$s_sConfFile) > filemtime(self::$s_sCacheFile)) {
+					self::$s_aConfig = parse_ini_file(self::$s_sConfFile, true);
+					$script = "<?php\nKo_Web_Config::VLoadConfig("
+						. Ko_Tool_Stringify::SConvArray(self::$s_aConfig)
+						. ");\n";
+					file_put_contents(self::$s_sCacheFile, $script);
+				} else {
+					require_once(self::$s_sCacheFile);
+				}
 			}
 		}
-	}
-
-	public static function VLoadCacheFile($sConfFilename, $sCacheFilename)
-	{
-		if (!is_file($sConfFilename)) {
-			return;
-		}
-		$cacheDir = dirname($sCacheFilename);
-		if (!is_dir($cacheDir)) {
-			mkdir($cacheDir, 0777, true);
-			if (!is_dir($cacheDir)) {
-				self::ALoadFile($sConfFilename);
-				return;
-			}
-		}
-		if (!is_file($sCacheFilename) || filemtime($sConfFilename) > filemtime($sCacheFilename)) {
-			$config = self::ALoadFile($sConfFilename);
-			$script = "<?php\nKo_Web_Config::VLoadConfig("
-				. Ko_Tool_Stringify::SConvArray($config)
-				. ");\n";
-			file_put_contents($sCacheFilename, $script);
-		} else {
-			require_once($sCacheFilename);
-		}
-	}
-
-	public static function ALoadFile($sFilename)
-	{
-		$config = parse_ini_file($sFilename, true);
-		self::VLoadConfig($config);
-		return $config;
 	}
 
 	public static function VLoadConfig($aConfig)

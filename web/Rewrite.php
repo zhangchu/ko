@@ -42,60 +42,43 @@ class Ko_Web_Rewrite
 		return self::$s_aResults[$sUrl];
 	}
 
-	public static function VLoadCacheFile($sConfFilename, $sCacheFilename)
-	{
-		if (!is_file($sConfFilename)) {
-			return;
-		}
-		$cacheDir = dirname($sCacheFilename);
-		if (!is_dir($cacheDir)) {
-			mkdir($cacheDir, 0777, true);
-			if (!is_dir($cacheDir)) {
-				self::VLoadFile($sConfFilename);
-				return;
-			}
-		}
-		if (!is_file($sCacheFilename) || filemtime($sConfFilename) > filemtime($sCacheFilename)) {
-			self::VLoadFile($sConfFilename);
-			$script = "<?php\nKo_Web_Rewrite::VLoadRules("
-				. Ko_Tool_Stringify::SConvArray(self::$s_aRules)
-				. ");\n";
-			file_put_contents($sCacheFilename, $script);
-		} else {
-			require_once($sCacheFilename);
-		}
-	}
-
-	public static function VLoadFile($sFilename)
-	{
-		$content = file_get_contents($sFilename);
-		if (false !== $content) {
-			self::VLoadConf($content);
-		}
-	}
-
-	public static function VLoadConf($sContent)
-	{
-		$rules = Ko_Web_RewriteParser::AProcess($sContent);
-		self::VLoadRules($rules);
-	}
-
 	public static function VLoadRules($aRules)
 	{
 		self::$s_aRules = $aRules;
 	}
 
-	private static function _AGet($sHost, $sUri)
+	private static function _VLoadHostRules($sHost)
 	{
-		$confFilename = Ko_Web_Config::SGetRewriteConf($sHost);
-		if ('' !== $confFilename) {
-			$cacheFilename = Ko_Web_Config::SGetRewriteCache($sHost);
-			if ('' === $cacheFilename) {
-				self::VLoadFile($confFilename);
+		$confFile = Ko_Web_Config::SGetRewriteConf($sHost);
+		if (is_file($confFile)) {
+			$cacheFile = Ko_Web_Config::SGetRewriteCache($sHost);
+			if ('' === $cacheFile) {
+				self::$s_aRules = Ko_Web_RewriteParser::AProcess(file_get_contents($confFile));
 			} else {
-				self::VLoadCacheFile($confFilename, $cacheFilename);
+				$cacheDir = dirname($cacheFile);
+				if (!is_dir($cacheDir)) {
+					mkdir($cacheDir, 0777, true);
+					if (!is_dir($cacheDir)) {
+						self::$s_aRules = Ko_Web_RewriteParser::AProcess(file_get_contents($confFile));
+						return;
+					}
+				}
+				if (!is_file($cacheFile) || filemtime($confFile) > filemtime($cacheFile)) {
+					self::$s_aRules = Ko_Web_RewriteParser::AProcess(file_get_contents($confFile));
+					$script = "<?php\nKo_Web_Rewrite::VLoadRules("
+						. Ko_Tool_Stringify::SConvArray(self::$s_aRules)
+						. ");\n";
+					file_put_contents($cacheFile, $script);
+				} else {
+					require_once($cacheFile);
+				}
 			}
 		}
+	}
+
+	private static function _AGet($sHost, $sUri)
+	{
+		self::_VLoadHostRules($sHost);
 
 		list($path, $query) = explode('?', $sUri, 2);
 
