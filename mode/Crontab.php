@@ -71,7 +71,7 @@ class Ko_Mode_Crontab
 			{
 				$cmd .= ' &';
 			}
-			echo '['.$ymd.' '.$time.'] '.$cmd."\n";
+			echo '[',$ymd,' ',$time,'] ',$cmd,"\n";
 			system($cmd);
 
 			if (isset($v['path']) && '.' !== $v['path'])

@@ -305,7 +305,7 @@ function koAssertCallback($file, $line, $code)
 {
 	if (KO_DEBUG)
 	{
-		echo 'Assertion Failed:'."\n\t".'File '.$file."\n\t".'Line '.$line."\n\t".'Code '.$code."\n";
+		echo 'Assertion Failed:',"\n\t",'File ',$file,"\n\t",'Line ',$line,"\n\t",'Code ',$code,"\n";
 		debug_print_backtrace();
 	}
 	else

@@ -98,7 +98,7 @@ class Ko_Tool_Xhprof
 					if (self::_isHtmlData())
 					{
 						echo '<a target="_blank" style="position:absolute;top:0;left:0;z-index:9999;" href="'
-							.htmlspecialchars(self::$s_vData).'">XHProf</a>';
+							,htmlspecialchars(self::$s_vData),'">XHProf</a>';
 					}
 					header('X-Xhprof-Link: '.self::$s_vData);
 				}
