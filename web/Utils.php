@@ -33,17 +33,13 @@ class Ko_Web_Utils
 	}
 	
 	/**
-	 * 根据 uri 重新设置一些相关的环境变量
+	 * 根据 uri 获取 script_name, query_string, path_info
+	 *
+	 * @return array($sn, $qs, $pi)
 	 */
-	public static function VResetEnv($sUri)
+	public static function AParseUri($sUri)
 	{
 		list($sn, $qs) = explode('?', $sUri, 2);
-		parse_str($qs, $arr);
-		$GLOBALS['_GET'] = $_GET = $arr;
-		$GLOBALS['_REQUEST'] = $_REQUEST = $_REQUEST + $arr;
-		$GLOBALS['_SERVER']['QUERY_STRING'] = $_SERVER['QUERY_STRING'] =
-		$GLOBALS['_ENV']['QUERY_STRING'] = $_ENV['QUERY_STRING'] = $qs;
-		
 		if (false !== ($pos = strpos($sn, '.php/')))
 		{
 			$pi = substr($sn, $pos + 4);
@@ -57,6 +53,22 @@ class Ko_Web_Utils
 			}
 			$pi = '';
 		}
+		return array($sn, $qs, $pi);
+	}
+	
+	/**
+	 * 根据 uri 重新设置一些相关的环境变量
+	 */
+	public static function VResetEnv($sUri)
+	{
+		list($sn, $qs, $pi) = self::AParseUri($sUri);
+		
+		parse_str($qs, $arr);
+		$GLOBALS['_GET'] = $_GET = $arr;
+		$GLOBALS['_REQUEST'] = $_REQUEST = $_REQUEST + $arr;
+		$GLOBALS['_SERVER']['QUERY_STRING'] = $_SERVER['QUERY_STRING'] =
+		$GLOBALS['_ENV']['QUERY_STRING'] = $_ENV['QUERY_STRING'] = $qs;
+
 		$GLOBALS['_SERVER']['PHP_SELF'] = $_SERVER['PHP_SELF'] =
 		$GLOBALS['_SERVER']['SCRIPT_NAME'] = $_SERVER['SCRIPT_NAME'] =
 		$GLOBALS['_ENV']['PHP_SELF'] = $_ENV['PHP_SELF'] =
