@@ -45,6 +45,10 @@ class Ko_Html_FilterHandle
 		assert($oAttr instanceof Ko_Html_Attr);
 
 		$n = $oAttr->sGetName();
+		if ('data-' === substr($n, 0, 5))
+		{
+			return false;
+		}
 		$v = $oAttr->sGetValue();
 		if (isset($aAllowAttr['']) && in_array($n, $aAllowAttr[''], true))
 		{
