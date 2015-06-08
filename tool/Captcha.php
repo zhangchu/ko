@@ -41,7 +41,7 @@ class Ko_Tool_Captcha
 
 	private $_bIgnoreAllEffects = false;
 
-	function __construct($iLength = 4)
+	public function __construct($iLength = 4)
 	{
 		$this->_sPhrase = self::_SGeneratePhrase($iLength);
 	}
