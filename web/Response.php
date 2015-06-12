@@ -42,7 +42,7 @@ class Ko_Web_Response
         
         $sContentType = ltrim(trim($sContentType), '.');
         $sContentType = (false !== strpos($sContentType, '/'))
-            ?: Ko_Tool_Mime::sGetMimeType($sContentType);
+            ? $sContentType : Ko_Tool_Mime::sGetMimeType($sContentType);
         if (null === $sCharset)
         {
             $sCharset = (in_array($sContentType, $s_aWhiteList)
