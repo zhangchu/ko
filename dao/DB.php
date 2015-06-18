@@ -483,10 +483,20 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 			}
 			$oOption = $this->_vBuildOption($oOption, $vHintId, array());
 			$aRet = $this->_oGetSqlAgent()->aSelect($this->_sTable, $this->iGetHintId($vHintId), $oOption, 0, true);
+			$aRetKeys = array();
 			foreach ($aRet as $v)
 			{
 				$sCacheKey = $aIdKeyMap[strval($v[$this->_aKeyField[0]])];
+				$aRetKeys[$sCacheKey] = true;
 				$this->_oGetDBCache()->vSet($sCacheKey, $v, false);
+			}
+			foreach ($uoids as $uoid)
+			{
+				$sCacheKey = $aIdKeyMap[strval($uoid)];
+				if (!isset($aRetKeys[$sCacheKey]))
+				{
+					$this->_oGetDBCache()->vSet($sCacheKey, array(), false);
+				}
 			}
 		}
 	}
