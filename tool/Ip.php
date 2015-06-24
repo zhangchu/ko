@@ -199,4 +199,25 @@ class Ko_Tool_Ip
 		}
 		return 0;
 	}
+
+	/**
+	 * 判断IP是否和某个ip相等，或者落在某个ip段里面
+	 * ip段使用形式如：192.168.1.0/24
+	 *
+	 * @return boolean
+	 */
+	public static function BCheck($sIp, $sIpMask)
+	{
+		$sIp = ip2long($sIp);
+		list($sIpMask, $mask) = explode('/', $sIpMask);
+		$sIpMask = ip2long($sIpMask);
+		$mask = intval($mask);
+		if (0 < $mask && $mask < 32)
+		{
+			$offset = 32 - $mask;
+			$sIpMask = ($sIpMask >> $offset) << $offset;
+			$sIp = ($sIp >> $offset) << $offset;
+		}
+		return $sIp === $sIpMask;
+	}
 }
