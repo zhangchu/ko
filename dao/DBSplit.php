@@ -47,7 +47,7 @@ class Ko_Dao_DBSplit extends Ko_Dao_DBHandler
 	/**
 	 * useuo 为真 才可用
 	 *
-	 * @return array 从 UOBject 查询多条数据
+	 * @return array 从 UObject 查询多条数据
 	 */
 	public function aGetDetails($oObjs, $sSplitField = '', $sKeyField = '', $bRetmap = true)
 	{
