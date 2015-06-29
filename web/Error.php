@@ -21,12 +21,9 @@ class Ko_Web_Error
 	public static function BHandleError($errno, $errstr, $errfile, $errline, $errcontext)
 	{
 		static $s_a500Errors = array(
-			E_ERROR,
-			E_CORE_ERROR,
-			E_COMPILE_ERROR,
 			E_USER_ERROR,
 		);
-		
+
 		Ko_Web_Event::Trigger('ko.error', 'error',
 			$errno, $errstr, $errfile, $errline, $errcontext);
 		if (null !== self::$_vPrevErrorHandler)
@@ -79,6 +76,13 @@ class Ko_Web_Error
 				$error['line'], 
 				array()
 			);
+			Ko_Web_Event::Trigger('ko.error', '500',
+				$error['type'],
+				$error['message'],
+				$error['file'],
+				$error['line'],
+				array()
+			);
 		}
 		Ko_Web_Event::Trigger('ko.error', 'shutdown');
 	}
@@ -104,3 +108,4 @@ class Ko_Web_Error
 			.'Context: '.Ko_Tool_Stringify::SConvAny($errcontext);
 	}
 }
+
