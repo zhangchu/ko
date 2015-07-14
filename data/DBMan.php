@@ -6,6 +6,13 @@
  * @author zhangchu
  */
 
+if (!defined('KO_DBMAN_TAG'))
+{
+	/**
+	 * DBMan默认使用的分组
+	 */
+	define('KO_DBMAN_TAG', '');
+}
 /**
  * 封装 DBMan
  */
@@ -16,6 +23,10 @@ class Ko_Data_DBMan extends Ko_Data_KProxy
 	protected function __construct ($sTag, $sExinfo = '')
 	{
 		KO_DEBUG >= 6 && Ko_Tool_Debug::VAddTmpLog('data/DBMan', '__construct:'.$sTag.'@'.$sExinfo);
+		if ('' === $sTag)
+		{
+			$sTag = KO_DBMAN_TAG;
+		}
 		parent::__construct('DBMan', $sTag, $sExinfo);
 	}
 
