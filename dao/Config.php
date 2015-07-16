@@ -17,6 +17,14 @@ class Ko_Dao_Config extends Ko_Dao_DBHandler
 	}
 
 	/**
+	 * @return array
+	 */
+	public function aInsertMulti($aData)
+	{
+		return $this->_oDB->aInsertMulti($aData);
+	}
+
+	/**
 	 * @param Ko_Tool_SQL|Ko_Tool_MONGO|array $oOption
 	 * @return int
 	 */

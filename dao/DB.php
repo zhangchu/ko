@@ -15,7 +15,7 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 
 	//数据表配置
 	private $_sTable;
-	private $_sSplitField;			//分表字段，为空表示不分表，如果有分表字段，该字段不能为0
+	private $_sSplitField;			//分表字段，为空表示不分表，如果有分表字段，该字段不能为空
 	private $_aKeyField;			//唯一字段，为空表示没有唯一字段或者分表字段就是唯一字段，唯一不一定是全局唯一，也可以是在 _sSplitField 指定值范围内唯一
 	private $_sIdKey;				//idGenerator 标示，用于生成 _sSplitField 或者 _aKeyField 指定字段的值
 
@@ -140,6 +140,39 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 	}
 
 	//////////////////////////// 写入操作 ////////////////////////////
+
+	/**
+	 * @return array 返回完整的信息array(data, rownum, insertid, affectedrows)
+	 */
+	public function aInsertMulti($aData)
+	{
+		assert(0 === strlen($this->_sSplitField));
+
+		if (empty($aData))
+		{
+			return array('data' => array(), 'rownum' => 0, 'insertid' => 0, 'affectedrows' => 0);
+		}
+
+		$insertid = 0;
+		$autoIdField = $this->_sGetAutoIdField();
+		if (strlen($this->_sIdKey) && strlen($autoIdField))
+		{
+			foreach ($aData as &$v)
+			{
+				if (!array_key_exists($autoIdField, $v))
+				{
+					$insertid = $v[$autoIdField] = $this->_oGetIdGenerator()->iGetNewTimeID($this->_sIdKey);
+				}
+			}
+			unset($v);
+		}
+		$aRet = $this->_oGetSqlAgent()->aInsertMulti($this->_sTable, 1, $aData);
+		if ($insertid)
+		{
+			$aRet['insertid'] = $insertid;
+		}
+		return $aRet;
+	}
 
 	/**
 	 * @return int 返回 insertid
