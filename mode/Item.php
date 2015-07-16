@@ -97,6 +97,7 @@ class Ko_Mode_Item extends Ko_Busi_Api
 
 	private $_aObserver = array();
 	private $_allowMethods = array(
+		'aInsertMulti',
 		'aGet',
 		'aGetListByKeys',
 		'aGetDetails',
