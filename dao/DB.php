@@ -212,6 +212,7 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 		{
 			$this->_vDelCache($vHintId, $aData);
 		}
+
 		return $aRet;
 	}
 
@@ -477,6 +478,7 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 		{
 			$this->_vDelCache($vHintId, $aKey);
 		}
+
 		return $iRet;
 	}
 
@@ -512,7 +514,8 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 			}
 			else
 			{
-				$oOption->oWhere($this->_aKeyField[0].' IN (?)', $uoids);
+				$field = ('`' === $this->_aKeyField[0][0]) ? $this->_aKeyField[0] : '`'.$this->_aKeyField[0].'`';
+				$oOption->oWhere($field.' IN (?)', $uoids);
 			}
 			$oOption = $this->_vBuildOption($oOption, $vHintId, array());
 			$aRet = $this->_oGetSqlAgent()->aSelect($this->_sTable, $this->iGetHintId($vHintId), $oOption, 0, true);
@@ -652,7 +655,8 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 			}
 			else
 			{
-				$oOption->oAnd($this->_sSplitField.' = ?', $vHintId);
+				$field = ('`' === $this->_sSplitField[0]) ? $this->_sSplitField : '`'.$this->_sSplitField.'`';
+				$oOption->oAnd($field.' = ?', $vHintId);
 			}
 		}
 		foreach ($this->_aKeyField as $key)
@@ -672,7 +676,8 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 				}
 				else
 				{
-					$oOption->oAnd($key.' = ?', $aKey[$key]);
+					$field = ('`' === $key[0]) ? $key : '`'.$key.'`';
+					$oOption->oAnd($field.' = ?', $aKey[$key]);
 				}
 			}
 		}
@@ -822,7 +827,13 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 		}
 		else
 		{
-			$oOption->oSelect(implode(', ', $this->_aKeyField))->oOffset(0)->oGroupBy('')->oHaving('')->oCalcFoundRows(false);
+			$fields = $this->_aKeyField;
+			foreach ($fields as &$field)
+			{
+				$field = ('`' === $field[0]) ? $field : '`'.$field.'`';
+			}
+			unset($field);
+			$oOption->oSelect(implode(', ', $fields))->oOffset(0)->oGroupBy('')->oHaving('')->oCalcFoundRows(false);
 		}
 		return $oOption;
 	}

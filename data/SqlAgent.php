@@ -119,10 +119,12 @@ class Ko_Data_SqlAgent
 		$set = array();
 		foreach($aUpdate as $k => $v)
 		{
+			$k = ('`' === $k[0]) ? $k : '`'.$k.'`';
 			$set[] = $k.' = "'.Ko_Data_Mysql::SEscape($v).'"';
 		}
 		foreach($aChange as $k => $v)
 		{
+			$k = ('`' === $k[0]) ? $k : '`'.$k.'`';
 			$abs = abs($v);
 			$set[] = $k.' = '.$k.' '.($v >= 0 ? '+' : '-').' '.$abs;
 		}
@@ -134,6 +136,12 @@ class Ko_Data_SqlAgent
 		assert(!empty($aData));
 		$fields = array_keys($aData[0]);
 		assert(!empty($fields));
+
+		foreach ($fields as &$field)
+		{
+			$field = ('`' === $field[0]) ? $field : '`'.$field.'`';
+		}
+		unset($field);
 
 		$sql = 'INSERT INTO '.$sKind.' ('.implode(', ', $fields).') VALUES ';
 		$values = array();

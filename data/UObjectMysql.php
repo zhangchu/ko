@@ -101,12 +101,15 @@ class Ko_Data_UObjectMysql
 	
 	private function _vGetOptionSplit($oOption, $aId)
 	{
-		$oOption->oOr($this->_sSplitField.' = ?', $aId[0]);
+		$field0 = ('`' === $this->_sSplitField[0]) ? $this->_sSplitField : '`'.$this->_sSplitField.'`';
+		$oOption->oOr($field0.' = ?', $aId[0]);
 	}
 
 	private function _vGetOptionSplitAndKey($oOption, $aId)
 	{
-		$oOption->oOr($this->_sSplitField.' = ? AND '.$this->_sKeyField.' = ?', $aId[0], $aId[1]);
+		$field0 = ('`' === $this->_sSplitField[0]) ? $this->_sSplitField : '`'.$this->_sSplitField.'`';
+		$field1 = ('`' === $this->_sKeyField[0]) ? $this->_sKeyField : '`'.$this->_sKeyField.'`';
+		$oOption->oOr($field0.' = ? AND '.$field1.' = ?', $aId[0], $aId[1]);
 	}
 }
 
