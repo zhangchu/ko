@@ -212,7 +212,6 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 		{
 			$this->_vDelCache($vHintId, $aData);
 		}
-
 		return $aRet;
 	}
 
@@ -478,7 +477,6 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 		{
 			$this->_vDelCache($vHintId, $aKey);
 		}
-
 		return $iRet;
 	}
 
