@@ -49,7 +49,7 @@ class Ko_Tool_Stat
 		foreach ($result as $tag => $stat)
 		{
 			$all = $stat['miss'] + $stat['cache'];
-			echo $tag,"\tall:",$all,"\tcache:",$stat['cache'],"\t",round($stat['cache']*100/$all, 1).'%'."\n";
+			echo $tag,"\tall:",$all,"\tcache:",$stat['cache'],"\t",round($stat['cache']*100/$all, 1),'%',"\n";
 		}
 	}
 }

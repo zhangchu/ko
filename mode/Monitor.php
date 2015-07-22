@@ -224,7 +224,7 @@ class Ko_Mode_Monitor extends Ko_Busi_Api
 			{
 				$this->_aInsertIp($nip);
 			}
-			echo date('Y-m-d H:i:s'),"\t",$i,"\t",long2ip($nip),"\t", $ping ? 'true' : 'false'."\n";
+			echo date('Y-m-d H:i:s'),"\t",$i,"\t",long2ip($nip),"\t",$ping ? 'true' : 'false',"\n";
 		}
 	}
 	
@@ -252,7 +252,7 @@ class Ko_Mode_Monitor extends Ko_Busi_Api
 		{
 			$code = rtrim($code, "/\\");
 			$ret = Ko_Tool_CMD::BRsync($this->_aConf['rsynctag']['from'].'/'.$code, $sIp.'::'.$this->_aConf['rsynctag']['to'].'/'.dirname($code));
-			echo $sIp,' ', $ret ? 'ok' : 'error'."\n";
+			echo $sIp,' ',$ret ? 'ok' : 'error',"\n";
 		}
 	}
 	
