@@ -28,7 +28,7 @@ class Ko_Data_KProxyWrap
 			'para' => $aArgs,
 			'time' => $end - $start
 		);
-		echo Ko_Html_Utils::SArr2html($data).'<br><br>';
+		echo Ko_Html_Utils::SArr2html($data),'<br><br>';
 		return $ret;
 	}
 }

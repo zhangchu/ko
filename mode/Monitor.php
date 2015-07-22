@@ -161,7 +161,7 @@ class Ko_Mode_Monitor extends Ko_Busi_Api
 				else
 				{
 					$aUnknown[] = implode("\t", $info);
-					echo date('Y-m-d H:i:s')."\t".$sip."\t".$service."\tUNKNOWN\n";
+					echo date('Y-m-d H:i:s'),"\t",$sip,"\t",$service,"\tUNKNOWN\n";
 				}
 			}
 			else if ('udp' === $info[0])
@@ -174,7 +174,7 @@ class Ko_Mode_Monitor extends Ko_Busi_Api
 				else
 				{
 					$aUnknown[] = implode("\t", $info);
-					echo date('Y-m-d H:i:s')."\t".$sip."\t".$service."\tUNKNOWN\n";
+					echo date('Y-m-d H:i:s'),"\t",$sip,"\t",$service,"\tUNKNOWN\n";
 				}
 			}
 			else if ('unix' === $info[0])
@@ -187,13 +187,13 @@ class Ko_Mode_Monitor extends Ko_Busi_Api
 				else
 				{
 					$aUnknown[] = implode("\t", $info);
-					echo date('Y-m-d H:i:s')."\t".$sip."\t".$service."\tUNKNOWN\n";
+					echo date('Y-m-d H:i:s'),"\t",$sip,"\t",$service,"\tUNKNOWN\n";
 				}
 			}
 			else
 			{
 				$aUnknown[] = implode("\t", $info);
-				echo date('Y-m-d H:i:s')."\t".$sip."\t".$info[0]."\tUNKNOWN\n";
+				echo date('Y-m-d H:i:s'),"\t",$sip,"\t",$info[0],"\tUNKNOWN\n";
 			}
 		}
 		
@@ -213,7 +213,7 @@ class Ko_Mode_Monitor extends Ko_Busi_Api
 		}
 		$mask = ip2long($sMask);
 		$this->_aInsertIpSegment($ip, $mask);
-		echo date('Y-m-d H:i:s')."\tipinfo\t".long2ip($ip)."\t".long2ip($mask)."\n";
+		echo date('Y-m-d H:i:s'),"\tipinfo\t",long2ip($ip),"\t",long2ip($mask),"\n";
 		
 		$ipc = Ko_Tool_Ip::IGetIpCountInMask($mask);
 		for ($i=1; $i<$ipc-1; $i++)
@@ -224,7 +224,7 @@ class Ko_Mode_Monitor extends Ko_Busi_Api
 			{
 				$this->_aInsertIp($nip);
 			}
-			echo date('Y-m-d H:i:s')."\t".$i."\t".long2ip($nip)."\t".($ping ? 'true' : 'false')."\n";
+			echo date('Y-m-d H:i:s'),"\t",$i,"\t",long2ip($nip),"\t", $ping ? 'true' : 'false'."\n";
 		}
 	}
 	
@@ -252,7 +252,7 @@ class Ko_Mode_Monitor extends Ko_Busi_Api
 		{
 			$code = rtrim($code, "/\\");
 			$ret = Ko_Tool_CMD::BRsync($this->_aConf['rsynctag']['from'].'/'.$code, $sIp.'::'.$this->_aConf['rsynctag']['to'].'/'.dirname($code));
-			echo $sIp.' '.($ret ? 'ok' : 'error')."\n";
+			echo $sIp,' ', $ret ? 'ok' : 'error'."\n";
 		}
 	}
 	
@@ -261,7 +261,7 @@ class Ko_Mode_Monitor extends Ko_Busi_Api
 		if ($iRange)
 		{
 			$second = hexdec(substr(md5($sTag), -4)) % $iRange;
-			echo date('Y-m-d H:i:s')."\tSleep\t".$second."\n";
+			echo date('Y-m-d H:i:s'),"\tSleep\t",$second,"\n";
 			sleep($second);
 		}
 		return true;
@@ -356,7 +356,7 @@ class Ko_Mode_Monitor extends Ko_Busi_Api
 				}
 			}
 			$this->_aInsertIpRole($sIp, $service, $config);
-			echo date('Y-m-d H:i:s')."\t".long2ip($sIp)."\t".$service."\n";
+			echo date('Y-m-d H:i:s'),"\t",long2ip($sIp),"\t",$service,"\n";
 		}
 		
 		$newroles = array_keys($aConfig);
