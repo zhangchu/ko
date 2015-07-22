@@ -134,9 +134,10 @@ class Ko_Data_SqlAgent
 	private function _sInsertMultiSql($sKind, $aData)
 	{
 		assert(!empty($aData));
-		$fields = array_keys($aData[0]);
-		assert(!empty($fields));
+		$keys = array_keys($aData[0]);
+		assert(!empty($keys));
 
+		$fields = $keys;
 		foreach ($fields as &$field)
 		{
 			$field = ('`' === $field[0]) ? $field : '`'.$field.'`';
@@ -148,9 +149,9 @@ class Ko_Data_SqlAgent
 		foreach ($aData as $data)
 		{
 			$vs = array();
-			foreach ($fields as $field)
+			foreach ($keys as $key)
 			{
-				$vs[] = Ko_Data_Mysql::SEscape($data[$field]);
+				$vs[] = Ko_Data_Mysql::SEscape($data[$key]);
 			}
 			$values[] = '("'.implode('", "', $vs).'")';
 		}

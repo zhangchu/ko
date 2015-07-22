@@ -58,47 +58,43 @@ class Ko_Web_Route
 			}
 			$phpFilename = self::$s_sFile;
 		}
+		else if (is_file(self::$s_sFile))
+		{
+			$render = new Ko_View_Render_FILE;
+			$render->oSetData('filename', self::$s_sFile);
+			Ko_Web_Response::VAppendBody($render);
+			Ko_Web_Response::VSend();
+		}
+		else if (is_dir(self::$s_sFile))
+		{
+			list($rewrite, $httpcode) = Ko_Web_Rewrite::AGet();
+			list($path, $query) = explode('?', $rewrite, 2);
+			if (isset($query))
+			{
+				$query = '?'.$query;
+			}
+			Ko_Web_Response::VSetRedirect($path.'/'.$query);
+			Ko_Web_Response::VSend();
+		}
 		else
 		{
 			$pathinfo = pathinfo(self::$s_sFile);
-			if (is_file(self::$s_sFile))
+			self::$s_sFunc = $pathinfo['basename'];
+			self::$s_sFile = $pathinfo['dirname'].'.php';
+			if (!is_file(self::$s_sFile))
 			{
-				$render = new Ko_View_Render_FILE;
-				$render->oSetData('filename', self::$s_sFile);
-				Ko_Web_Response::VSetContentType($pathinfo['extension']);
-				Ko_Web_Response::VAppendBody($render);
-				Ko_Web_Response::VSend();
+				return self::$s_iErrno = self::ERR_FILE;
 			}
-			else if (is_dir(self::$s_sFile))
+			self::_VRequireFile(self::$s_sFile);
+			if (!isset(self::$s_aRoute[self::$s_sFunc]))
 			{
-				list($rewrite, $httpcode) = Ko_Web_Rewrite::AGet();
-				list($path, $query) = explode('?', $rewrite, 2);
-				if (isset($query))
-				{
-					$query = '?'.$query;
-				}
-				Ko_Web_Response::VSetRedirect($path.'/'.$query);
-				Ko_Web_Response::VSend();
+				return self::$s_iErrno = self::ERR_FUNC;
 			}
-			else
+			if (!isset(self::$s_aRoute[self::$s_sFunc][self::$s_sMethod]))
 			{
-				self::$s_sFunc = $pathinfo['basename'];
-				self::$s_sFile = $pathinfo['dirname'].'.php';
-				if (!is_file(self::$s_sFile))
-				{
-					return self::$s_iErrno = self::ERR_FILE;
-				}
-				self::_VRequireFile(self::$s_sFile);
-				if (!isset(self::$s_aRoute[self::$s_sFunc]))
-				{
-					return self::$s_iErrno = self::ERR_FUNC;
-				}
-				if (!isset(self::$s_aRoute[self::$s_sFunc][self::$s_sMethod]))
-				{
-					return self::$s_iErrno = self::ERR_METHOD;
-				}
-				call_user_func(self::$s_aRoute[self::$s_sFunc][self::$s_sMethod]);
+				return self::$s_iErrno = self::ERR_METHOD;
 			}
+			call_user_func(self::$s_aRoute[self::$s_sFunc][self::$s_sMethod]);
 		}
 		return self::$s_iErrno = 0;
 	}
@@ -119,7 +115,6 @@ class Ko_Web_Route
 		$render->oSetData('error', $error);
 		
 		Ko_Web_Response::VSetHttpCode(404);
-		Ko_Web_Response::VSetContentType('text/plain');
 		Ko_Web_Response::VAppendBody($render);
 		Ko_Web_Response::VSend();
 	}

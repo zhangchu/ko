@@ -94,7 +94,6 @@ class Ko_Web_Error
 		$render->oSetData('error', $error);
 		
 		Ko_Web_Response::VSetHttpCode(500);
-		Ko_Web_Response::VSetContentType('text/plain');
 		Ko_Web_Response::VAppendBody($render);
 		Ko_Web_Response::VSend();
 	}
@@ -105,7 +104,6 @@ class Ko_Web_Error
 			.'Error: '.$errstr."\n"
 			.'File: '.$errfile."\n"
 			.'Line: '.$errline."\n"
-			.'Context: '.Ko_Tool_Stringify::SConvAny($errcontext);
+			.'Context: '.print_r($errcontext, true);
 	}
 }
-

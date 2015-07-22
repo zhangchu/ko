@@ -139,6 +139,19 @@ class Ko_Web_Response
         if (null === self::$s_oBody || !($oBody INSTANCEOF Ko_View_Render_List))
         {
             self::$s_oBody = $oBody;
+            if ($oBody INSTANCEOF Ko_View_Render_TEXT)
+            {
+                self::VSetContentType('text/plain');
+            }
+            else if ($oBody INSTANCEOF Ko_View_Render_JSON)
+            {
+                self::VSetContentType('application/json');
+            }
+            else if ($oBody INSTANCEOF Ko_View_Render_FILE)
+            {
+                $ext = pathinfo($oBody->sFilename(), PATHINFO_EXTENSION);
+                self::VSetContentType($ext);
+            }
         }
         else
         {
