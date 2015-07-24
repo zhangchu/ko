@@ -12,6 +12,7 @@
 class Ko_Tool_SQL
 {
 	private $_sFields = '*';
+	private $_sIndex = '';
 	private $_sWhere = '';
 	private $_sGroupBy = '';
 	private $_sHaving = '';
@@ -31,6 +32,7 @@ class Ko_Tool_SQL
 	{
 		$option = new self;
 		$option->_sFields = $this->_sFields;
+		$option->_sIndex = $this->_sIndex;
 		$option->_sWhere = $this->_sWhere;
 		$option->_sGroupBy = $this->_sGroupBy;
 		$option->_sHaving = $this->_sHaving;
@@ -51,6 +53,30 @@ class Ko_Tool_SQL
 	{
 		$this->_sFields = $sFields;
 		return $this;
+	}
+
+	/**
+	 * @return Ko_Tool_SQL 返回 $this
+	 */
+	public function oUseIndex($sIndex)
+	{
+		return $this->_oIndex($sIndex, 'USE');
+	}
+
+	/**
+	 * @return Ko_Tool_SQL 返回 $this
+	 */
+	public function oIgnoreIndex($sIndex)
+	{
+		return $this->_oIndex($sIndex, 'IGNORE');
+	}
+
+	/**
+	 * @return Ko_Tool_SQL 返回 $this
+	 */
+	public function oForceIndex($sIndex)
+	{
+		return $this->_oIndex($sIndex, 'FORCE');
 	}
 
 	/**
@@ -200,6 +226,7 @@ class Ko_Tool_SQL
 	{
 		$sql = 'SELECT'.($this->_bCalcFoundRows ? ' SQL_CALC_FOUND_ROWS' : '').' '.$this->_sFields
 			.' FROM '.$sKind
+			.' '.$this->_sIndex
 			.' '.$this->_sFormatWhere($this->_sWhere)
 			.' '.$this->_sFormatGroup($this->_sGroupBy)
 			.' '.$this->_sFormatHaving($this->_sHaving)
@@ -215,6 +242,14 @@ class Ko_Tool_SQL
 	public function sFields()
 	{
 		return $this->_sFields;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function sIndex()
+	{
+		return $this->_sIndex;
 	}
 
 	/**
@@ -342,6 +377,19 @@ class Ko_Tool_SQL
 			return 'LIMIT '.$iNum;
 		}
 		return '';
+	}
+
+	private function _oIndex($sIndex, $sAction)
+	{
+		if (strlen($sIndex))
+		{
+			$this->_sIndex = $sAction.' INDEX ('.$sIndex.')';
+		}
+		else
+		{
+			$this->_sIndex = '';
+		}
+		return $this;
 	}
 }
 
