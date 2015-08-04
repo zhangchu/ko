@@ -76,8 +76,8 @@ class Ko_Data_DBMan extends Ko_Data_KProxy
 	private function _aFormatResult($oSqlRes)
 	{
 		$data = array();
-		$insertId = intval($oSqlRes['insertId']);
-		$affectedRowNumber = intval($oSqlRes['affectedRowNumber']);
+		$insertId = isset($oSqlRes['insertId']) ? intval($oSqlRes['insertId']) : 0;
+		$affectedRowNumber = isset($oSqlRes['affectedRowNumber']) ? intval($oSqlRes['affectedRowNumber']) : 0;
 		if (isset($oSqlRes['rows']))
 		{
 			$rownum = count($oSqlRes['rows']);
