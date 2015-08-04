@@ -7,7 +7,7 @@
  */
 
 /**
- * 观察者接口
+ * 数据修改后的观察者接口
  */
 interface IKo_Mode_ItemObserver
 {
@@ -15,5 +15,3 @@ interface IKo_Mode_ItemObserver
 	public function vOnUpdate($oDao, $sHintId, $aUpdate, $aChange, $vAdmin);
 	public function vOnDelete($oDao, $sHintId, $vAdmin);
 }
-
-?>

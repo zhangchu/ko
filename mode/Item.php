@@ -96,6 +96,7 @@ class Ko_Mode_Item extends Ko_Busi_Api
 	protected $_aConf = array();
 
 	private $_aObserver = array();
+	private $_aBefore = array();
 	private $_allowMethods = array(
 		'aInsertMulti',
 		'aGet',
@@ -175,6 +176,7 @@ class Ko_Mode_Item extends Ko_Busi_Api
 		}
 		
 		$itemDao = $this->_aConf['item'].'Dao';
+		$this->_vFireBeforeInsert($this->$itemDao, $aData, $aUpdate, $aChange, $vAdmin);
 		$aInfo = $this->$itemDao->aInsert($aData, $aUpdate, $aChange);
 		if (1 == $aInfo['affectedrows'])
 		{
@@ -203,6 +205,7 @@ class Ko_Mode_Item extends Ko_Busi_Api
 			$aOldInfo = $this->aGet($vKey);
 		}
 		$itemDao = $this->_aConf['item'].'Dao';
+		$this->_vFireBeforeUpdate($this->$itemDao, $vKey, $aUpdate, $aChange, $oOption, $vAdmin);
 		$iInfo = $this->$itemDao->iUpdate($vKey, $aUpdate, $aChange, $oOption);
 		if ($iInfo)
 		{
@@ -269,6 +272,7 @@ class Ko_Mode_Item extends Ko_Busi_Api
 	{
 		$aInfo = $this->_aGetDeleteIndexInfo($vKey);
 		$itemDao = $this->_aConf['item'].'Dao';
+		$this->_vFireBeforeDelete($this->$itemDao, $vKey, $oOption, $vAdmin);
 		$iInfo = $this->$itemDao->iDelete($vKey, $oOption);
 		if ($iInfo)
 		{
@@ -326,6 +330,12 @@ class Ko_Mode_Item extends Ko_Busi_Api
 		$this->_aObserver[] = $oObserver;
 	}
 
+	public function vAttachBefore($oBefore)
+	{
+		assert($oBefore instanceof IKo_Mode_ItemBefore);
+		$this->_aBefore[] = $oBefore;
+	}
+
 	/**
 	 * @return string
 	 */
@@ -333,6 +343,30 @@ class Ko_Mode_Item extends Ko_Busi_Api
 	{
 		$data = $this->aKeyToArray($vKey);
 		return implode(':', array_map('urlencode', $data));
+	}
+
+	private function _vFireBeforeInsert($oDao, $aData, $aUpdate, $aChange, $vAdmin)
+	{
+		foreach ($this->_aBefore as $oBefore)
+		{
+			$oBefore->vBeforeInsert($oDao, $aData, $aUpdate, $aChange, $vAdmin);
+		}
+	}
+
+	private function _vFireBeforeUpdate($oDao, $vKey, $aUpdate, $aChange, $oOption, $vAdmin)
+	{
+		foreach ($this->_aBefore as $oBefore)
+		{
+			$oBefore->vBeforeUpdate($oDao, $vKey, $aUpdate, $aChange, $oOption, $vAdmin);
+		}
+	}
+
+	private function _vFireBeforeDelete($oDao, $vKey, $oOption, $vAdmin)
+	{
+		foreach ($this->_aBefore as $oBefore)
+		{
+			$oBefore->vBeforeDelete($oDao, $vKey, $oOption, $vAdmin);
+		}
 	}
 
 	private function _vFireInsert($oDao, $aData, $vAdmin)
@@ -559,5 +593,3 @@ class Ko_Mode_Item extends Ko_Busi_Api
 		$this->$indexDao->iDelete($aInfo);
 	}
 }
-
-?>
