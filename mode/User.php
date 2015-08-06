@@ -18,7 +18,7 @@
  *     src varchar(32) not null default '',
  *     uid bigint UNSIGNED not null default 0,
  *     unique (username, src)
- *   )ENGINE=InnoDB DEFAULT CHARSET=utf8;
+ *   )ENGINE=InnoDB DEFAULT CHARSET=latin1;
  *   CREATE TABLE s_zhangchu_bindlog(
  *     uid bigint UNSIGNED not null default 0,
  *     username varchar(128) not null default '',
@@ -26,39 +26,41 @@
  *     bind tinyint UNSIGNED not null default 0,			-- 0/1 解除/绑定
  *     ctime timestamp NOT NULL default 0,
  *     index (uid)
- *   )ENGINE=InnoDB DEFAULT CHARSET=utf8;
+ *   )ENGINE=InnoDB DEFAULT CHARSET=latin1;
  *   CREATE TABLE s_zhangchu_hashpass_0(
  *     uid bigint UNSIGNED not null default 0,
  *     salt varchar(64) not null default '',
  *     hash varchar(64) not null default '',
  *     unique (uid)
- *   )ENGINE=InnoDB DEFAULT CHARSET=utf8;
+ *   )ENGINE=InnoDB DEFAULT CHARSET=latin1;
  *   CREATE TABLE s_zhangchu_password_0(
  *     uid bigint UNSIGNED not null default 0,
  *     salt varchar(64) not null default '',
  *     passwd varchar(128) not null default '',
  *     unique (uid)
- *   )ENGINE=InnoDB DEFAULT CHARSET=utf8;
+ *   )ENGINE=InnoDB DEFAULT CHARSET=latin1;
  *   CREATE TABLE s_zhangchu_varsalt_0(
  *     uid bigint UNSIGNED not null default 0,
  *     salt varchar(64) not null default '',
  *     oldsalt varchar(64) not null default '',
  *     mtime timestamp NOT NULL default 0,
  *     unique (uid)
- *   )ENGINE=InnoDB DEFAULT CHARSET=utf8;
+ *   )ENGINE=InnoDB DEFAULT CHARSET=latin1;
  *   CREATE TABLE s_zhangchu_tmpsalt_0(
  *     uid bigint UNSIGNED not null default 0,
  *     salt varchar(64) not null default '',
  *     ctime timestamp NOT NULL default 0,
- *     unique (uid, salt)
- *   )ENGINE=InnoDB DEFAULT CHARSET=utf8;
+ *     unique (uid, salt),
+ *     key (ctime)
+ *   )ENGINE=InnoDB DEFAULT CHARSET=latin1;
  *   CREATE TABLE s_zhangchu_cookie_0(
  *     uid bigint UNSIGNED not null default 0,
  *     series varchar(64) not null default '',
  *     token varchar(64) not null default '',
  *     mtime timestamp NOT NULL default 0,
- *     unique (uid, series)
- *   )ENGINE=InnoDB DEFAULT CHARSET=utf8;
+ *     unique (uid, series),
+ *     key (mtime)
+ *   )ENGINE=InnoDB DEFAULT CHARSET=latin1;
  * </pre>
  *
  * <b>_aConf 配置</b>
@@ -461,8 +463,8 @@ class Ko_Mode_User extends Ko_Busi_Api
 	{
 		assert(isset($this->_aConf['persistent']));
 
-		list($hash1, $uid, $series, $token) = explode('_', $sPersistentToken, 4);
-		if (!$this->_bCheckPersistentHash($hash1, $uid, $series, $token))
+		list($hash, $uid, $series, $token) = explode('_', $sPersistentToken, 4);
+		if (!$this->_bCheckPersistentHash($hash, $uid, $series, $token))
 		{
 			$iErrno = self::E_PERSISTENT_ERROR;
 			return 0;
