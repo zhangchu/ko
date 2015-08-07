@@ -219,7 +219,7 @@ class Ko_Mode_Counter extends Ko_Busi_Api
 	private function _vIncrDb($vKey, $iValue)
 	{
 		$dbDao = $this->_aConf['db'].'Dao';
-		$data = $this->$dbDao->aKeyToArray($vKey);
+		$data = $this->$dbDao->aGetIndexValue($vKey);
 		$data['times'] = $iValue;
 		$data['mtime'] = date('Y-m-d H:i:s');
 		$update = array(
@@ -234,7 +234,7 @@ class Ko_Mode_Counter extends Ko_Busi_Api
 	private function _sGetMCKey($vKey)
 	{
 		$dbDao = $this->_aConf['db'].'Dao';
-		$data = $this->$dbDao->aKeyToArray($vKey);
+		$data = $this->$dbDao->aGetIndexValue($vKey);
 		return 'koct:'.$this->$dbDao->sGetTableName().':'.implode(':', array_map('urlencode', $data));
 	}
 }

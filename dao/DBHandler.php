@@ -49,19 +49,19 @@ class Ko_Dao_DBHandler implements IKo_Dao_DBHelp, IKo_Dao_Table
 	}
 
 	/**
+	 * @return array
+	 */
+	public function aGetIndexValue($vIndex)
+	{
+		return $this->_oDB->aGetIndexValue($vIndex);
+	}
+
+	/**
 	 * @return string
 	 */
 	public function sGetIdKey()
 	{
 		return $this->_oDB->sGetIdKey();
-	}
-
-	/**
-	 * @return int
-	 */
-	public function iGetHintId($vHintId)
-	{
-		return $this->_oDB->iGetHintId($vHintId);
 	}
 
 	public function vGetAttribute($sName)
@@ -96,7 +96,7 @@ class Ko_Dao_DBHandler implements IKo_Dao_DBHelp, IKo_Dao_Table
 	 */
 	public function iUpdate($vKey, $aUpdate, $aChange=array(), $oOption=null)
 	{
-		return $this->_oDB->iUpdate($this->_iGetHintId($vKey), $vKey, $aUpdate, $aChange, $oOption);
+		return $this->_oDB->iUpdate($vKey, $vKey, $aUpdate, $aChange, $oOption);
 	}
 
 	/**
@@ -105,7 +105,7 @@ class Ko_Dao_DBHandler implements IKo_Dao_DBHelp, IKo_Dao_Table
 	 */
 	public function iDelete($vKey, $oOption=null)
 	{
-		return $this->_oDB->iDelete($this->_iGetHintId($vKey), $vKey, $oOption);
+		return $this->_oDB->iDelete($vKey, $vKey, $oOption);
 	}
 
 	/**
@@ -113,12 +113,12 @@ class Ko_Dao_DBHandler implements IKo_Dao_DBHelp, IKo_Dao_Table
 	 */
 	public function aGet($vKey)
 	{
-		return $this->_oDB->aGet($this->_iGetHintId($vKey), $vKey);
+		return $this->_oDB->aGet($vKey, $vKey);
 	}
 
 	public function vDeleteCache($vKey)
 	{
-		return $this->_oDB->vDeleteCache($this->_iGetHintId($vKey), $vKey);
+		return $this->_oDB->vDeleteCache($vKey, $vKey);
 	}
 
 	/**
@@ -149,62 +149,4 @@ class Ko_Dao_DBHandler implements IKo_Dao_DBHelp, IKo_Dao_Table
 	{
 		$this->_oDB->vDoFetchSelect($sSql, $fnCallback, $sTag);
 	}
-	
-	/**
-	 * 把数据转换为数组，用字段名做 key
-	 *
-	 * @return array
-	 */
-	public function aKeyToArray($vKey)
-	{
-		if (is_array($vKey))
-		{
-			return $this->_aArrayToKey($vKey);
-		}
-		$splitField = $this->sGetSplitField();
-		$keyField = $this->aGetKeyField();
-		$keyCount = count($keyField);
-		if (strlen($splitField))
-		{
-			assert(0 == $keyCount);
-			return array($splitField => $vKey);
-		}
-		assert(1 == $keyCount);
-		return array($keyField[0] => $vKey);
-	}
-
-	private function _aArrayToKey($aData)
-	{
-		$aRet = array();
-		$splitField = $this->sGetSplitField();
-		if (strlen($splitField))
-		{
-			assert(array_key_exists($splitField, $aData));
-			$aRet[$splitField] = $aData[$splitField];
-		}
-		$keyField = $this->aGetKeyField();
-		foreach ($keyField as $field)
-		{
-			assert(array_key_exists($field, $aData));
-			$aRet[$field] = $aData[$field];
-		}
-		return $aRet;
-	}
-
-	private function _iGetHintId($vKey)
-	{
-		$splitField = $this->sGetSplitField();
-		if (strlen($splitField))
-		{
-			if (is_array($vKey))
-			{
-				assert(array_key_exists($splitField, $vKey));
-				return $vKey[$splitField];
-			}
-			return $vKey;
-		}
-		return 1;
-	}
 }
-
-?>

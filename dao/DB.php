@@ -94,23 +94,34 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 	}
 
 	/**
+	 * @return array
+	 */
+	public function aGetIndexValue($vIndex)
+	{
+		$aRet = array();
+		$indexField = $this->aGetIndexField();
+		if (is_array($vIndex))
+		{
+			foreach ($indexField as $field)
+			{
+				assert(array_key_exists($field, $vIndex));
+				$aRet[$field] = $vIndex[$field];
+			}
+		}
+		else
+		{
+			assert(1 === count($indexField));
+			$aRet[$indexField[0]] = $vIndex;
+		}
+		return $aRet;
+	}
+
+	/**
 	 * @return string
 	 */
 	public function sGetIdKey()
 	{
 		return $this->_sIdKey;
-	}
-
-	/**
-	 * @return int
-	 */
-	public function iGetHintId($vHintId)
-	{
-		if ($this->_bIsSplitString)
-		{
-			return 1 + hexdec(substr(md5(strtolower($vHintId)), -4));
-		}
-		return intval($vHintId);
 	}
 
 	public function vGetAttribute($sName)
@@ -193,8 +204,8 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 		{
 			$aData[$autoIdField] = $this->_oGetIdGenerator()->iGetNewTimeID($this->_sIdKey);
 		}
-		$vHintId = strlen($this->_sSplitField) ? $aData[$this->_sSplitField] : 1;
-		$aRet = $this->_oGetSqlAgent()->aInsert($this->_sTable, $this->iGetHintId($vHintId), $aData, $aUpdate, $aChange);
+		$vHintId = $this->_vNormalizedSplit($aData);
+		$aRet = $this->_oGetSqlAgent()->aInsert($this->_sTable, $this->_iGetHintId($vHintId), $aData, $aUpdate, $aChange);
 		if ($bGenId)
 		{
 			$aRet['insertid'] = $aData[$autoIdField];
@@ -221,6 +232,7 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 	 */
 	public function iUpdate($vHintId, $vKey, $aUpdate, $aChange=array(), $oOption=null)
 	{
+		$vHintId = $this->_vNormalizedSplit($vHintId);
 		$aKey = $this->_aNormalizedKey($vKey);
 		$oOption = $this->_vNormalizeOption($oOption);
 		return $this->_iUpdate($vHintId, $aKey, $aUpdate, $aChange, $oOption, false);
@@ -232,12 +244,13 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 	 */
 	public function iUpdateByCond($vHintId, $oOption, $aUpdate, $aChange=array())
 	{
+		$vHintId = $this->_vNormalizedSplit($vHintId);
 		assert(!Ko_Tool_Option::BIsWhereEmpty($oOption, $this->_bIsMongoDB));
 		if (($this->_bUseUO || $this->_iMCacheTime) && count($this->_aKeyField))
 		{
 			$oOption = $this->_vBuildOption($oOption, $vHintId, array());
 			$oOption = $this->_oWriteOption2ReadOption($oOption);
-			$aInfo = $this->_oGetSqlAgent()->aSelect($this->_sTable, $this->iGetHintId($vHintId), $oOption, 0, true);
+			$aInfo = $this->_oGetSqlAgent()->aSelect($this->_sTable, $this->_iGetHintId($vHintId), $oOption, 0, true);
 			$iRet = 0;
 			foreach ($aInfo as $key)
 			{
@@ -255,6 +268,7 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 	 */
 	public function iDelete($vHintId, $vKey, $oOption=null)
 	{
+		$vHintId = $this->_vNormalizedSplit($vHintId);
 		$aKey = $this->_aNormalizedKey($vKey);
 		$oOption = $this->_vNormalizeOption($oOption);
 		return $this->_iDelete($vHintId, $aKey, $oOption, false);
@@ -266,12 +280,13 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 	 */
 	public function iDeleteByCond($vHintId, $oOption)
 	{
+		$vHintId = $this->_vNormalizedSplit($vHintId);
 		assert(!Ko_Tool_Option::BIsWhereEmpty($oOption, $this->_bIsMongoDB));
 		if (($this->_bUseUO || $this->_iMCacheTime) && count($this->_aKeyField))
 		{
 			$oOption = $this->_vBuildOption($oOption, $vHintId, array());
 			$oOption = $this->_oWriteOption2ReadOption($oOption);
-			$aInfo = $this->_oGetSqlAgent()->aSelect($this->_sTable, $this->iGetHintId($vHintId), $oOption, 0, true);
+			$aInfo = $this->_oGetSqlAgent()->aSelect($this->_sTable, $this->_iGetHintId($vHintId), $oOption, 0, true);
 			$iRet = 0;
 			foreach ($aInfo as $key)
 			{
@@ -290,6 +305,7 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 	 */
 	public function aGet($vHintId, $vKey)
 	{
+		$vHintId = $this->_vNormalizedSplit($vHintId);
 		$aKey = $this->_aNormalizedKey($vKey);
 		return $this->_aGet($vHintId, $aKey, false);
 	}
@@ -301,6 +317,7 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 	 */
 	public function aGetListByKeys($vHintId, $aKey, $sKeyField = '')
 	{
+		$vHintId = $this->_vNormalizedSplit($vHintId);
 		assert(1 == count($this->_aKeyField));
 
 		//获取 id 列表
@@ -369,8 +386,9 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 	 */
 	public function aGetList($vHintId, $oOption, $iCacheTime=0)
 	{
+		$vHintId = $this->_vNormalizedSplit($vHintId);
 		$oOption = $this->_vBuildOption($oOption, $vHintId, array());
-		$iHintId = $this->iGetHintId($vHintId);
+		$iHintId = $this->_iGetHintId($vHintId);
 		if ($this->_bGetForceInactive($oOption))
 		{
 			$no = $iHintId % $this->iTableCount();
@@ -403,6 +421,7 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 
 	public function vDeleteCache($vHintId, $vKey)
 	{
+		$vHintId = $this->_vNormalizedSplit($vHintId);
 		$aKey = $this->_aNormalizedKey($vKey);
 		$this->_vDelCache($vHintId, $aKey);
 	}
@@ -438,6 +457,15 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 
 	//////////////////////////// 私有函数 ////////////////////////////
 
+	private function _iGetHintId($vHintId)
+	{
+		if ($this->_bIsSplitString)
+		{
+			return 1 + hexdec(substr(md5(strtolower($vHintId)), -4));
+		}
+		return intval($vHintId);
+	}
+
 	private function _sGetAutoIdField()
 	{
 		if (count($this->_aKeyField))
@@ -463,7 +491,7 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 		$oOption = $this->_oCreateOption();
 		$oOption = $this->_vBuildOption($oOption, $vHintId, $aKey);
 		$oOption->oLimit(1);
-		$aRet = $this->_oGetSqlAgent()->aSelect($this->_sTable, $this->iGetHintId($vHintId), $oOption, 0, true);
+		$aRet = $this->_oGetSqlAgent()->aSelect($this->_sTable, $this->_iGetHintId($vHintId), $oOption, 0, true);
 		$aRet = empty($aRet) ? array() : $aRet[0];
 		$this->_oGetDBCache()->vSet($sCacheKey, $aRet, true);
 		return $aRet;
@@ -472,7 +500,7 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 	private function _iUpdate($vHintId, $aKey, $aUpdate, $aChange, $oOption, $bNoCache)
 	{
 		$oOption = $this->_vBuildOption($oOption, $vHintId, $aKey);
-		$iRet = $this->_oGetSqlAgent()->iUpdate($this->_sTable, $this->iGetHintId($vHintId), $aUpdate, $aChange, $oOption);
+		$iRet = $this->_oGetSqlAgent()->iUpdate($this->_sTable, $this->_iGetHintId($vHintId), $aUpdate, $aChange, $oOption);
 		if (0 != $iRet && !$bNoCache)
 		{
 			$this->_vDelCache($vHintId, $aKey);
@@ -483,7 +511,7 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 	private function _iDelete($vHintId, $aKey, $oOption, $bNoCache)
 	{
 		$oOption = $this->_vBuildOption($oOption, $vHintId, $aKey);
-		$iRet = $this->_oGetSqlAgent()->iDelete($this->_sTable, $this->iGetHintId($vHintId), $oOption);
+		$iRet = $this->_oGetSqlAgent()->iDelete($this->_sTable, $this->_iGetHintId($vHintId), $oOption);
 		if (0 != $iRet && !$bNoCache)
 		{
 			$this->_vDelCache($vHintId, $aKey);
@@ -516,7 +544,7 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 				$oOption->oWhere($field.' IN (?)', $uoids);
 			}
 			$oOption = $this->_vBuildOption($oOption, $vHintId, array());
-			$aRet = $this->_oGetSqlAgent()->aSelect($this->_sTable, $this->iGetHintId($vHintId), $oOption, 0, true);
+			$aRet = $this->_oGetSqlAgent()->aSelect($this->_sTable, $this->_iGetHintId($vHintId), $oOption, 0, true);
 			$aRetKeys = array();
 			foreach ($aRet as $v)
 			{
@@ -775,6 +803,20 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 			}
 		}
 		return array_values(array_unique(array_diff($vKeyField, array($sSplitField))));
+	}
+
+	private function _vNormalizedSplit($vKey)
+	{
+		if (strlen($this->_sSplitField))
+		{
+			if (is_array($vKey))
+			{
+				assert(array_key_exists($this->_sSplitField, $vKey));
+				return $vKey[$this->_sSplitField];
+			}
+			return $vKey;
+		}
+		return 1;
 	}
 
 	private function _aNormalizedKey($vKey)

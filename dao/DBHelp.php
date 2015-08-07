@@ -28,13 +28,13 @@ interface IKo_Dao_DBHelp
 	 */
 	public function aGetIndexField();
 	/**
+	 * @return array
+	 */
+	public function aGetIndexValue($vIndex);
+	/**
 	 * @return string
 	 */
 	public function sGetIdKey();
-	/**
-	 * @return int 返回用来计算分表的ID，在使用字符串字段分表时用来查询某个串对应的 ID
-	 */
-	public function iGetHintId($vHintId);
 	/**
 	 * 查询数据库某个属性
 	 */

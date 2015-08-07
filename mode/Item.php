@@ -104,14 +104,13 @@ class Ko_Mode_Item extends Ko_Busi_Api
 		'aGetDetails',
 		'aGetList',
 		'vDeleteCache',
-		'aKeyToArray',
 
 		'sGetTableName',
 		'sGetSplitField',
 		'aGetKeyField',
 		'aGetIndexField',
+		'aGetIndexValue',
 		'sGetIdKey',
-		'iGetHintId',
 		'vGetAttribute',
 		'vSetAttribute',
 
@@ -341,7 +340,7 @@ class Ko_Mode_Item extends Ko_Busi_Api
 	 */
 	public function sGetHintId($vKey)
 	{
-		$data = $this->aKeyToArray($vKey);
+		$data = $this->aGetIndexValue($vKey);
 		return implode(':', array_map('urlencode', $data));
 	}
 
@@ -521,7 +520,7 @@ class Ko_Mode_Item extends Ko_Busi_Api
 	private function _vInsert_Index_One($aData, $aIndexConf)
 	{
 		$indexDao = $aIndexConf['dao'].'Dao';
-		$aIndexData = $this->$indexDao->aKeyToArray($aData);
+		$aIndexData = $this->$indexDao->aGetIndexValue($aData);
 		if (isset($aIndexConf['datafields']))
 		{
 			foreach ($aIndexConf['datafields'] as $field)
