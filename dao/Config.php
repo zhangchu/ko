@@ -13,7 +13,7 @@ class Ko_Dao_Config extends Ko_Dao_DBHandler
 {
 	public function __construct($sTable, $vKeyField='', $sIdKey='', $sDBAgentName='', $sMCacheName='', $iMCacheTime=3600)
 	{
-		$this->_oDB = new Ko_Dao_DB($sTable, '', $vKeyField, $sIdKey, $sDBAgentName, $sMCacheName, $iMCacheTime);
+		$this->_oDB = new Ko_Dao_DB($sTable, $vKeyField, $sIdKey, $sDBAgentName, $sMCacheName, $iMCacheTime);
 	}
 
 	/**

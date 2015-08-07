@@ -42,11 +42,11 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 	private $_oUObject;
 	private $_oDirectMysql;			//直连数据库对象
 
-	public function __construct($sTable, $sSplitField, $vKeyField, $sIdKey='', $sDBAgentName='', $sMCacheName = '', $iMCacheTime = 3600, $bUseUO = false, $aUoFields = array(), $sUoName = '')
+	public function __construct($sTable, $vKeyField, $sIdKey='', $sDBAgentName='', $sMCacheName = '', $iMCacheTime = 3600, $bUseUO = false, $aUoFields = array(), $sUoName = '')
 	{
 		$this->_sTable = $sTable;
-		$this->_sSplitField = $sSplitField;
-		$this->_aKeyField = $this->_aNormalizedKeyField($vKeyField, $sSplitField);
+		$this->_sSplitField = $this->_sGetSplitField();
+		$this->_aKeyField = $this->_aNormalizedKeyField($vKeyField, $this->_sSplitField);
 		$this->_sIdKey = $sIdKey;
 		$this->_sDBAgentName = $sDBAgentName;
 		$this->_sMCacheName = $sMCacheName;
@@ -456,6 +456,20 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 	}
 
 	//////////////////////////// 私有函数 ////////////////////////////
+
+	private function _sGetSplitField()
+	{
+		if (false !== ($db = dba_open(KO_DB_SPLIT_CONF, 'r', 'qdbm')))
+		{
+			$value = dba_fetch($this->_sTable, $db);
+			dba_close($db);
+			if (false !== $value)
+			{
+				return $value;
+			}
+		}
+		return '';
+	}
 
 	private function _iGetHintId($vHintId)
 	{

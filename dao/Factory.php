@@ -50,7 +50,6 @@ class Ko_Dao_Factory
 		$mcachetime = (is_array($key) || strlen($key)) ? self::_VGetValue($aConfig, 'mcachetime') : 0;
 		$db = new Ko_Dao_DB(
 			self::_VGetValue($aConfig, 'kind'),
-			self::_VGetValue($aConfig, 'split'),
 			$key,
 			self::_VGetValue($aConfig, 'idkey'),
 			self::_VGetValue($aConfig, 'dbagent'),
@@ -65,14 +64,9 @@ class Ko_Dao_Factory
 	private static function _OCreateDao_db_single($aConfig, $aParam)
 	{
 		$kind = (isset($aParam['suffix']) && strlen($aParam['suffix'])) ? self::_VGetValue($aConfig, 'kind').'_'.$aParam['suffix'] : self::_VGetValue($aConfig, 'kind');
-		$key = self::_VGetValue($aConfig, 'key');
-		if (null === $key)
-		{
-			$key = self::_VGetValue($aConfig, 'split');
-		}
 		$db = new Ko_Dao_Config(
 			$kind,
-			$key,
+			self::_VGetValue($aConfig, 'key'),
 			self::_VGetValue($aConfig, 'idkey'),
 			self::_VGetValue($aConfig, 'dbagent'),
 			self::_VGetValue($aConfig, 'mcachename'),
@@ -96,14 +90,8 @@ class Ko_Dao_Factory
 
 	private static function _OCreateDao_db_one($aConfig, $aParam)
 	{
-		$split = self::_VGetValue($aConfig, 'split');
-		if (null === $split)
-		{
-			$split = self::_VGetValue($aConfig, 'key');
-		}
 		$db = new Ko_Dao_UserOne(
 			self::_VGetValue($aConfig, 'kind'),
-			$split,
 			self::_VGetValue($aConfig, 'idkey'),
 			self::_VGetValue($aConfig, 'dbagent'),
 			self::_VGetValue($aConfig, 'mcachename'),
@@ -118,7 +106,6 @@ class Ko_Dao_Factory
 	{
 		$db = new Ko_Dao_DBSplit(
 			self::_VGetValue($aConfig, 'kind'),
-			self::_VGetValue($aConfig, 'split'),
 			self::_VGetValue($aConfig, 'key'),
 			self::_VGetValue($aConfig, 'idkey'),
 			self::_VGetValue($aConfig, 'dbagent'),

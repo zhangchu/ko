@@ -11,9 +11,9 @@
  */
 class Ko_Dao_UserOne extends Ko_Dao_DBHandler
 {
-	public function __construct($sTable, $sSplitField, $sIdKey='', $sDBAgentName='', $sMCacheName='', $iMCacheTime=3600, $bUseUO = false, $aUoFields = array(), $sUoName = '')
+	public function __construct($sTable, $sIdKey='', $sDBAgentName='', $sMCacheName='', $iMCacheTime=3600, $bUseUO = false, $aUoFields = array(), $sUoName = '')
 	{
-		$this->_oDB = new Ko_Dao_DB($sTable, $sSplitField, '', $sIdKey, $sDBAgentName, $sMCacheName, $iMCacheTime, $bUseUO, $aUoFields, $sUoName);
+		$this->_oDB = new Ko_Dao_DB($sTable, '', $sIdKey, $sDBAgentName, $sMCacheName, $iMCacheTime, $bUseUO, $aUoFields, $sUoName);
 	}
 	
 	/**
