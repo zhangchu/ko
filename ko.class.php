@@ -112,6 +112,13 @@ if (!defined('KO_DB_NAME'))
 	 */
 	define('KO_DB_NAME', 'dev_config');
 }
+if (!defined('KO_DB_SPLIT_CONF'))
+{
+	/**
+	 * 分表配置，保存kind到split字段的映射关系
+	 */
+	define('KO_DB_SPLIT_CONF', '');
+}
 
 if (!defined('KO_MONGO_HOST'))
 {
