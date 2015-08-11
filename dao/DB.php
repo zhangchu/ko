@@ -218,10 +218,14 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 			}
 			$aRet['data'] = $aData;
 			$this->_vDelCache($vHintId, $aData);
+			$indexData = $this->aGetIndexValue($aData);
+			Ko_Web_Event::Trigger('ko.db', 'insert', $this->_sTable, $indexData, $aData);
 		}
 		else if (2 == $aRet['affectedrows'])
 		{
 			$this->_vDelCache($vHintId, $aData);
+			$indexData = $this->aGetIndexValue($aData);
+			Ko_Web_Event::Trigger('ko.db', 'update', $this->_sTable, $indexData, $aUpdate, $aChange);
 		}
 		return $aRet;
 	}
@@ -518,6 +522,9 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 		if (0 != $iRet && !$bNoCache)
 		{
 			$this->_vDelCache($vHintId, $aKey);
+			$aKey[$this->_sSplitField] = $vHintId;
+			$indexData = $this->aGetIndexValue($aKey);
+			Ko_Web_Event::Trigger('ko.db', 'update', $this->_sTable, $indexData, $aUpdate, $aChange);
 		}
 		return $iRet;
 	}
@@ -529,6 +536,9 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 		if (0 != $iRet && !$bNoCache)
 		{
 			$this->_vDelCache($vHintId, $aKey);
+			$aKey[$this->_sSplitField] = $vHintId;
+			$indexData = $this->aGetIndexValue($aKey);
+			Ko_Web_Event::Trigger('ko.db', 'delete', $this->_sTable, $indexData);
 		}
 		return $iRet;
 	}
