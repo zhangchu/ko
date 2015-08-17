@@ -45,9 +45,9 @@ class Ko_Dao_DBSplit extends Ko_Dao_DBHandler
 	}
 
 	/**
-	 * useuo 为真 才可用
+	 * 根据数据库表唯一键（一个字段或两个字段）进行数据获取，对于分表，需要使用UO支持
 	 *
-	 * @return array 从 UObject 查询多条数据
+	 * @return array 查询多条数据
 	 */
 	public function aGetDetails($oObjs, $sSplitField = '', $sKeyField = '', $bRetmap = true)
 	{

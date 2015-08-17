@@ -17,13 +17,8 @@ class Ko_Data_UObjectAgent
 		{
 		case 'kproxy':
 			return Ko_Data_UObjectMan::OInstance($sKind, $sSplitField, $sKeyField, $sUoName);
-		case 'mysql':
-		case 'mysql-pdo':
-			return Ko_Data_UObjectMysql::OInstance($sKind, $sSplitField, $sKeyField, $sUoName);
 		default:
 			assert(0);
 		}
 	}
 }
-
-?>

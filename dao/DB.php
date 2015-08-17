@@ -349,22 +349,34 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 	}
 
 	/**
-	 * useuo 为真 才可用
+	 * 根据数据库表唯一键（一个字段或两个字段）进行数据获取，对于分表，需要使用UO支持
 	 *
-	 * @return array 从 UOBject 查询多条数据
+	 * @return array 查询多条数据
 	 */
 	public function aGetDetails($oObjs, $sSplitField = '', $sKeyField = '', $bRetmap = true)
 	{
+		$isSplit = strlen($this->_sSplitField);
 		$keyCount = count($this->_aKeyField);
-		assert($this->_bUseUO && 1 >= $keyCount);
+		if ($isSplit)
+		{
+			assert($this->_bUseUO && 1 >= $keyCount);
+			$isSingleKey = 0 >= $keyCount;
+			$field0 = strlen($sSplitField) ? $sSplitField : $this->_sSplitField;
+			$field1 = $isSingleKey ? $field0 : (strlen($sKeyField) ? $sKeyField : $this->_aKeyField[0]);
+		}
+		else
+		{
+			assert(2 >= $keyCount && $keyCount >= 1);
+			$isSingleKey = 1 >= $keyCount;
+			$field0 = strlen($sSplitField) ? $sSplitField : $this->_aKeyField[0];
+			$field1 = $isSingleKey ? $field0 : (strlen($sKeyField) ? $sKeyField : $this->_aKeyField[1]);
+		}
 
 		//获取 id 列表
-		$splitField = strlen($sSplitField) ? $sSplitField : $this->_sSplitField;
-		$keyField = $keyCount ? (strlen($sKeyField) ? $sKeyField : $this->_aKeyField[0]) : $splitField;
-		list($uids, $ids) = $this->_aObjs2IntIds($oObjs, $splitField, $keyField);
+		list($uids, $ids) = $this->_aObjs2KeyIds($oObjs, $field0, $field1);
 
 		//去0，排重，返回剩下的键列表
-		$keyidmap = $this->_aGetDetails_KeyIdMap($uids, $ids, 0 == $keyCount);
+		$keyidmap = $this->_aGetDetails_KeyIdMap($uids, $ids, $isSplit, $isSingleKey);
 		$allkeys = array_keys($keyidmap);
 
 		//过滤掉 InProcCache / MCache 中存在的key
@@ -372,14 +384,23 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 		KO_DEBUG >= 1 && Ko_Tool_Debug::VAddTmpLog('stat/aGetDetails', count($allkeys).':'.count($keys));
 
 		//从 UObject / LCache 获取剩下的
-		$this->_vGetDetailsEx($keys, $keyidmap);
+		$this->_vGetDetailsEx($keys, $keyidmap, $isSplit, $isSingleKey);
 
 		//拼装并返回结果
 		$aRet = array();
 		foreach ($uids as $i => $uid)
 		{
 			$key = $bRetmap ? $ids[$i] : $i;
-			$aRet[$key] = $this->_aGet($uid, $keyCount ? array($this->_aKeyField[0] => $ids[$i]) : array(), -1, true);
+			if ($isSplit)
+			{
+				$aRet[$key] = $this->_aGet($uid, $isSingleKey ? array() : array($this->_aKeyField[0] => $ids[$i]), true);
+			}
+			else
+			{
+				$aRet[$key] = $this->_aGet(1, $isSingleKey
+					? array($this->_aKeyField[0] => $uid)
+					: array($this->_aKeyField[0] => $uid, $this->_aKeyField[1] => $ids[$i]), true);
+			}
 		}
 		return $aRet;
 	}
@@ -587,21 +608,72 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 		}
 	}
 
-	private function _vGetDetailsEx($aKeys, $aKeyIdMap)
+	private function _vGetDetailsEx($aKeys, $aKeyIdMap, $bIsSplit, $bIsSingleKey)
 	{
 		$ucount = count($aKeys);
 		for ($c=0; ; $c+=self::SPLIT_COUNT)
 		{
-			$uoids = array();
-			for ($i=$c; $i<$ucount && $i<$c+self::SPLIT_COUNT; $i++)
+			if ($bIsSplit)
 			{
-				$uoids[$i-$c] = $this->_oGetUObject()->oCreateLOID($aKeyIdMap[$aKeys[$i]][0], $aKeyIdMap[$aKeys[$i]][1]);
+				$uoids = array();
+				for ($i=$c; $i<$ucount && $i<$c+self::SPLIT_COUNT; $i++)
+				{
+					$uoids[$i-$c] = $this->_oGetUObject()->oCreateLOID($aKeyIdMap[$aKeys[$i]][0], $aKeyIdMap[$aKeys[$i]][1]);
+				}
+				if ($i === $c)
+				{
+					break;
+				}
+				$aRet = $this->_oGetUObject()->aGetUObjectDetailLong($uoids, $this->_aUoFields);
 			}
-			if (empty($uoids))
+			else
 			{
-				break;
+				$oOption = new Ko_Tool_SQL();
+				for ($i=$c; $i<$ucount && $i<$c+self::SPLIT_COUNT; $i++)
+				{
+					$field0 = ('`' === $this->_aKeyField[0][0]) ? $this->_aKeyField[0] : '`'.$this->_aKeyField[0].'`';
+					if ($bIsSingleKey)
+					{
+						$oOption->oOr($field0.' = ?', $aKeyIdMap[$aKeys[$i]][0]);
+					}
+					else
+					{
+						$field1 = ('`' === $this->_aKeyField[1][0]) ? $this->_aKeyField[1] : '`'.$this->_aKeyField[1].'`';
+						$oOption->oOr($field0.' = ? AND '.$field1.' = ?', $aKeyIdMap[$aKeys[$i]][0], $aKeyIdMap[$aKeys[$i]][1]);
+					}
+				}
+				if ($i === $c)
+				{
+					break;
+				}
+				$aItem = $this->_oGetSqlAgent()->aSelect($this->_sTable, 1, $oOption, 0, true);
+				$aRet = array();
+				for ($i=$c; $i<$ucount && $i<$c+self::SPLIT_COUNT; $i++)
+				{
+					$item = array();
+					foreach ($aItem as $v)
+					{
+						if ($bIsSingleKey)
+						{
+							if ($v[$this->_aKeyField[0]] == $aKeyIdMap[$aKeys[$i]][0])
+							{
+								$item = $v;
+								break;
+							}
+						}
+						else
+						{
+							if ($v[$this->_aKeyField[0]] == $aKeyIdMap[$aKeys[$i]][0]
+								&& $v[$this->_aKeyField[1]] == $aKeyIdMap[$aKeys[$i]][1])
+							{
+								$item = $v;
+								break;
+							}
+						}
+					}
+					$aRet[] = $item;
+				}
 			}
-			$aRet = $this->_oGetUObject()->aGetUObjectDetailLong($uoids, $this->_aUoFields);
 			foreach ($aRet as $i=>$item)
 			{
 				$this->_oGetDBCache()->vSet($aKeys[$i+$c], $item, false);
@@ -637,19 +709,30 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 		return array($aIdKeyMap, $aKeyIdMap);
 	}
 
-	private function _aGetDetails_KeyIdMap($aUids, $aIds, $bKeyIsEmpty)
+	private function _aGetDetails_KeyIdMap($aUids, $aIds, $bIsSplit, $bIsSingleKey)
 	{
 		$aKeyIdMap = array();
 		foreach ($aUids as $i=>$uid)
 		{
-			if (0 == $uid || 0 == $aIds[$i])
+			if ($bIsSplit)
 			{
-				continue;
+				if (0 == $uid || 0 == $aIds[$i])
+				{
+					continue;
+				}
+				$sCacheKey = urlencode($uid);
+				if (!$bIsSingleKey)
+				{
+					$sCacheKey .= ':'.$this->_aKeyField[0].':'.urlencode($aIds[$i]);
+				}
 			}
-			$sCacheKey = urlencode($uid);
-			if (!$bKeyIsEmpty)
+			else
 			{
-				$sCacheKey .= ':'.$this->_aKeyField[0].':'.urlencode($aIds[$i]);
+				$sCacheKey = $this->_aKeyField[0].':'.urlencode($uid);
+				if (!$bIsSingleKey)
+				{
+					$sCacheKey .= ':'.$this->_aKeyField[1].':'.urlencode($aIds[$i]);
+				}
 			}
 			$aKeyIdMap[$sCacheKey] = array($uid, $aIds[$i]);
 		}
@@ -787,7 +870,7 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 		return $this->_oDirectMysql;
 	}
 
-	private function _aObjs2IntIds($aObjs, $sUidKey, $sIdKey)
+	private function _aObjs2KeyIds($aObjs, $sUidKey, $sIdKey)
 	{
 		$uids = $ids = array();
 		if (is_array($aObjs))
@@ -796,17 +879,17 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 			{
 				if (is_array($obj))
 				{
-					$uids[] = intval($obj[$sUidKey]);
-					$ids[] = intval($obj[$sIdKey]);
+					$uids[] = $obj[$sUidKey];
+					$ids[] = $obj[$sIdKey];
 				}
 				else if (is_object($obj))
 				{
-					$uids[] = intval($obj->$sUidKey);
-					$ids[] = intval($obj->$sIdKey);
+					$uids[] = $obj->$sUidKey;
+					$ids[] = $obj->$sIdKey;
 				}
 				else
 				{
-					$uids[] = $ids[] = intval($obj);
+					$uids[] = $ids[] = $obj;
 				}
 			}
 		}

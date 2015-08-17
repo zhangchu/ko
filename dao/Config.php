@@ -53,6 +53,16 @@ class Ko_Dao_Config extends Ko_Dao_DBHandler
 	}
 
 	/**
+	 * 根据数据库表唯一键（一个字段或两个字段）进行数据获取，对于分表，需要使用UO支持
+	 *
+	 * @return array 查询多条数据
+	 */
+	public function aGetDetails($oObjs, $sSplitField = '', $sKeyField = '', $bRetmap = true)
+	{
+		return $this->_oDB->aGetDetails($oObjs, $sSplitField, $sKeyField, $bRetmap);
+	}
+
+	/**
 	 * @param Ko_Tool_SQL|Ko_Tool_MONGO|array $oOption
 	 * @return array
 	 */
