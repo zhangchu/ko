@@ -160,7 +160,7 @@ class Ko_Mode_Counter extends Ko_Busi_Api
 		foreach ($aKey as $i => $key)
 		{
 			$index = $this->$dbDao->aGetIndexValue($key);
-			$ret[implode(':', array_map('urlencode', $index)] = $dbinfo[$i]['times'] + $mcinfo[$keys[$i]];
+			$ret[implode(':', array_map('urlencode', $index))] = $dbinfo[$i]['times'] + $mcinfo[$keys[$i]];
 		}
 		return $ret;
 	}
