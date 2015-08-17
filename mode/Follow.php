@@ -169,7 +169,31 @@ class Ko_Mode_Follow extends Ko_Busi_Api
 	public function aIsFollowed($iUidb, $aUida, $sKeyField = '')
 	{
 		$followedDao = $this->_aConf['followed'].'Dao';
-		$list = $this->$followedDao->aGetListByKeys($iUidb, $aUida, $sKeyField);
+		$splitField = $this->$followedDao->sGetSplitField();
+		if (strlen($splitField))
+		{
+			$list = $this->$followedDao->aGetListByKeys($iUidb, $aUida, $sKeyField);
+		}
+		else
+		{
+			foreach ($aUida as &$uida)
+			{
+				if (is_array($uida))
+				{
+					$uida['uidb'] = $iUidb;
+				}
+				else
+				{
+					$uida = array(
+						'uidb' => $iUidb,
+						'uida' => $uida,
+					);
+					$sKeyField = '';
+				}
+			}
+			unset($uida);
+			$list = $this->$followedDao->aGetDetails($aUida, '', $sKeyField);
+		}
 		return array_keys($list);
 	}
 	
@@ -192,7 +216,31 @@ class Ko_Mode_Follow extends Ko_Busi_Api
 	public function aGetFollowInfos($iUida, $aUidb, $sKeyField = '')
 	{
 		$followDao = $this->_aConf['follow'].'Dao';
-		return $this->$followDao->aGetListByKeys($iUida, $aUidb, $sKeyField);
+		$splitField = $this->$followDao->sGetSplitField();
+		if (strlen($splitField))
+		{
+			return $this->$followDao->aGetListByKeys($iUida, $aUidb, $sKeyField);
+		}
+		else
+		{
+			foreach ($aUidb as &$uidb)
+			{
+				if (is_array($uidb))
+				{
+					$uidb['uida'] = $iUida;
+				}
+				else
+				{
+					$uidb = array(
+						'uida' => $iUida,
+						'uidb' => $uidb,
+					);
+					$sKeyField = '';
+				}
+			}
+			unset($uidb);
+			return $this->$followDao->aGetDetails($aUidb, '', $sKeyField);
+		}
 	}
 
 	/**

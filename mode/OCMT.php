@@ -148,10 +148,18 @@ class Ko_Mode_OCMT extends Ko_Busi_Api
 			$oOption = new Ko_Tool_SQL;
 			$oOption->oWhere('thread_cid = ?', $iCid)->oOrderBy('cid desc')->oLimit(self::MAX_REPLY);
 			$aReply = $this->$replyDao->aGetList($oid, $oOption);
-			$aReplyCid = Ko_Tool_Utils::AObjs2ids($aReply, 'cid');
-			if (!empty($aReplyCid))
+			if (!empty($aReply))
 			{
-				$aReplyContent = $this->$contentDao->aGetListByKeys($oid, $aReplyCid);
+				$aReplyCid = Ko_Tool_Utils::AObjs2ids($aReply, 'cid');
+				$splitField = $this->$contentDao->sGetSplitField();
+				if (strlen($splitField))
+				{
+					$aReplyContent = $this->$contentDao->aGetListByKeys($oid, $aReplyCid);
+				}
+				else
+				{
+					$aReplyContent = $this->$contentDao->aGetDetails($aReply);
+				}
 				$aReplyCid = array_reverse($aReplyCid);
 				foreach ($aReplyCid as $v)
 				{
@@ -395,7 +403,30 @@ class Ko_Mode_OCMT extends Ko_Busi_Api
 			return array();
 		}
 		$contentDao = $this->_aConf['content'].'Dao';
-		return $this->$contentDao->aGetListByKeys($iOid, $aCids);
+		$splitField = $this->$contentDao->sGetSplitField();
+		if (strlen($splitField))
+		{
+			return $this->$contentDao->aGetListByKeys($iOid, $aCids);
+		}
+		else
+		{
+			foreach ($aCids as &$cid)
+			{
+				if (is_array($cid))
+				{
+					$cid['oid'] = $iOid;
+				}
+				else
+				{
+					$cid = array(
+						'oid' => $iOid,
+						'cid' => $cid,
+					);
+				}
+			}
+			unset($cid);
+			return $this->$contentDao->aGetDetails($aCids);
+		}
 	}
 
 	private function _iInsertContentEx($iAid, $iBid, $iThread, $iUid, $sContent, $vAdmin, $iForceFlag)

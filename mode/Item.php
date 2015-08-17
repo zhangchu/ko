@@ -229,7 +229,8 @@ class Ko_Mode_Item extends Ko_Busi_Api
 	{
 		$aArgv = func_get_args();
 		$splitField = $this->sGetSplitField();
-		if (strlen($splitField))
+		$isSplit = strlen($splitField);
+		if ($isSplit)
 		{
 			assert(count($aArgv) >= 3);
 			$vHintId = $aArgv[0];
@@ -247,7 +248,7 @@ class Ko_Mode_Item extends Ko_Busi_Api
 			$vAdmin = isset($aArgv[3]) ? $aArgv[3] : '';
 		}
 		assert(!Ko_Tool_Option::BIsWhereEmpty($oOption, $this->vGetAttribute('ismongodb')));
-		if (strlen($splitField))
+		if ($isSplit)
 		{
 			$list = $this->aGetList($vHintId, $oOption);
 		}
@@ -292,7 +293,8 @@ class Ko_Mode_Item extends Ko_Busi_Api
 	{
 		$aArgv = func_get_args();
 		$splitField = $this->sGetSplitField();
-		if (strlen($splitField))
+		$isSplit = strlen($splitField);
+		if ($isSplit)
 		{
 			assert(count($aArgv) >= 2);
 			$vHintId = $aArgv[0];
@@ -306,7 +308,7 @@ class Ko_Mode_Item extends Ko_Busi_Api
 			$vAdmin = isset($aArgv[1]) ? $aArgv[1] : '';
 		}
 		assert(!Ko_Tool_Option::BIsWhereEmpty($oOption, $this->vGetAttribute('ismongodb')));
-		if (strlen($splitField))
+		if ($isSplit)
 		{
 			$list = $this->aGetList($vHintId, $oOption);
 		}

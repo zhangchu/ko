@@ -134,7 +134,7 @@ class Ko_Mode_Counter extends Ko_Busi_Api
 	}
 	
 	/**
-	 * 批量查询，db为单表才可以使用
+	 * 批量查询
 	 *
 	 * @return array
 	 */
@@ -147,19 +147,20 @@ class Ko_Mode_Counter extends Ko_Busi_Api
 		}
 		else
 		{
-			foreach ($aKey as $key)
+			foreach ($aKey as $i => $key)
 			{
-				$keys[$key] = $this->_sGetMCKey($key);
+				$keys[$i] = $this->_sGetMCKey($key);
 			}
 			$mcDao = $this->_aConf['mc'].'Dao';
-			$mcinfo = $this->$mcDao->vGet(array_values($keys));
+			$mcinfo = $this->$mcDao->vGet($keys);
 		}
 		$dbDao = $this->_aConf['db'].'Dao';
-		$dbinfo = $this->$dbDao->aGetListByKeys($aKey);
+		$dbinfo = $this->$dbDao->aGetDetails($aKey, '', '', false);
 		$ret = array();
-		foreach ($aKey as $key)
+		foreach ($aKey as $i => $key)
 		{
-			$ret[$key] = $dbinfo[$key]['times'] + $mcinfo[$keys[$key]];
+			$index = $this->$dbDao->aGetIndexValue($key);
+			$ret[implode(':', array_map('urlencode', $index)] = $dbinfo[$i]['times'] + $mcinfo[$keys[$i]];
 		}
 		return $ret;
 	}

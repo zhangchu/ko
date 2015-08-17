@@ -485,7 +485,15 @@ class Ko_Mode_User extends Ko_Busi_Api
 		if (!$this->_bUpdatePersistentToken($uid, $series, $token, $sNewToken))
 		{
 			$oOption = new Ko_Tool_SQL;
-			$this->$persistentDao->iDeleteByCond($uid, $oOption->oWhere('1'));
+			$splitField = $this->$persistentDao->sGetSplitField();
+			if (strlen($splitField))
+			{
+				$this->$persistentDao->iDeleteByCond($uid, $oOption->oWhere('1'));
+			}
+			else
+			{
+				$this->$persistentDao->iDeleteByCond($oOption->oWhere('uid = ?', $uid));
+			}
 			$iErrno = self::E_PERSISTENT_TOKEN;
 			return 0;
 		}

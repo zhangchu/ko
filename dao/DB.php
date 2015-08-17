@@ -628,18 +628,32 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 			}
 			else
 			{
-				$oOption = new Ko_Tool_SQL();
+				$oOption = $this->_oCreateOption();
 				for ($i=$c; $i<$ucount && $i<$c+self::SPLIT_COUNT; $i++)
 				{
-					$field0 = ('`' === $this->_aKeyField[0][0]) ? $this->_aKeyField[0] : '`'.$this->_aKeyField[0].'`';
-					if ($bIsSingleKey)
+					if ($this->_bIsMongoDB)
 					{
-						$oOption->oOr($field0.' = ?', $aKeyIdMap[$aKeys[$i]][0]);
+						if ($bIsSingleKey)
+						{
+							$oOption->oOr(array($this->_aKeyField[0] => $aKeyIdMap[$aKeys[$i]][0]));
+						}
+						else
+						{
+							$oOption->oOr(array($this->_aKeyField[0] => $aKeyIdMap[$aKeys[$i]][0], $this->_aKeyField[1] => $aKeyIdMap[$aKeys[$i]][1]));
+						}
 					}
 					else
 					{
-						$field1 = ('`' === $this->_aKeyField[1][0]) ? $this->_aKeyField[1] : '`'.$this->_aKeyField[1].'`';
-						$oOption->oOr($field0.' = ? AND '.$field1.' = ?', $aKeyIdMap[$aKeys[$i]][0], $aKeyIdMap[$aKeys[$i]][1]);
+						$field0 = ('`' === $this->_aKeyField[0][0]) ? $this->_aKeyField[0] : '`'.$this->_aKeyField[0].'`';
+						if ($bIsSingleKey)
+						{
+							$oOption->oOr($field0.' = ?', $aKeyIdMap[$aKeys[$i]][0]);
+						}
+						else
+						{
+							$field1 = ('`' === $this->_aKeyField[1][0]) ? $this->_aKeyField[1] : '`'.$this->_aKeyField[1].'`';
+							$oOption->oOr($field0.' = ? AND '.$field1.' = ?', $aKeyIdMap[$aKeys[$i]][0], $aKeyIdMap[$aKeys[$i]][1]);
+						}
 					}
 				}
 				if ($i === $c)
