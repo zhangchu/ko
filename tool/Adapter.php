@@ -37,6 +37,7 @@ class Ko_Tool_Adapter
 	 * 将数据按照指定的规则来进行适配
 	 * rule支持的基本数据类型：
 	 *   boolean, integer, float, string, list, hash
+	 *   使用 any 来表示任意类型
 	 * 如：
 	 *   Ko_Tool_Adapter::VConv($data, 'boolean');
 	 *   Ko_Tool_Adapter::VConv($data, 'string');
@@ -52,6 +53,7 @@ class Ko_Tool_Adapter
 	 *     ))),
 	 *     'userinfo' => 'userbasicinfo',                         //自定义类型
 	 *     'logo16' => array('userlogo', '16'),                   //带参数的自定义类型
+	 *     'userdata' => 'any',
 	 *   )));
 	 */
 	public static function VConv($vData, $vRule)
@@ -93,31 +95,33 @@ class Ko_Tool_Adapter
 		}
 		switch ($sType)
 		{
-		case 'bool':
-		case 'boolean':
-			$vData = (boolean)$vData;
-			break;
-		case 'int':
-		case 'integer':
-			$vData = (integer)$vData;
-			break;
-		case 'double':
-		case 'float':
-			$vData = (float)$vData;
-			break;
-		case 'str':
-		case 'string':
-			$vData = (string)$vData;
-			break;
-		case 'list':
-			self::_VList($vData, $vChildRule, $aBatchData, $sBatchKey);
-			break;
-		case 'hash':
-			self::_VHash($vData, $vChildRule, $aBatchData, $sBatchKey);
-			break;
-		default:
-			$aBatchData[$sType][$sBatchKey] = array($vData, $vChildRule);
-			break;
+			case 'any':
+				break;
+			case 'bool':
+			case 'boolean':
+				$vData = (boolean)$vData;
+				break;
+			case 'int':
+			case 'integer':
+				$vData = (integer)$vData;
+				break;
+			case 'double':
+			case 'float':
+				$vData = (float)$vData;
+				break;
+			case 'str':
+			case 'string':
+				$vData = (string)$vData;
+				break;
+			case 'list':
+				self::_VList($vData, $vChildRule, $aBatchData, $sBatchKey);
+				break;
+			case 'hash':
+				self::_VHash($vData, $vChildRule, $aBatchData, $sBatchKey);
+				break;
+			default:
+				$aBatchData[$sType][$sBatchKey] = array($vData, $vChildRule);
+				break;
 		}
 	}
 	
