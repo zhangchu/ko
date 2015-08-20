@@ -312,7 +312,7 @@ class Ko_Mode_Rest
 
 	private function _sGetPostFuncInfo($resConf, &$aInput, &$para)
 	{
-		if ('' !== $unique_value || !isset($resConf['unique']))
+		if ('' !== $this->_sId || !isset($resConf['unique']))
 		{
 			throw new Exception('指定资源不能进行POST操作', self::ERROR_POST_INVALID);
 		}
