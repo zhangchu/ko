@@ -162,8 +162,12 @@ class Ko_Web_Response
     /**
      * 发送数据头和数据体
      */
-    public static function VSend()
+    public static function VSend($oBody = null)
     {
+        if($oBody instanceof Ko_View_Render_Base) 
+        {
+            self::VAppendBody($oBody);
+        }
         if (!self::$s_bSendBody)
         {
             self::_VSendHeader();
