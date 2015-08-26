@@ -57,6 +57,19 @@ class Ko_Mode_Rest
 		return '';
 	}
 
+	protected function _aLoadConf($sModule, $sResource)
+	{
+		if (!isset($this->_aConf[$sModule]))
+		{
+			throw new Exception('模块不存在', self::ERROR_MODULE_INVALID);
+		}
+		if (!isset($this->_aConf[$sModule]['urilist'][$sResource]))
+		{
+			throw new Exception('资源不存在', self::ERROR_RESOURCE_INVALID);
+		}
+		return $this->_aConf[$sModule]['urilist'][$sResource];
+	}
+
 	public function aGet($sUri, $aInput)
 	{
 		return $this->aCall('GET', $sUri, $aInput);
@@ -97,15 +110,7 @@ class Ko_Mode_Rest
 		$this->_sResource = array_pop($items);
 		$this->_sModule = implode('/', $items);
 
-		if (!isset($this->_aConf[$this->_sModule]))
-		{
-			throw new Exception('模块不存在', self::ERROR_MODULE_INVALID);
-		}
-		if (!isset($this->_aConf[$this->_sModule]['urilist'][$this->_sResource]))
-		{
-			throw new Exception('资源不存在', self::ERROR_RESOURCE_INVALID);
-		}
-		$resConf = &$this->_aConf[$this->_sModule]['urilist'][$this->_sResource];
+		$resConf = $this->_aLoadConf($this->_sModule, $this->_sResource);
 		if ('' !== $this->_sId && !isset($resConf['unique']))
 		{
 			throw new Exception('唯一键类型未定义', self::ERROR_UNIQUE_NOT_DEFINED);
