@@ -19,6 +19,9 @@ class Ko_Mode_Rest
 	const ERROR_DELETE_INVALID             = -10000008;
 	const ERROR_STYLE_INVALID              = -10000009;
 	const ERROR_EXSTYLE_INVALID            = -10000010;
+	const ERROR_FILTERSTYLE_INVALID        = -10000011;
+	const ERROR_POSTSTYLE_INVALID          = -10000012;
+	const ERROR_PUTSTYLE_INVALID           = -10000013;
 
 	public static $s_aPageInput = array('hash', array(
 		'mode' => 'string',
@@ -42,6 +45,9 @@ class Ko_Mode_Rest
 	 *     'unique' => 'datatype',
 	 *     'stylelist' => array('list', 'datatype'),
 	 *     'exstylelist' => array('list', 'datatype'),
+	 *     'filterstylelist' => array('list', 'datatype'),
+	 *     'poststylelist' => array('list', 'datatype'),
+	 *     'putstylelist' => array('list', 'datatype'),
 	 *   ))),
 	 * )));
 	 */
@@ -296,7 +302,7 @@ class Ko_Mode_Rest
 		{
 			$funcname = 'get';
 			$para = array(
-				$this->_vKey,
+				Ko_Tool_Adapter::VConv($this->_vKey, $resConf['unique']),
 				$this->_aGetStylePara($aInput, 'data_style', 'data_decorate'),
 			);
 		}
@@ -304,6 +310,8 @@ class Ko_Mode_Rest
 		{
 			$aInput['page'] = Ko_Tool_Adapter::VConv($aInput['page'], self::$s_aPageInput);
 			$this->_vNormalizeExStyle($resConf, $aInput, 'ex_style');
+			$filterRule = $this->_vGetFilterStyle($resConf, $aInput);
+			$aInput['filter'] = Ko_Tool_Adapter::VConv($aInput['filter'], $filterRule);
 			$funcname = 'getMulti';
 			$para = array(
 				$this->_aGetStylePara($aInput, 'data_style', 'data_decorate'),
@@ -321,9 +329,11 @@ class Ko_Mode_Rest
 		{
 			throw new Exception('指定资源不能进行POST操作', self::ERROR_POST_INVALID);
 		}
+		$postRule = $this->_vGetPostStyle($resConf, $aInput);
 		if (!isset($aInput['list']))
 		{
 			$this->_vNormalizeStyle($resConf, $aInput, 'after_style', true);
+			$aInput['update'] = Ko_Tool_Adapter::VConv($aInput['update'], $postRule);
 			$funcname = 'post';
 			$para = array(
 				$aInput['update'],
@@ -332,6 +342,8 @@ class Ko_Mode_Rest
 		}
 		else
 		{
+			$aInput['list'] = Ko_Tool_Adapter::VConv($aInput['list'], array('list', array('hash',
+				array('update' => $postRule))));
 			$funcname = 'postMulti';
 			$para = array(
 				$aInput['list'],
@@ -342,13 +354,15 @@ class Ko_Mode_Rest
 
 	private function _sGetPutFuncInfo($resConf, &$aInput, &$para)
 	{
+		$putRule = $this->_vGetPutStyle($resConf, $aInput);
 		if ('' !== $this->_sId || !isset($resConf['unique']))
 		{
 			$this->_vNormalizeStyle($resConf, $aInput, 'before_style', true);
 			$this->_vNormalizeStyle($resConf, $aInput, 'after_style', true);
+			$aInput['update'] = Ko_Tool_Adapter::VConv($aInput['update'], $putRule);
 			$funcname = 'put';
 			$para = array(
-				$this->_vKey,
+				Ko_Tool_Adapter::VConv($this->_vKey, $resConf['unique']),
 				$aInput['update'],
 				$this->_aGetStylePara($aInput, 'before_style', 'before_decorate'),
 				$this->_aGetStylePara($aInput, 'after_style', 'after_decorate'),
@@ -356,6 +370,8 @@ class Ko_Mode_Rest
 		}
 		else
 		{
+			$aInput['list'] = Ko_Tool_Adapter::VConv($aInput['list'], array('list', array('hash',
+				array('key' => $resConf['unique'], 'update' => $putRule))));
 			$funcname = 'putMulti';
 			$para = array(
 				$aInput['list'],
@@ -375,18 +391,59 @@ class Ko_Mode_Rest
 			$this->_vNormalizeStyle($resConf, $aInput, 'before_style', true);
 			$funcname = 'delete';
 			$para = array(
-				$this->_vKey,
+				Ko_Tool_Adapter::VConv($this->_vKey, $resConf['unique']),
 				$this->_aGetStylePara($aInput, 'before_style', 'before_decorate'),
 			);
 		}
 		else
 		{
+			$aInput['list'] = Ko_Tool_Adapter::VConv($aInput['list'], array('list', array('hash',
+				array('key' => $resConf['unique']))));
 			$funcname = 'deleteMulti';
 			$para = array(
 				$aInput['list'],
 			);
 		}
 		return $funcname;
+	}
+
+	private function _vGetFilterStyle($resConf, $aInput)
+	{
+		if (!isset($aInput['filter_style']))
+		{
+			$aInput['filter_style'] = 'default';
+		}
+		if (!isset($resConf['filterstylelist'][$aInput['filter_style']]))
+		{
+			throw new Exception('FILTER数据样式不存在', self::ERROR_FILTERSTYLE_INVALID);
+		}
+		return $resConf['filterstylelist'][$aInput['filter_style']];
+	}
+
+	private function _vGetPostStyle($resConf, $aInput)
+	{
+		if (!isset($aInput['post_style']))
+		{
+			$aInput['post_style'] = 'default';
+		}
+		if (!isset($resConf['poststylelist'][$aInput['post_style']]))
+		{
+			throw new Exception('POST数据样式不存在', self::ERROR_POSTSTYLE_INVALID);
+		}
+		return $resConf['poststylelist'][$aInput['post_style']];
+	}
+
+	private function _vGetPutStyle($resConf, $aInput)
+	{
+		if (!isset($aInput['put_style']))
+		{
+			$aInput['put_style'] = 'default';
+		}
+		if (!isset($resConf['putstylelist'][$aInput['put_style']]))
+		{
+			throw new Exception('PUT数据样式不存在', self::ERROR_PUTSTYLE_INVALID);
+		}
+		return $resConf['putstylelist'][$aInput['put_style']];
 	}
 
 	private function _vNormalizeStyle($resConf, &$aInput, $key, $bIsOption)
