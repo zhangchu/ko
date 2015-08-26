@@ -113,9 +113,11 @@ class Ko_Tool_Adapter
 			case 'string':
 				$vData = (string)$vData;
 				break;
+			case 'array':
 			case 'list':
 				self::_VList($vData, $vChildRule, $aBatchData, $sBatchKey);
 				break;
+			case 'object':
 			case 'hash':
 				self::_VHash($vData, $vChildRule, $aBatchData, $sBatchKey);
 				break;
