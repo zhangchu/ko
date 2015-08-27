@@ -267,7 +267,7 @@ class Ko_Mode_Rest
 		}
 		catch (Exception $e)
 		{
-			if ($e->getCode() <= self::ERROR_UNKNOWN)
+			if ($e->getCode() <= self::ERROR_UNKNOWN || 0 == $e->getCode())
 			{
 				throw new Exception($e->getCode().': '.$e->getMessage(), self::ERROR_UNKNOWN);
 			}
