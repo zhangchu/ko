@@ -62,8 +62,7 @@ class Ko_Web_Route
 		{
 			$render = new Ko_View_Render_FILE;
 			$render->oSetData('filename', self::$s_sFile);
-			Ko_Web_Response::VAppendBody($render);
-			Ko_Web_Response::VSend();
+			Ko_Web_Response::VSend($render);
 		}
 		else if (is_dir(self::$s_sFile))
 		{
@@ -115,8 +114,7 @@ class Ko_Web_Route
 		$render->oSetData('error', $error);
 		
 		Ko_Web_Response::VSetHttpCode(404);
-		Ko_Web_Response::VAppendBody($render);
-		Ko_Web_Response::VSend();
+		Ko_Web_Response::VSend($render);
 	}
 	
 	public static function VGet($sName, $fnRoute)

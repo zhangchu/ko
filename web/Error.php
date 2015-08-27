@@ -94,8 +94,7 @@ class Ko_Web_Error
 		$render->oSetData('error', $error);
 		
 		Ko_Web_Response::VSetHttpCode(500);
-		Ko_Web_Response::VAppendBody($render);
-		Ko_Web_Response::VSend();
+		Ko_Web_Response::VSend($render);
 	}
 	
 	public static function SFormatError($errno, $errstr, $errfile, $errline, $errcontext)
