@@ -54,7 +54,7 @@ class Ko_Mode_Sysmsg extends Ko_Busi_Api
 	 * array(
 	 *   'content' =>        内容表
 	 *   'user' =>           用户索引表
-	 *   'merge' =>          合并消息表
+	 *   'merge' =>          合并消息表，可选
 	 *   'masstag' =>        指定群发消息列表，记录指定群发集合对应的消息ID列表，可选
 	 *   ‘usermasstag' =>    用户接收群发消息状态，记录用户订阅了那些群发消息，以及接收到的最大ID，可选
 	 *   'kind' => array(    消息类型组配置
@@ -202,6 +202,7 @@ class Ko_Mode_Sysmsg extends Ko_Busi_Api
 			$v['content'] = Ko_Tool_Enc::ADecode($v['content']);
 		}
 		unset($v);
+		return $list;
 	}
 
 	public function vDeleteByKind($uid, $kind)

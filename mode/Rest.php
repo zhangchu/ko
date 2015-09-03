@@ -226,20 +226,20 @@ class Ko_Mode_Rest
 
 	private function _vPostMulti2Post($api, $aInput)
 	{
-		$this->_vMulti2Single($api, $aInput, 'post', array('update'));
+		$this->_vMulti2Single($api, $aInput, 'post');
 	}
 
 	private function _vPutMulti2Put($api, $aInput)
 	{
-		$this->_vMulti2Single($api, $aInput, 'put', array('key', 'update'));
+		$this->_vMulti2Single($api, $aInput, 'put');
 	}
 
 	private function _vDeleteMulti2Delete($api, $aInput)
 	{
-		$this->_vMulti2Single($api, $aInput, 'delete', array('key'));
+		$this->_vMulti2Single($api, $aInput, 'delete');
 	}
 
-	private function _vMulti2Single($api, $aInput, $funcname, $aVar)
+	private function _vMulti2Single($api, $aInput, $funcname)
 	{
 		if (!method_exists($api, $funcname))
 		{
@@ -249,10 +249,17 @@ class Ko_Mode_Rest
 		{
 			foreach ($aInput['list'] as $v)
 			{
-				$para = array();
-				foreach ($aVar as $var)
+				switch ($funcname)
 				{
-					$para[] = $v[$var];
+					case 'post':
+						$para = array($v['update'], null, $aInput['post_style']);
+						break;
+					case 'put':
+						$para = array($v['key'], $v['update'], null, null, $aInput['put_style']);
+						break;
+					case 'delete':
+						$para = array($v['key'], null);
+						break;
 				}
 				$this->_vCallApiFunc($api, $funcname, $para);
 			}
@@ -318,6 +325,7 @@ class Ko_Mode_Rest
 				$aInput['page'],
 				$aInput['filter'],
 				$this->_aGetStylePara($aInput, 'ex_style', 'ex_decorate'),
+				$aInput['filter_style'],
 			);
 		}
 		return $funcname;
@@ -338,6 +346,7 @@ class Ko_Mode_Rest
 			$para = array(
 				$aInput['update'],
 				$this->_aGetStylePara($aInput, 'after_style', 'after_decorate'),
+				$aInput['post_style'],
 			);
 		}
 		else
@@ -347,6 +356,7 @@ class Ko_Mode_Rest
 			$funcname = 'postMulti';
 			$para = array(
 				$aInput['list'],
+				$aInput['post_style'],
 			);
 		}
 		return $funcname;
@@ -366,6 +376,7 @@ class Ko_Mode_Rest
 				$aInput['update'],
 				$this->_aGetStylePara($aInput, 'before_style', 'before_decorate'),
 				$this->_aGetStylePara($aInput, 'after_style', 'after_decorate'),
+				$aInput['put_style'],
 			);
 		}
 		else
@@ -375,6 +386,7 @@ class Ko_Mode_Rest
 			$funcname = 'putMulti';
 			$para = array(
 				$aInput['list'],
+				$aInput['put_style'],
 			);
 		}
 		return $funcname;
@@ -407,7 +419,7 @@ class Ko_Mode_Rest
 		return $funcname;
 	}
 
-	private function _vGetFilterStyle($resConf, $aInput)
+	private function _vGetFilterStyle($resConf, &$aInput)
 	{
 		if (!isset($aInput['filter_style']))
 		{
@@ -420,7 +432,7 @@ class Ko_Mode_Rest
 		return $resConf['filterstylelist'][$aInput['filter_style']];
 	}
 
-	private function _vGetPostStyle($resConf, $aInput)
+	private function _vGetPostStyle($resConf, &$aInput)
 	{
 		if (!isset($aInput['post_style']))
 		{
@@ -433,7 +445,7 @@ class Ko_Mode_Rest
 		return $resConf['poststylelist'][$aInput['post_style']];
 	}
 
-	private function _vGetPutStyle($resConf, $aInput)
+	private function _vGetPutStyle($resConf, &$aInput)
 	{
 		if (!isset($aInput['put_style']))
 		{
