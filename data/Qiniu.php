@@ -70,6 +70,10 @@ class Ko_Data_Qiniu extends Ko_Data_Storage
 	
 	public function sGetUrl($sDest, $sBriefTag)
 	{
+		if ('' == $sBriefTag)
+		{
+			return 'http://'.$this->_sDomain.'/'.$sDest;
+		}
 		return 'http://'.$this->_sDomain.'/'.$sDest.'?'.$sBriefTag;
 	}
 	
