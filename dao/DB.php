@@ -17,6 +17,7 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 	private $_sTable;
 	private $_sSplitField;			//分表字段，为空表示不分表，如果有分表字段，该字段不能为空
 	private $_aKeyField;			//唯一字段，为空表示没有唯一字段或者分表字段就是唯一字段，唯一不一定是全局唯一，也可以是在 _sSplitField 指定值范围内唯一
+	                                // 自增长的字段应该是第一个字段，对于单表，第二个字段是潜在的分表字段
 	private $_sIdKey;				//idGenerator 标示，用于生成 _sSplitField 或者 _aKeyField 指定字段的值
 
 	//DBAgent 配置
@@ -368,8 +369,8 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 		{
 			assert(2 >= $keyCount && $keyCount >= 1);
 			$isSingleKey = 1 >= $keyCount;
-			$field0 = strlen($sSplitField) ? $sSplitField : $this->_aKeyField[0];
-			$field1 = $isSingleKey ? $field0 : (strlen($sKeyField) ? $sKeyField : $this->_aKeyField[1]);
+			$field0 = strlen($sSplitField) ? $sSplitField : ($isSingleKey ? $this->_aKeyField[0] : $this->_aKeyField[1]);
+			$field1 = $isSingleKey ? $field0 : (strlen($sKeyField) ? $sKeyField : $this->_aKeyField[0]);
 		}
 
 		//获取 id 列表
@@ -399,7 +400,7 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 			{
 				$aRet[$key] = $this->_aGet(1, $isSingleKey
 					? array($this->_aKeyField[0] => $uid)
-					: array($this->_aKeyField[0] => $uid, $this->_aKeyField[1] => $ids[$i]), true);
+					: array($this->_aKeyField[1] => $uid, $this->_aKeyField[0] => $ids[$i]), true);
 			}
 		}
 		return $aRet;
@@ -639,7 +640,7 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 						}
 						else
 						{
-							$oOption->oOr(array($this->_aKeyField[0] => $aKeyIdMap[$aKeys[$i]][0], $this->_aKeyField[1] => $aKeyIdMap[$aKeys[$i]][1]));
+							$oOption->oOr(array($this->_aKeyField[1] => $aKeyIdMap[$aKeys[$i]][0], $this->_aKeyField[0] => $aKeyIdMap[$aKeys[$i]][1]));
 						}
 					}
 					else
@@ -652,7 +653,7 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 						else
 						{
 							$field1 = ('`' === $this->_aKeyField[1][0]) ? $this->_aKeyField[1] : '`'.$this->_aKeyField[1].'`';
-							$oOption->oOr($field0.' = ? AND '.$field1.' = ?', $aKeyIdMap[$aKeys[$i]][0], $aKeyIdMap[$aKeys[$i]][1]);
+							$oOption->oOr($field1.' = ? AND '.$field0.' = ?', $aKeyIdMap[$aKeys[$i]][0], $aKeyIdMap[$aKeys[$i]][1]);
 						}
 					}
 				}
@@ -677,8 +678,8 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 						}
 						else
 						{
-							if ($v[$this->_aKeyField[0]] == $aKeyIdMap[$aKeys[$i]][0]
-								&& $v[$this->_aKeyField[1]] == $aKeyIdMap[$aKeys[$i]][1])
+							if ($v[$this->_aKeyField[1]] == $aKeyIdMap[$aKeys[$i]][0]
+								&& $v[$this->_aKeyField[0]] == $aKeyIdMap[$aKeys[$i]][1])
 							{
 								$item = $v;
 								break;
@@ -742,10 +743,10 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 			}
 			else
 			{
-				$sCacheKey = $this->_aKeyField[0].':'.urlencode($uid);
+				$sCacheKey = $this->_aKeyField[0].':'.urlencode($aIds[$i]);
 				if (!$bIsSingleKey)
 				{
-					$sCacheKey .= ':'.$this->_aKeyField[1].':'.urlencode($aIds[$i]);
+					$sCacheKey .= ':'.$this->_aKeyField[1].':'.urlencode($uid);
 				}
 			}
 			$aKeyIdMap[$sCacheKey] = array($uid, $aIds[$i]);
