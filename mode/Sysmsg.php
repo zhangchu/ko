@@ -205,6 +205,49 @@ class Ko_Mode_Sysmsg extends Ko_Busi_Api
 		return $list;
 	}
 
+	public function aGetListSeq($uid, $kind, $boundary, $num, &$next, &$next_boundary)
+	{
+		$msgtypes = $this->_aKind2MsgTypes($kind);
+		$userDao = $this->_aConf['user'].'Dao';
+		$option = new Ko_Tool_SQL();
+		$option->oWhere('msgtype in (?)', $msgtypes)->oOrderBy('stime desc, msgid desc')->oLimit($num+1);
+		list($boundary_stime, $boundary_msgid) = explode('_', $boundary);
+		if ($boundary_msgid)
+		{
+			$option->oAnd('stime < ? or (stime = ? and msgid < ?)', $boundary_stime, $boundary_stime, $boundary_msgid);
+		}
+		$splitField = $this->$userDao->sGetSplitField();
+		if (strlen($splitField))
+		{
+			$list = $this->$userDao->aGetList($uid, $option);
+		}
+		else
+		{
+			$option->oAnd('uid = ?', $uid);
+			$list = $this->$userDao->aGetList($option);
+		}
+		$next = 0;
+		if ($count = count($list)) {
+			if (count($list) > $num) {
+				$next = array_pop($list);
+				$count --;
+				$next = $next['msgid'];
+			}
+		}
+		$contentDao = $this->_aConf['content'].'Dao';
+		$msginfos = $this->$contentDao->aGetListByKeys($list);
+		foreach ($list as $k => &$v)
+		{
+			$v = array_merge($msginfos[$v['msgid']], $v);
+			$v['content'] = Ko_Tool_Enc::ADecode($v['content']);
+			if ($k == $count - 1) {
+				$next_boundary = $v['stime'].'_'.$v['msgid'];
+			}
+		}
+		unset($v);
+		return $list;
+	}
+
 	public function vDeleteByKind($uid, $kind)
 	{
 		$msgtypes = $this->_aKind2MsgTypes($kind);
