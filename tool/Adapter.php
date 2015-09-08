@@ -85,8 +85,26 @@ class Ko_Tool_Adapter
 	{
 		if (is_array($vRule))
 		{
-			$sType = $vRule[0];
-			$vChildRule = $vRule[1];
+			if (isset($vRule['type']))
+			{
+				$sType = $vRule['type'];
+				switch ($sType)
+				{
+					case 'array':
+					case 'list':
+						$vChildRule = isset($vRule['items']) ? $vRule['items'] : $vRule['elements'];
+						break;
+					case 'object':
+					case 'hash':
+						$vChildRule = isset($vRule['properties']) ? $vRule['properties'] : $vRule['members'];
+						break;
+				}
+			}
+			else
+			{
+				$sType = $vRule[0];
+				$vChildRule = $vRule[1];
+			}
 		}
 		else
 		{
