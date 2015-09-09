@@ -176,7 +176,8 @@ class Ko_Data_Storage extends Ko_Busi_Api
 					$this->_vSetSize($sDest, $imginfo['width'], $imginfo['height']);
 				}
 
-				if (strlen($this->_aConf['exif']) && (false !== ($exif = Ko_Tool_Image::VExif($sContent, Ko_Tool_Image::FLAG_SRC_BLOB))))
+				if (strlen($this->_aConf['exif'])
+					&& (false !== ($exif = Ko_Tool_Image::VExif($sContent, Ko_Tool_Image::FLAG_SRC_BLOB))))
 				{
 					$this->_vSetExif($sDest, $exif);
 				}
