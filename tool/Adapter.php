@@ -98,6 +98,9 @@ class Ko_Tool_Adapter
 					case 'hash':
 						$vChildRule = isset($vRule['properties']) ? $vRule['properties'] : $vRule['members'];
 						break;
+					default:
+						$vChildRule = isset($vRule['paras']) ? $vRule['paras'] : null;
+						break;
 				}
 			}
 			else
