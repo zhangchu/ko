@@ -80,40 +80,10 @@ class Ko_Tool_Adapter
 		}
 		return $vData;
 	}
-	
+
 	private static function _VConv(&$vData, $vRule, &$aBatchData, $sBatchKey)
 	{
-		if (is_array($vRule))
-		{
-			if (isset($vRule['type']))
-			{
-				$sType = $vRule['type'];
-				switch ($sType)
-				{
-					case 'array':
-					case 'list':
-						$vChildRule = isset($vRule['items']) ? $vRule['items'] : $vRule['elements'];
-						break;
-					case 'object':
-					case 'hash':
-						$vChildRule = isset($vRule['properties']) ? $vRule['properties'] : $vRule['members'];
-						break;
-					default:
-						$vChildRule = isset($vRule['paras']) ? $vRule['paras'] : null;
-						break;
-				}
-			}
-			else
-			{
-				$sType = $vRule[0];
-				$vChildRule = $vRule[1];
-			}
-		}
-		else
-		{
-			$sType = $vRule;
-			$vChildRule = null;
-		}
+		list($sType, $vChildRule) = self::_AParseRule($vRule);
 		switch ($sType)
 		{
 			case 'any':
@@ -147,7 +117,43 @@ class Ko_Tool_Adapter
 				break;
 		}
 	}
-	
+
+	private static function _AParseRule($vRule)
+	{
+		if (is_array($vRule))
+		{
+			if (isset($vRule['type']))
+			{
+				$sType = $vRule['type'];
+				switch ($sType)
+				{
+					case 'array':
+					case 'list':
+						$vChildRule = isset($vRule['items']) ? $vRule['items'] : $vRule['elements'];
+						break;
+					case 'object':
+					case 'hash':
+						$vChildRule = isset($vRule['properties']) ? $vRule['properties'] : $vRule['members'];
+						break;
+					default:
+						$vChildRule = isset($vRule['paras']) ? $vRule['paras'] : null;
+						break;
+				}
+			}
+			else
+			{
+				$sType = $vRule[0];
+				$vChildRule = $vRule[1];
+			}
+		}
+		else
+		{
+			$sType = $vRule;
+			$vChildRule = null;
+		}
+		return array($sType, $vChildRule);
+	}
+
 	private static function _VHash(&$vData, $vRule, &$aBatchData, $sBatchKey)
 	{
 		if (!is_array($vData))
