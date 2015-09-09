@@ -13,6 +13,22 @@ class Ko_Tool_Image_Gd
 		'png' => array('imagepng', 9, 9),
 		'jpg' => array('imagejpeg', 90, 98),
 	);
+
+	public static function VExif($sSrc, $iFlag = 0)
+	{
+		if ($iFlag & Ko_Tool_Image::FLAG_SRC_BLOB)
+		{
+			$tmpfile = tempnam(KO_TEMPDIR, '');
+			file_put_contents($tmpfile, $sSrc);
+			$exif = exif_read_data($tmpfile);
+			unlink($tmpfile);
+		}
+		else
+		{
+			$exif = exif_read_data($sSrc);
+		}
+		return $exif;
+	}
 	
 	public static function VInfo($sSrc, $iFlag = 0)
 	{

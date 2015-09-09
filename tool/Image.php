@@ -45,9 +45,19 @@ class Ko_Tool_Image
 		}
 		return array($dst_w, $dst_h);
 	}
+
+	/**
+	 * 获取图片exif信息
+	 *
+	 * @return boolean|array
+	 */
+	public static function VExif($sSrc, $iFlag = 0)
+	{
+		return call_user_func(array('Ko_Tool_Image_'.KO_IMAGE, 'VExif'), $sSrc, $iFlag);
+	}
 	
 	/**
-	 * 获取图片文件信息, width, height, type
+	 * 获取图片文件信息, width, height, type, orientation
 	 *
 	 * @return boolean|array
 	 */

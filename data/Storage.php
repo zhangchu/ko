@@ -68,6 +68,11 @@ class Ko_Data_Storage extends Ko_Busi_Api
 	 *     `ctime` timestamp NOT NULL DEFAULT 0,
 	 *     UNIQUE KEY (`dest`)
 	 *   ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
+	 *   CREATE TABLE `s_file_exif` (
+	 *     `dest` varchar(128) NOT NULL DEFAULT '',
+	 *     `exif` blob not null default '',
+	 *     UNIQUE KEY (`dest`)
+	 *   ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 	 * </pre>
 	 *
 	 * @var array
@@ -104,6 +109,20 @@ class Ko_Data_Storage extends Ko_Busi_Api
 		
 		$sizeDao = $this->_aConf['size'].'Dao';
 		return $this->$sizeDao->aGetListByKeys($aDest);
+	}
+
+	public function aGetImageExif($sDest)
+	{
+		assert(strlen($this->_aConf['exif']));
+
+		$exifDao = $this->_aConf['exif'].'Dao';
+		$ret = $this->$exifDao->aGet($sDest);
+		$exif = Ko_Tool_Enc::ADecode($ret['exif']);
+		if (false === $exif)
+		{
+			return array();
+		}
+		return $exif;
 	}
 	
 	public function bUpload2Storage($aFile, &$sDest, $bOnlyImage = true)
@@ -155,6 +174,11 @@ class Ko_Data_Storage extends Ko_Busi_Api
 				else
 				{
 					$this->_vSetSize($sDest, $imginfo['width'], $imginfo['height']);
+				}
+
+				if (strlen($this->_aConf['exif']) && (false !== ($exif = Ko_Tool_Image::VExif($sContent, Ko_Tool_Image::FLAG_SRC_BLOB))))
+				{
+					$this->_vSetExif($sDest, $exif);
 				}
 			}
 		}
@@ -259,6 +283,19 @@ class Ko_Data_Storage extends Ko_Busi_Api
 			);
 			$this->$sizeDao->aInsert($data, $update);
 		}
+	}
+
+	private function _vSetExif($sDest, $exif)
+	{
+		$exifDao = $this->_aConf['exif'].'Dao';
+		$data = array(
+			'dest' => $sDest,
+			'exif' => Ko_Tool_Enc::SEncode($exif),
+		);
+		$update = array(
+			'exif' => Ko_Tool_Enc::SEncode($exif),
+		);
+		$this->$exifDao->aInsert($data, $update);
 	}
 	
 	private function _bIsUrlExist($url, &$sDest)

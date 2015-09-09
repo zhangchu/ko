@@ -14,6 +14,25 @@ class Ko_Tool_Image_Imagick
 		'jpg' => array(90, false),
 	);
 
+	public static function VExif($sSrc, $iFlag = 0)
+	{
+		try
+		{
+			$imgsrc = self::_VCreateImage($sSrc, $iFlag);
+			$list = $imgsrc->getImageProperties('exif:*');
+			$exif = array();
+			foreach ($list as $k => $v)
+			{
+				$exif[substr($k, 5)] = $v;
+			}
+			return $exif;
+		}
+		catch (Exception $e)
+		{
+			return false;
+		}
+	}
+
 	public static function VInfo($sSrc, $iFlag = 0)
 	{
 		try
