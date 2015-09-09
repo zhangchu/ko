@@ -288,6 +288,8 @@ class Ko_Data_Storage extends Ko_Busi_Api
 
 	private function _vSetExif($sDest, $exif)
 	{
+		unset($exif['UserComment']);
+
 		$exifDao = $this->_aConf['exif'].'Dao';
 		$data = array(
 			'dest' => $sDest,
