@@ -13,7 +13,7 @@ class Ko_Tool_Image_Imagick
 		'png' => array(0, false),
 		'jpg' => array(90, false),
 	);
-	
+
 	public static function VInfo($sSrc, $iFlag = 0)
 	{
 		try
@@ -23,6 +23,7 @@ class Ko_Tool_Image_Imagick
 				'width' => $imgsrc->getImageWidth(),
 				'height' => $imgsrc->getImageHeight(),
 				'type' => strtolower($imgsrc->getImageFormat()),
+				'orientation' => $imgsrc->getImageOrientation(),
 			);
 			if ($info['width'] && $info['height'])
 			{

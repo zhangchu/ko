@@ -21,16 +21,19 @@ class Ko_Tool_Image_Gd
 			$tmpfile = tempnam(KO_TEMPDIR, '');
 			file_put_contents($tmpfile, $sSrc);
 			$arr = getimagesize($tmpfile);
+			$exif = exif_read_data($tmpfile);
 			unlink($tmpfile);
 		}
 		else
 		{
 			$arr = getimagesize($sSrc);
+			$exif = exif_read_data($sSrc);
 		}
 		$info = array(
 			'width' => intval($arr[0]),
 			'height' => intval($arr[1]),
 			'type' => image_type_to_extension($arr[2], false),
+			'orientation' => $exif['IFD0']['Orientation'],
 		);
 		if ($info['width'] && $info['height'])
 		{

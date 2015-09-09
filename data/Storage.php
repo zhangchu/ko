@@ -148,7 +148,14 @@ class Ko_Data_Storage extends Ko_Busi_Api
 			$ret = $this->bWrite($sContent, $imginfo['type'], $sDest);
 			if ($ret)
 			{
-				$this->_vSetSize($sDest, $imginfo['width'], $imginfo['height']);
+				if (5 <= $imginfo['orientation'] && $imginfo['orientation'] <= 8)
+				{
+					$this->_vSetSize($sDest, $imginfo['height'], $imginfo['width']);
+				}
+				else
+				{
+					$this->_vSetSize($sDest, $imginfo['width'], $imginfo['height']);
+				}
 			}
 		}
 		else if (!$bOnlyImage)
