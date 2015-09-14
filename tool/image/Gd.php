@@ -20,12 +20,12 @@ class Ko_Tool_Image_Gd
 		{
 			$tmpfile = tempnam(KO_TEMPDIR, '');
 			file_put_contents($tmpfile, $sSrc);
-			$exif = exif_read_data($tmpfile);
+			$exif = @exif_read_data($tmpfile);
 			unlink($tmpfile);
 		}
 		else
 		{
-			$exif = exif_read_data($sSrc);
+			$exif = @exif_read_data($sSrc);
 		}
 		return $exif;
 	}
@@ -37,13 +37,13 @@ class Ko_Tool_Image_Gd
 			$tmpfile = tempnam(KO_TEMPDIR, '');
 			file_put_contents($tmpfile, $sSrc);
 			$arr = getimagesize($tmpfile);
-			$exif = exif_read_data($tmpfile);
+			$exif = @exif_read_data($tmpfile);
 			unlink($tmpfile);
 		}
 		else
 		{
 			$arr = getimagesize($sSrc);
-			$exif = exif_read_data($sSrc);
+			$exif = @exif_read_data($sSrc);
 		}
 		$info = array(
 			'width' => intval($arr[0]),
