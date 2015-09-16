@@ -188,14 +188,18 @@ class Ko_Mode_OAuth2Server extends Ko_Mode_OAuthServerBase
 	{
 		if (!isset($this->_aReq['access_token']))
 		{
-			return array(0, 0, '');
+			$this->_vTokenError('empty_accesstoken');
 		}
 		$tokenApi = $this->_aConf['tokenApi'];
 		$info = $this->$tokenApi->aGet($this->_aReq['access_token']);
+		if (empty($info))
+		{
+			$this->_vTokenError('invalid_accesstoken');
+		}
 		$tt = $this->_iGetTokenTimeout();
 		if ($tt && ($tt < abs(time() - strtotime($info['ctime']))))
 		{
-			return array(0, 0, '');
+			$this->_vTokenError('expire_accesstoken');
 		}
 		return array($info['cid'], $info['uid'], $info['scope']);
 	}
