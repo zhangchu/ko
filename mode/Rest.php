@@ -22,6 +22,7 @@ class Ko_Mode_Rest
 	const ERROR_FILTERSTYLE_INVALID        = -10000011;
 	const ERROR_POSTSTYLE_INVALID          = -10000012;
 	const ERROR_PUTSTYLE_INVALID           = -10000013;
+	const ERROR_AUTH_INVALID               = -10000014;
 
 	public static $s_aPageInput = array('hash', array(
 		'mode' => 'string',
