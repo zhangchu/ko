@@ -6,13 +6,22 @@
  * @author zhangchu
  */
 
+if (!defined('KO_CONFIG_SITE_INI'))
+{
+	define('KO_CONFIG_SITE_INI', '');
+}
+if (!defined('KO_CONFIG_SITE_CACHE'))
+{
+	define('KO_CONFIG_SITE_CACHE', '');
+}
+
 /**
  * 加载web域名等配置
  */
 class Ko_Web_Config
 {
-	private static $s_sConfFile = '';
-	private static $s_sCacheFile = '';
+	private static $s_sConfFile = KO_CONFIG_SITE_INI;
+	private static $s_sCacheFile = KO_CONFIG_SITE_CACHE;
 	private static $s_aConfig = array();
 	private static $s_aHostConfig = array();
 
