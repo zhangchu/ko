@@ -66,7 +66,7 @@ class Ko_Web_Rewrite
 				if (!is_file($cacheFile) || filemtime($confFile) > filemtime($cacheFile)) {
 					self::$s_aRules = Ko_Web_RewriteParser::AProcess(file_get_contents($confFile));
 					$script = "<?php\nKo_Web_Rewrite::VLoadRules("
-						. Ko_Tool_Stringify::SConvArray(self::$s_aRules)
+						. var_export(self::$s_aRules, true)
 						. ");\n";
 					file_put_contents($cacheFile, $script);
 				} else {

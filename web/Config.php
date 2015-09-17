@@ -53,7 +53,7 @@ class Ko_Web_Config
 				if (!is_file(self::$s_sCacheFile) || filemtime(self::$s_sConfFile) > filemtime(self::$s_sCacheFile)) {
 					self::$s_aConfig = parse_ini_file(self::$s_sConfFile, true);
 					$script = "<?php\nKo_Web_Config::VLoadConfig("
-						. Ko_Tool_Stringify::SConvArray(self::$s_aConfig)
+						. var_export(self::$s_aConfig, true)
 						. ");\n";
 					file_put_contents(self::$s_sCacheFile, $script);
 				} else {
