@@ -466,7 +466,7 @@ class Ko_Tool_Str
 			$c0 = ord($sIn[$i]);
 			if ($c0 < 0x80)
 			{
-				if ($c0 == 0x9 || $c0 == 0xA || $c0 == 0xD || $c0 >=0x20)
+				if ($c0 == 0x9 || $c0 == 0xA || $c0 == 0xD || (0x20 <= $c0 && $c0 <= 0x7E))
 				{
 					self::$fnChar($sIn, $i, 1, $aOut);
 					continue;
@@ -508,7 +508,16 @@ class Ko_Tool_Str
 				if ($k === $j)
 				{
 					$invalid = false;
-					if (3 == $j)
+					if (2 == $j)
+					{
+						if ($c0 == 0xC2
+							&& ((0x80 <= $c1 && $c1 <= 0x84)         // 80-84
+								|| (0x86 <= $c1 && $c1 <= 0x9F)))    // 86-9F
+						{
+							$invalid = true;
+						}
+					}
+					else if (3 == $j)
 					{
 						if (($c0 == 0xED && $c1 >= 0xA0)                     // D800-DFFF
 							|| ($c0 == 0xEF && $c1 == 0xBF && $c2 >= 0xBE))  // FFFE-FFFF
