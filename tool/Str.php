@@ -265,7 +265,22 @@ class Ko_Tool_Str
 		$fn = 'SFilterErrorCode_'.self::_SConvertCharset($sCharset);
 		return self::$fn($sIn);
 	}
-	
+
+	/**
+	 * 过滤掉不符合 xml 规范的字符，并且过滤掉专用区内的字符(PUA) 0xE000-0xF8FF, 0xF0000-0xFFFFD和0x100000-0x10FFFD
+	 *
+	 * @return string
+	 */
+	public static function SFilterErrorCode_Strict($sIn)
+	{
+		$aOut = array(
+			'start' => -1,
+			'del' => array(),
+		);
+		self::_VCheckStr_Strict($sIn, '_VFilterErrorCode_OnChar', '_VFilterErrorCode_OnFail', '_VFilterErrorCode_OnComplete', $aOut);
+		return self::_SFilterStr($sIn, $aOut['del']);
+	}
+
 	/**
 	 * 过滤掉不符合 xml 规范的字符
 	 *
@@ -457,7 +472,93 @@ class Ko_Tool_Str
 			$aOut['start'] = -1;
 		}
 	}
-	
+
+	private static function _VCheckStr_Strict($sIn, $fnChar, $fnFail, $fnComplete, &$aOut)
+	{
+		$iLen = strlen($sIn);
+		for($i=0; $i<$iLen; $i++)
+		{
+			$c0 = ord($sIn[$i]);
+			if ($c0 < 0x80)
+			{
+				if ($c0 == 0x9 || $c0 == 0xA || $c0 == 0xD || (0x20 <= $c0 && $c0 <= 0x7E))
+				{
+					self::$fnChar($sIn, $i, 1, $aOut);
+					continue;
+				}
+			}
+			else if (self::_BCheckMultiByte_Strict($sIn, $i, $c0, $iLen, $j))
+			{
+				self::$fnChar($sIn, $i, $j, $aOut);
+				$i += $j - 1;
+				continue;
+			}
+			self::$fnFail($sIn, $i, $aOut);
+		}
+		self::$fnComplete($sIn, $iLen, $aOut);
+	}
+
+	private static function _BCheckMultiByte_Strict($sIn, $i, $c0, $iLen, &$j)
+	{
+		if (0xC0 <= $c0 && $c0 <= 0xFD)
+		{
+			if ($c0 >= 0xFC)       $j = 6;
+			else if ($c0 >= 0xF8)  $j = 5;
+			else if ($c0 >= 0xF0)  $j = 4;
+			else if ($c0 >= 0xE0)  $j = 3;
+			else                   $j = 2;
+			if ($i + $j <= $iLen && $j <= 4)
+			{
+				$c1 = $c2 = $c3 = 0;
+				for ($k=1; $k<$j; $k++)
+				{
+					$ck = 'c'.$k;
+					$$ck = ord($sIn[$i + $k]);
+					if (0x80 <= $$ck && $$ck <= 0xBF)
+					{
+						continue;
+					}
+					break;
+				}
+				if ($k === $j)
+				{
+					$invalid = false;
+					if (2 == $j)
+					{
+						if ($c0 == 0xC2
+							&& ((0x80 <= $c1 && $c1 <= 0x84)         // 80-84
+								|| (0x86 <= $c1 && $c1 <= 0x9F)))    // 86-9F
+						{
+							$invalid = true;
+						}
+					}
+					else if (3 == $j)
+					{
+						if (($c0 == 0xED && $c1 >= 0xA0)                     // D800-DFFF
+							|| ($c0 == 0xEE) || ($c0 == 0xEF && $c1 <= 0xA3) // E000-F8FF
+							|| ($c0 == 0xEF && $c1 == 0xBF && $c2 >= 0xBE))  // FFFE-FFFF
+						{
+							$invalid = true;
+						}
+					}
+					else if (4 == $j)
+					{
+						if ($c0 > 0xF3
+							|| ($c0 == 0xF3 && $c1 >= 0xB0))
+						{
+							$invalid = true;
+						}
+					}
+					if (!$invalid)
+					{
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
 	private static function _VCheckStr_Xml($sIn, $fnChar, $fnFail, $fnComplete, &$aOut)
 	{
 		$iLen = strlen($sIn);
