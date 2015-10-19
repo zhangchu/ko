@@ -237,7 +237,7 @@ class Ko_Tool_Str
 	/**
 	 * 过滤掉不符合 utf-8/gb18030 规范的字符
 	 */
-	public static function VFilterErrorCode(&$aIn, $sCharset = '')
+	public static function VFilterErrorCode(&$aIn, $sCharset = '', $sMode = '')
 	{
 		if (is_array($aIn))
 		{
@@ -245,11 +245,11 @@ class Ko_Tool_Str
 			{
 				if (is_array($v))
 				{
-					self::VFilterErrorCode($aIn[$k], $sCharset);
+					self::VFilterErrorCode($aIn[$k], $sCharset, $sMode);
 				}
 				else if (is_string($v))
 				{
-					$aIn[$k] = self::SFilterErrorCode($v, $sCharset);
+					$aIn[$k] = self::SFilterErrorCode($v, $sCharset, $sMode);
 				}
 			}
 		}
@@ -260,9 +260,23 @@ class Ko_Tool_Str
 	 *
 	 * @return string
 	 */
-	public static function SFilterErrorCode($sIn, $sCharset = '')
+	public static function SFilterErrorCode($sIn, $sCharset = '', $sMode = '')
 	{
-		$fn = 'SFilterErrorCode_'.self::_SConvertCharset($sCharset);
+		$charset = self::_SConvertCharset($sCharset);
+		if ('UTF8' === $charset)
+		{
+			$sMode = strtolower($sMode);
+			switch ($sMode)
+			{
+				case 'strict':
+				case 'xml':
+					$charset = ucfirst($charset);
+					break;
+				default:
+					break;
+			}
+		}
+		$fn = 'SFilterErrorCode_'.$charset;
 		return self::$fn($sIn);
 	}
 

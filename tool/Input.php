@@ -387,10 +387,10 @@ class Ko_Tool_Input
 	{
 		if (is_array($vData))
 		{
-			Ko_Tool_Str::VFilterErrorCode($vData, $sCharset);
+			Ko_Tool_Str::VFilterErrorCode($vData, $sCharset, 'strict');
 			return $vData;
 		}
-		return Ko_Tool_Str::SFilterErrorCode($vData, $sCharset);
+		return Ko_Tool_Str::SFilterErrorCode($vData, $sCharset, 'strict');
 	}
 
 	private static function _VParseFileArray(&$aFile, $sName, $vTmpNameValue, $vNameValue, $vTypeValue, $vErrorValue, $vSizeValue)
