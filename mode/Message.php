@@ -106,7 +106,7 @@ class Ko_Mode_Message extends Ko_Busi_Api
 	 *
 	 * @return int 消息线id，返回0表示失败
 	 */
-	public function iCreateThread($iUid, $aTo, $sContent, $sExinfo, $sLastinfo)
+	public function iCreateThread($iUid, $aTo, $sContent, $sExinfo, $sLastinfo, $bForceCreate = false)
 	{
 		$sUids = $this->_sUidsToString($iUid, $aTo);
 		$aUids = $this->_aUidsToArray($sUids);
@@ -116,7 +116,7 @@ class Ko_Mode_Message extends Ko_Busi_Api
 			return 0;
 		}
 
-		if ($uc <= $this->_iGetMaxUserCountForMerge())
+		if (!$bForceCreate && $uc <= $this->_iGetMaxUserCountForMerge())
 		{	//用户数量满足合并消息的条件
 			$iThread = $this->_iGetMergeThread($sUids);
 			if ($iThread)
