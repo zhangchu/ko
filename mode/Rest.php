@@ -105,6 +105,10 @@ class Ko_Mode_Rest
 		}
 		catch (Exception $e)
 		{
+			if ($e INSTANCEOF Ko_Exception)
+			{
+				return array('errno' => $e->getCode(), 'error' => $e->getMessage(), 'data' => $e->getData());
+			}
 			return array('errno' => $e->getCode(), 'error' => $e->getMessage());
 		}
 		return array('errno' => 0, 'error' => '', 'data' => $data);
