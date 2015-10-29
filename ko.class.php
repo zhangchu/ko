@@ -272,7 +272,14 @@ function koAutoload($sClassName)
 	}
 	if (substr($sClassName, 0, 3) === 'Ko_')
 	{
-		$modulename = substr($sClassName, 3, $pos - 3);
+		if ($pos < 3)
+		{
+			$modulename = '';
+		}
+		else
+		{
+			$modulename = substr($sClassName, 3, $pos - 3);
+		}
 		$includeRoot = KO_DIR;
 	}
 	else
