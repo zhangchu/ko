@@ -34,6 +34,7 @@
  *     mid bigint unsigned not null default 0,
  *     ctime timestamp NOT NULL default 0,
  *     unique(uid, mid),
+ *     index(uid, threadmid, mid),
  *     index(uid, threadmid, ctime)
  *   )ENGINE=InnoDB DEFAULT CHARSET=UTF8;
  *   CREATE TABLE kotest_message_thread_0(
@@ -364,7 +365,7 @@ class Ko_Mode_Message extends Ko_Busi_Api
 		{
 			$oOption->oWhere('ctime >= ?', $info['jointime']);
 		}
-		$oOption->oOrderBy('ctime desc')->oOffset($iStart)->oLimit($iNum);
+		$oOption->oOrderBy('mid desc')->oOffset($iStart)->oLimit($iNum);
 		return $this->_aGetMessageList($iUid, $iThread, $oOption);
 	}
 
@@ -394,7 +395,7 @@ class Ko_Mode_Message extends Ko_Busi_Api
 		{
 			$oOption->oWhere('ctime >= ?', $info['jointime']);
 		}
-		$oOption->oOrderBy('ctime desc')->oOffset($iStart)->oLimit($iNum)->oCalcFoundRows(true);
+		$oOption->oOrderBy('mid desc')->oOffset($iStart)->oLimit($iNum)->oCalcFoundRows(true);
 		$aRet = $this->_aGetMessageList($iUid, $iThread, $oOption);
 		$iTotal = $oOption->iGetFoundRows();
 		return $aRet;
@@ -445,6 +446,7 @@ class Ko_Mode_Message extends Ko_Busi_Api
 			{
 				return array();
 			}
+			//和 ByMinmid 不同，这个接口获取的是历史消息，所以不需要清除未读计数
 		}
 		
 		$oOption = new Ko_Tool_SQL;
@@ -452,17 +454,7 @@ class Ko_Mode_Message extends Ko_Busi_Api
 		{
 			$oOption->oWhere('ctime >= ?', $info['jointime']);
 		}
-		$listDao = $this->_aConf['list'].'Dao';
-		$minfo = $this->$listDao->aGet(array('threadmid' => $iThread, 'mid' => $iMaxmid));
-		if (empty($minfo))
-		{
-			$oOption->oAnd('mid < ?', $iMaxmid);
-		}
-		else
-		{
-			$oOption->oAnd('ctime < ?', $minfo['ctime']);
-		}
-		$oOption->oOrderBy('ctime desc')->oLimit($iNum);
+		$oOption->oAnd('mid < ?', $iMaxmid)->oOrderBy('mid desc')->oLimit($iNum);
 		return $this->_aGetMessageList($iUid, $iThread, $oOption);
 	}
 	
@@ -492,17 +484,7 @@ class Ko_Mode_Message extends Ko_Busi_Api
 		{
 			$oOption->oWhere('ctime >= ?', $info['jointime']);
 		}
-		$listDao = $this->_aConf['list'].'Dao';
-		$minfo = $this->$listDao->aGet(array('threadmid' => $iThread, 'mid' => $iMinmid));
-		if (empty($minfo))
-		{
-			$oOption->oAnd('mid > ?', $iMinmid);
-		}
-		else
-		{
-			$oOption->oAnd('ctime > ?', $minfo['ctime']);
-		}
-		$oOption->oOrderBy('ctime desc')->oLimit($iNum);
+		$oOption->oAnd('mid > ?', $iMinmid)->oOrderBy('mid desc')->oLimit($iNum);
 		return $this->_aGetMessageList($iUid, $iThread, $oOption);
 	}
 	
