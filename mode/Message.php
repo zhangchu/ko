@@ -344,7 +344,7 @@ class Ko_Mode_Message extends Ko_Busi_Api
 	 *
 	 * @return array
 	 */
-	public function aGetMessageList($iUid, $iThread, $iStart, $iNum)
+	public function aGetMessageList($iUid, $iThread, $iStart, $iNum, $bAutoRead = true)
 	{
 		if (isset($this->_aConf['userthread']))
 		{
@@ -354,7 +354,7 @@ class Ko_Mode_Message extends Ko_Busi_Api
 			{
 				return array();
 			}
-			if ($info['unread'])
+			if ($bAutoRead && $info['unread'])
 			{
 				$this->$userthreadDao->iUpdate(array('uid' => $iUid, 'mid' => $iThread), array('unread' => 0));
 			}
@@ -374,7 +374,7 @@ class Ko_Mode_Message extends Ko_Busi_Api
 	 *
 	 * @return array
 	 */
-	public function aGetMessageListWithTotal($iUid, $iThread, &$iTotal, $iStart, $iNum)
+	public function aGetMessageListWithTotal($iUid, $iThread, &$iTotal, $iStart, $iNum, $bAutoRead = true)
 	{
 		if (isset($this->_aConf['userthread']))
 		{
@@ -384,7 +384,7 @@ class Ko_Mode_Message extends Ko_Busi_Api
 			{
 				return array();
 			}
-			if ($info['unread'])
+			if ($bAutoRead && $info['unread'])
 			{
 				$this->$userthreadDao->iUpdate(array('uid' => $iUid, 'mid' => $iThread), array('unread' => 0));
 			}
@@ -406,14 +406,14 @@ class Ko_Mode_Message extends Ko_Busi_Api
 	 *
 	 * @return array
 	 */
-	public function aGetMessageListByUsers($iUid, $aTo, $iStart, $iNum)
+	public function aGetMessageListByUsers($iUid, $aTo, $iStart, $iNum, $bAutoRead = true)
 	{
 		$iThread = $this->iGetThread($iUid, $aTo);
 		if (empty($iThread))
 		{
 			return array();
 		}
-		return $this->aGetMessageList($iUid, $iThread, $iStart, $iNum);
+		return $this->aGetMessageList($iUid, $iThread, $iStart, $iNum, $bAutoRead);
 	}
 	
 	/**
@@ -421,14 +421,14 @@ class Ko_Mode_Message extends Ko_Busi_Api
 	 *
 	 * @return array
 	 */
-	public function aGetMessageListByUsersWithTotal($iUid, $aTo, &$iTotal, $iStart, $iNum)
+	public function aGetMessageListByUsersWithTotal($iUid, $aTo, &$iTotal, $iStart, $iNum, $bAutoRead = true)
 	{
 		$iThread = $this->iGetThread($iUid, $aTo);
 		if (empty($iThread))
 		{
 			return array();
 		}
-		return $this->aGetMessageListWithTotal($iUid, $iThread, $iTotal, $iStart, $iNum);
+		return $this->aGetMessageListWithTotal($iUid, $iThread, $iTotal, $iStart, $iNum, $bAutoRead);
 	}
 	
 	/**
@@ -436,7 +436,7 @@ class Ko_Mode_Message extends Ko_Busi_Api
 	 *
 	 * @return array
 	 */
-	public function aGetMessageListByMaxmid($iUid, $iThread, $iMaxmid, $iNum)
+	public function aGetMessageListByMaxmid($iUid, $iThread, $iMaxmid, $iNum, $bAutoRead = false)
 	{
 		if (isset($this->_aConf['userthread']))
 		{
@@ -446,7 +446,11 @@ class Ko_Mode_Message extends Ko_Busi_Api
 			{
 				return array();
 			}
-			//和 ByMinmid 不同，这个接口获取的是历史消息，所以不需要清除未读计数
+			//和 ByMinmid 不同，这个接口获取的是历史消息，所以默认不需要清除未读计数
+			if ($bAutoRead && $info['unread'])
+			{
+				$this->$userthreadDao->iUpdate(array('uid' => $iUid, 'mid' => $iThread), array('unread' => 0));
+			}
 		}
 		
 		$oOption = new Ko_Tool_SQL;
@@ -463,7 +467,7 @@ class Ko_Mode_Message extends Ko_Busi_Api
 	 *
 	 * @return array
 	 */
-	public function aGetMessageListByMinmid($iUid, $iThread, $iMinmid, $iNum)
+	public function aGetMessageListByMinmid($iUid, $iThread, $iMinmid, $iNum, $bAutoRead = true)
 	{
 		if (isset($this->_aConf['userthread']))
 		{
@@ -473,7 +477,7 @@ class Ko_Mode_Message extends Ko_Busi_Api
 			{
 				return array();
 			}
-			if ($info['unread'])
+			if ($bAutoRead && $info['unread'])
 			{
 				$this->$userthreadDao->iUpdate(array('uid' => $iUid, 'mid' => $iThread), array('unread' => 0));
 			}
