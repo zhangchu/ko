@@ -1199,7 +1199,7 @@ class Ko_Mode_XList extends Ko_Busi_Api
 				}
 			}
 			$itemApi = $this->_aConf['itemApi'];
-			$newid = $this->$itemApi->iInsert($aData, array(), array(), $this->_vAdmin);
+			$newid = $this->$itemApi->iInsert($aData, array(), array(), null, $this->_vAdmin);
 		}
 		catch(Exception $e)
 		{

@@ -190,16 +190,16 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 	/**
 	 * @return int 返回 insertid
 	 */
-	public function iInsert($aData, $aUpdate = array(), $aChange = array())
+	public function iInsert($aData, $aUpdate = array(), $aChange = array(), $oOption = null)
 	{
-		$info = $this->aInsert($aData, $aUpdate, $aChange);
+		$info = $this->aInsert($aData, $aUpdate, $aChange, $oOption);
 		return $info['insertid'];
 	}
 
 	/**
 	 * @return array 返回完整的信息array(data, rownum, insertid, affectedrows)
 	 */
-	public function aInsert($aData, $aUpdate = array(), $aChange = array())
+	public function aInsert($aData, $aUpdate = array(), $aChange = array(), $oOption = null)
 	{
 		$autoIdField = $this->_sGetAutoIdField();
 		if ($bGenId = (strlen($this->_sIdKey) && strlen($autoIdField) && !array_key_exists($autoIdField, $aData)))
@@ -207,7 +207,8 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 			$aData[$autoIdField] = $this->_oGetIdGenerator()->iGetNewTimeID($this->_sIdKey);
 		}
 		$vHintId = $this->_vNormalizedSplit($aData);
-		$aRet = $this->_oGetSqlAgent()->aInsert($this->_sTable, $this->_iGetHintId($vHintId), $aData, $aUpdate, $aChange);
+		$oOption = $this->_vNormalizeOption($oOption);
+		$aRet = $this->_oGetSqlAgent()->aInsert($this->_sTable, $this->_iGetHintId($vHintId), $aData, $aUpdate, $aChange, $oOption);
 		if ($bGenId)
 		{
 			$aRet['insertid'] = $aData[$autoIdField];

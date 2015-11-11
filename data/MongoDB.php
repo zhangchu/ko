@@ -33,7 +33,7 @@ class Ko_Data_MongoDB
 		return self::$s_aInstance[$sTag];
 	}
 
-	public function aInsert($sKind, $iHintId, $aData, $aUpdate, $aChange)
+	public function aInsert($sKind, $iHintId, $aData, $aUpdate, $aChange, $oOption)
 	{
 		assert(empty($aUpdate) && empty($aChange));
 		$options = array('safe' => self::SAFE);

@@ -37,9 +37,9 @@ class Ko_Data_SqlAgent
 		return $this->_aQuery($sKind, $iHintId, $sql);
 	}
 
-	public function aInsert($sKind, $iHintId, $aData, $aUpdate, $aChange)
+	public function aInsert($sKind, $iHintId, $aData, $aUpdate, $aChange, $oOption)
 	{
-		$sql = $this->_sInsertSql($sKind, $aData, $aUpdate, $aChange);
+		$sql = $this->_sInsertSql($sKind, $aData, $aUpdate, $aChange, $oOption);
 		return $this->_aQuery($sKind, $iHintId, $sql);
 	}
 
@@ -167,9 +167,17 @@ class Ko_Data_SqlAgent
 		return $sql;
 	}
 
-	private function _sInsertSql($sKind, $aData, $aUpdate, $aChange)
+	private function _sInsertSql($sKind, $aData, $aUpdate, $aChange, $oOption)
 	{
-		$sql = 'INSERT INTO '.$sKind.' SET '.$this->_sGetSetSql($aData, array());
+		if ($oOption->bIgnore())
+		{
+			$sql = 'INSERT IGNORE ';
+		}
+		else
+		{
+			$sql = 'INSERT ';
+		}
+		$sql .= 'INTO '.$sKind.' SET '.$this->_sGetSetSql($aData, array());
 		if (!empty($aUpdate) || !empty($aChange))
 		{
 			$sql .= ' ON DUPLICATE KEY UPDATE '.$this->_sGetSetSql($aUpdate, $aChange);

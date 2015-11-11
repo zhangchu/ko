@@ -48,8 +48,8 @@
 /**
  * 观察者模式
  *
- * @method int   iInsert($aData, $aUpdate = array(), $aChange = array())
- * @method array aInsert($aData, $aUpdate = array(), $aChange = array())
+ * @method int   iInsert($aData, $aUpdate = array(), $aChange = array(), $oOption=null)
+ * @method array aInsert($aData, $aUpdate = array(), $aChange = array(), $oOption=null)
  * @method int   iUpdate($vKey, $aUpdate, $aChange=array(), $oOption=null)
  * @method int   iUpdateByCond($oOption, $aUpdate, $aChange=array())  db_single
  * @method int   iUpdateByCond($vHintId, $oOption, $aUpdate, $aChange=array())  db_split
@@ -154,16 +154,16 @@ class Ko_Mode_Item extends Ko_Busi_Api
 	/**
 	 * @return int
 	 */
-	public function iInsert($aData, $aUpdate = array(), $aChange = array(), $vAdmin='')
+	public function iInsert($aData, $aUpdate = array(), $aChange = array(), $oOption = null, $vAdmin='')
 	{
-		$info = $this->aInsert($aData, $aUpdate, $aChange, $vAdmin);
+		$info = $this->aInsert($aData, $aUpdate, $aChange, $oOption, $vAdmin);
 		return $info['insertid'];
 	}
 
 	/**
 	 * @return array
 	 */
-	public function aInsert($aData, $aUpdate = array(), $aChange = array(), $vAdmin='')
+	public function aInsert($aData, $aUpdate = array(), $aChange = array(), $oOption = null, $vAdmin='')
 	{
 		if (!$this->_bIsFullItemIndex($aData))
 		{
@@ -176,7 +176,7 @@ class Ko_Mode_Item extends Ko_Busi_Api
 		
 		$itemDao = $this->_aConf['item'].'Dao';
 		$this->_vFireBeforeInsert($this->$itemDao, $aData, $aUpdate, $aChange, $vAdmin);
-		$aInfo = $this->$itemDao->aInsert($aData, $aUpdate, $aChange);
+		$aInfo = $this->$itemDao->aInsert($aData, $aUpdate, $aChange, $oOption);
 		if (1 == $aInfo['affectedrows'])
 		{
 			$this->_vInsert_Index($aInfo['data']);

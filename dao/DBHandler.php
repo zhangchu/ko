@@ -77,17 +77,17 @@ class Ko_Dao_DBHandler implements IKo_Dao_DBHelp, IKo_Dao_Table
 	/**
 	 * @return int
 	 */
-	public function iInsert($aData, $aUpdate = array(), $aChange = array())
+	public function iInsert($aData, $aUpdate = array(), $aChange = array(), $oOption = null)
 	{
-		return $this->_oDB->iInsert($aData, $aUpdate, $aChange);
+		return $this->_oDB->iInsert($aData, $aUpdate, $aChange, $oOption);
 	}
 
 	/**
 	 * @return array
 	 */
-	public function aInsert($aData, $aUpdate = array(), $aChange = array())
+	public function aInsert($aData, $aUpdate = array(), $aChange = array(), $oOption = null)
 	{
-		return $this->_oDB->aInsert($aData, $aUpdate, $aChange);
+		return $this->_oDB->aInsert($aData, $aUpdate, $aChange, $oOption);
 	}
 
 	/**
