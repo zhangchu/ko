@@ -19,6 +19,7 @@ class Ko_Tool_SQL
 	private $_sOrderBy = '';
 	private $_iOffset = 0;
 	private $_iLimit = 0;
+	private $_bIgnore = false;
 	private $_bCalcFoundRows = false;
 	private $_bForceMaster = false;
 	private $_bForceInactive = false;
@@ -39,6 +40,7 @@ class Ko_Tool_SQL
 		$option->_sOrderBy = $this->_sOrderBy;
 		$option->_iOffset = $this->_iOffset;
 		$option->_iLimit = $this->_iLimit;
+		$option->_bIgnore = $this->_bIgnore;
 		$option->_bCalcFoundRows = $this->_bCalcFoundRows;
 		$option->_bForceMaster = $this->_bForceMaster;
 		$option->_bForceInactive = $this->_bForceInactive;
@@ -164,6 +166,15 @@ class Ko_Tool_SQL
 	public function oLimit($iLimit)
 	{
 		$this->_iLimit = max(0, $iLimit);
+		return $this;
+	}
+
+	/**
+	 * @return Ko_Tool_SQL 返回 $this
+	 */
+	public function oIgnore($bIgnore)
+	{
+		$this->_bIgnore = $bIgnore;
 		return $this;
 	}
 
@@ -298,6 +309,14 @@ class Ko_Tool_SQL
 	public function iLimit()
 	{
 		return $this->_iLimit;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function bIgnore()
+	{
+		return $this->_bIgnore;
 	}
 
 	/**

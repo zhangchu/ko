@@ -19,9 +19,9 @@ class Ko_Dao_Config extends Ko_Dao_DBHandler
 	/**
 	 * @return array
 	 */
-	public function aInsertMulti($aData)
+	public function aInsertMulti($aData, $oOption = null)
 	{
-		return $this->_oDB->aInsertMulti($aData);
+		return $this->_oDB->aInsertMulti($aData, $oOption);
 	}
 
 	/**

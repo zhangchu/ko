@@ -156,7 +156,7 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 	/**
 	 * @return array 返回完整的信息array(data, rownum, insertid, affectedrows)
 	 */
-	public function aInsertMulti($aData)
+	public function aInsertMulti($aData, $oOption = null)
 	{
 		assert(0 === strlen($this->_sSplitField));
 
@@ -178,7 +178,8 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 			}
 			unset($v);
 		}
-		$aRet = $this->_oGetSqlAgent()->aInsertMulti($this->_sTable, 1, $aData);
+		$oOption = $this->_vNormalizeOption($oOption);
+		$aRet = $this->_oGetSqlAgent()->aInsertMulti($this->_sTable, 1, $aData, $oOption);
 		if ($insertid)
 		{
 			$aRet['insertid'] = $insertid;

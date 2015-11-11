@@ -31,9 +31,9 @@ class Ko_Data_SqlAgent
 		return self::$s_aInstance[$sTag];
 	}
 
-	public function aInsertMulti($sKind, $iHintId, $aData)
+	public function aInsertMulti($sKind, $iHintId, $aData, $oOption)
 	{
-		$sql = $this->_sInsertMultiSql($sKind, $aData);
+		$sql = $this->_sInsertMultiSql($sKind, $aData, $oOption);
 		return $this->_aQuery($sKind, $iHintId, $sql);
 	}
 
@@ -131,7 +131,7 @@ class Ko_Data_SqlAgent
 		return implode(', ', $set);
 	}
 
-	private function _sInsertMultiSql($sKind, $aData)
+	private function _sInsertMultiSql($sKind, $aData, $oOption)
 	{
 		assert(!empty($aData));
 		$keys = array_keys($aData[0]);
@@ -144,7 +144,15 @@ class Ko_Data_SqlAgent
 		}
 		unset($field);
 
-		$sql = 'INSERT INTO '.$sKind.' ('.implode(', ', $fields).') VALUES ';
+		if ($oOption->bIgnore())
+		{
+			$sql = 'INSERT IGNORE ';
+		}
+		else
+		{
+			$sql = 'INSERT ';
+		}
+		$sql .= 'INTO '.$sKind.' ('.implode(', ', $fields).') VALUES ';
 		$values = array();
 		foreach ($aData as $data)
 		{
