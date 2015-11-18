@@ -47,11 +47,11 @@ class Ko_Web_Rewrite
 		self::$s_aRules = $aRules;
 	}
 
-	private static function _VLoadHostRules($sHost)
+	private static function _VLoadHostRules($sHost, &$sUri)
 	{
-		$confFile = Ko_Web_Config::SGetRewriteConf($sHost);
+		$confFile = Ko_Web_Config::SGetRewriteConf($sHost, $sUri);
 		if (is_file($confFile)) {
-			$cacheFile = Ko_Web_Config::SGetRewriteCache($sHost);
+			$cacheFile = Ko_Web_Config::SGetRewriteCache($sHost, $sUri);
 			if ('' === $cacheFile) {
 				self::$s_aRules = Ko_Web_RewriteParser::AProcess(file_get_contents($confFile));
 			} else {
@@ -78,7 +78,7 @@ class Ko_Web_Rewrite
 
 	private static function _AGet($sHost, $sUri)
 	{
-		self::_VLoadHostRules($sHost);
+		self::_VLoadHostRules($sHost, $sUri);
 
 		list($path, $query) = explode('?', $sUri, 2);
 
