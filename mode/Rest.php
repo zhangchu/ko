@@ -40,20 +40,6 @@ class Ko_Mode_Rest
 		'next_boundary' => 'any',
 	));
 
-	/**
-	 * array('list', array('hash', array(
-	 *   'urilist' => array('list', array('hash', array(
-	 *     'unique' => 'datatype',
-	 *     'stylelist' => array('list', 'datatype'),
-	 *     'exstylelist' => array('list', 'datatype'),
-	 *     'filterstylelist' => array('list', 'datatype'),
-	 *     'poststylelist' => array('list', 'datatype'),
-	 *     'putstylelist' => array('list', 'datatype'),
-	 *   ))),
-	 * )));
-	 */
-	protected $_aConf = array();
-
 	private $_sModule = '';
 	private $_sResource = '';
 	private $_sId = '';
@@ -61,20 +47,12 @@ class Ko_Mode_Rest
 
 	protected function _sGetClassname($sModule, $sResource)
 	{
-		return '';
+		assert(0);
 	}
 
 	protected function _aLoadConf($sModule, $sResource)
 	{
-		if (!isset($this->_aConf[$sModule]))
-		{
-			throw new Exception('模块不存在', self::ERROR_MODULE_INVALID);
-		}
-		if (!isset($this->_aConf[$sModule]['urilist'][$sResource]))
-		{
-			throw new Exception('资源不存在', self::ERROR_RESOURCE_INVALID);
-		}
-		return $this->_aConf[$sModule]['urilist'][$sResource];
+		assert(0);
 	}
 
 	public function aGet($sUri, $aInput)
