@@ -35,6 +35,10 @@ class Ko_Tool_Module
 	 *     $classname = 'KO2o_User_AddCreditApi',  return 'O2o_User'
 	 * eg2:
 	 *     $classname = 'Ko_Dao_File',  return 'Ko_Dao'
+	 * eg3:
+	 *     $classname = 'APPS\user\MRest_test',  return 'APPS\user\Rest'
+	 * eg4:
+	 *     $classname = 'APPS\user\MApi',  return 'APPS\user\'
 	 * </pre>
 	 *
 	 * @return string
@@ -64,21 +68,31 @@ class Ko_Tool_Module
 	 * <pre>
 	 * eg1:
 	 *     $sModuleName = 'o2o_user',  return 'O2o_User'
-	 * eg1:
+	 * eg2:
 	 *     $sModuleName = 'O2O_UsEr',  return 'O2o_User'
+	 * eg3:
+	 *     $sModuleName = 'APPS\user\ReSt',  return 'APPS\user\Rest'
 	 * </pre>
 	 *
 	 * @return string
 	 */
 	public static function SGetRegularModuleName($sModuleName)
 	{
-		$sModuleName = strtolower($sModuleName);
-		$aList = explode('_', $sModuleName);
-		foreach ($aList as $k => $v)
+		$pos = strrpos($sModuleName, '\\');
+		if (false !== $pos)
 		{
-			$aList[$k] = ucfirst($v);
+			$ns = substr($sModuleName, 0, $pos + 1);
+			$mname = substr($sModuleName, $pos + 1);
+			if (0 == strlen($mname))
+			{
+				return $ns;
+			}
+			return $ns.self::_SGetRegularModuleName($mname);
 		}
-		return implode('_', $aList);
+		else
+		{
+			return self::_SGetRegularModuleName($sModuleName);
+		}
 	}
 
 	/**
@@ -87,12 +101,19 @@ class Ko_Tool_Module
 	 * <pre>
 	 * eg1:
 	 *     $sModuleName = 'O2o_User_AddCreditApi',  return 'O2o'
+	 * eg2:
+	 *     $sModuleName = 'APPS\user\Rest_test',  return 'APPS\user\'
 	 * </pre>
 	 *
 	 * @return string
 	 */
 	public static function SGetRootModuleName($sModuleName)
 	{
+		$pos = strrpos($sModuleName, '\\');
+		if (false !== $pos)
+		{
+			return substr($sModuleName, 0, $pos + 1);
+		}
 		$aList = explode('_', $sModuleName);
 		return $aList[0];
 	}
@@ -105,11 +126,39 @@ class Ko_Tool_Module
 	 *     $sVarName = 'xxx_yyy_zZz',  return array('xxx_yyy', 'zZz');
 	 * eg2:
 	 *     $sVarName = 'zZz',  return array('', 'zZz');
+	 * eg3:
+	 *     $sVarName = 'APPS\user\Rest_test'  return array('APPS\user\Rest', 'test');
+	 * eg3:
+	 *     $sVarName = 'APPS\user\Rest'  return array('APPS\user\', 'Rest');
 	 * </pre>
 	 *
 	 * @return array
 	 */
 	public static function AGetSubModule($sVarName)
+	{
+		$pos = strrpos($sVarName, '\\');
+		if (false !== $pos)
+		{
+			$ns = substr($sVarName, 0, $pos + 1);
+			$vname = substr($sVarName, $pos + 1);
+			list($m, $f) = self::_AGetSubModule($vname);
+			return array($ns.$m, $f);
+		}
+		return self::_AGetSubModule($sVarName);
+	}
+
+	private static function _SGetRegularModuleName($sModuleName)
+	{
+		$sModuleName = strtolower($sModuleName);
+		$aList = explode('_', $sModuleName);
+		foreach ($aList as $k => $v)
+		{
+			$aList[$k] = ucfirst($v);
+		}
+		return implode('_', $aList);
+	}
+
+	private static function _AGetSubModule($sVarName)
 	{
 		$aList = explode('_', $sVarName);
 		$sName = array_pop($aList);
@@ -118,19 +167,38 @@ class Ko_Tool_Module
 
 	private static function _SGetClassModuleName($sClassName)
 	{
-		if (substr($sClassName, 0, 1) !== 'K')
+		$pos = strrpos($sClassName, '\\');
+		if (false !== $pos)
 		{
-			return '';
+			$cname = substr($sClassName, $pos + 1);
+			if (substr($cname, 0, 1) !== 'M')
+			{
+				return '';
+			}
+			$ns = substr($sClassName, 0, $pos + 1);
+			$pos = strrpos($cname, '_');
+			if (false === $pos)
+			{
+				return $ns;
+			}
+			return $ns.substr($cname, 1, $pos - 1);
 		}
-		$pos = strrpos($sClassName, '_');
-		if (false === $pos)
+		else
 		{
-			return '';
+			if (substr($sClassName, 0, 1) !== 'K')
+			{
+				return '';
+			}
+			$pos = strrpos($sClassName, '_');
+			if (false === $pos)
+			{
+				return '';
+			}
+			if (substr($sClassName, 0, 3) === 'Ko_')
+			{
+				return substr($sClassName, 0, $pos);
+			}
+			return substr($sClassName, 1, $pos - 1);
 		}
-		if (substr($sClassName, 0, 3) === 'Ko_')
-		{
-			return substr($sClassName, 0, $pos);
-		}
-		return substr($sClassName, 1, $pos - 1);
 	}
 }

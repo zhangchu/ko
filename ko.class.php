@@ -54,6 +54,22 @@ if (!defined('KO_INCLUDE_DIR'))
 	define('KO_INCLUDE_DIR', dirname(KO_DIR).DS);
 }
 
+if (!defined('KO_APPS_DIR'))
+{
+	/**
+	 * 组件根路径
+	 */
+	define('KO_APPS_DIR', dirname(KO_DIR).DS.'apps'.DS);
+}
+
+if (!defined('KO_APPS_NS'))
+{
+	/**
+	 * 组件命名空间前缀
+	 */
+	define('KO_APPS_NS', 'koApps');
+}
+
 if (!defined('KO_CHARSET'))
 {
 	/**
@@ -228,6 +244,19 @@ if (!KO_SPL_AUTOLOAD)
 	spl_autoload_register('koAutoload');
 }
 
+if (!defined('KO_APPS_AUTOLOAD'))
+{
+	/**
+	 * KO对于 apps 里面的 M 和 IM 开头的接口和类定义了 AutoLoad 的处理方式，如果应用需要自己处理 AutoLoad 可以设置 KO_APPS_AUTOLOAD 为 1
+	 */
+	define('KO_APPS_AUTOLOAD', 0);
+}
+
+if (!KO_APPS_AUTOLOAD)
+{
+	spl_autoload_register('koAppsAutoload');
+}
+
 if (!defined('KO_ASSERT'))
 {
 	/**
@@ -303,6 +332,48 @@ function koAutoload($sClassName)
 	{
 		require_once($classfile);
 		return;
+	}
+}
+
+/**
+ * apps 里面 M 和 IM 开头的类的自动加载
+ * 类 koApps\test\MRest_demo 的路径为 apps/test/rest/demo.php
+ */
+function koAppsAutoload($sClassName)
+{
+	$items = explode('\\', $sClassName);
+	$ns = array_shift($items);
+	if (KO_APPS_NS === $ns)
+	{
+		$cname = array_pop($items);
+		if ('M' === substr($cname, 0, 1))
+		{
+			$cnames = explode('_', $cname);
+			$lastname = array_pop($cnames);
+			if (!empty($cnames))
+			{
+				$lastname = strtolower(implode('/', $cnames)).'/'.$lastname;
+			}
+			$classfile = KO_APPS_DIR.implode('/', $items).'/'.substr($lastname, 1).'.php';
+			if (is_file($classfile))
+			{
+				require_once($classfile);
+			}
+		}
+		else if ('IM' === substr($cname, 0, 2))
+		{
+			$cnames = explode('_', $cname);
+			$lastname = array_pop($cnames);
+			if (!empty($cnames))
+			{
+				$lastname = strtolower(implode('/', $cnames)).'/'.$lastname;
+			}
+			$classfile = KO_APPS_DIR.implode('/', $items).'/'.substr($lastname, 1).'.php';
+			if (is_file($classfile))
+			{
+				require_once($classfile);
+			}
+		}
 	}
 }
 

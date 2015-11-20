@@ -28,7 +28,22 @@ class Ko_Tool_Object
 		assert('' === $sSubModuleName);
 
 		// 构造类名
-		$sClassName = 'K'.$sThisModule.'_'.$sFile;
+		$pos = strrpos($sThisModule, '\\');
+		if (false !== $pos)
+		{
+			if ('\\' === substr($sThisModule, -1))
+			{
+				$sClassName = substr($sThisModule, 0, $pos + 1).'M'.$sFile;
+			}
+			else
+			{
+				$sClassName = substr($sThisModule, 0, $pos + 1).'M'.substr($sThisModule, $pos + 1).'_'.$sFile;
+			}
+		}
+		else
+		{
+			$sClassName = 'K'.$sThisModule.'_'.$sFile;
+		}
 
 		// 创建对象
 		return Ko_Tool_Singleton::OInstance($sClassName);
@@ -74,58 +89,47 @@ class Ko_Tool_Object
 		list($sModule, $sFile) = Ko_Tool_Module::AGetSubModule($sName);
 
 		// 构造类名
-		if($sModule !== '')
+		$pos = strrpos($sFromModule, '\\');
+		if (false !== $pos)
 		{
-			$sModule = Ko_Tool_Module::SGetRegularModuleName($sModule);
-			$sClassName = 'K'.$sFromModule.'_'.$sModule.'_'.$sFile;
+			if($sModule !== '')
+			{
+				$sModule = Ko_Tool_Module::SGetRegularModuleName($sModule);
+				if ('\\' === substr($sFromModule, -1))
+				{
+					$sClassName = substr($sFromModule, 0, $pos + 1).'M'.$sModule.'_'.$sFile;
+				}
+				else
+				{
+					$sClassName = substr($sFromModule, 0, $pos + 1).'M'.substr($sFromModule, $pos + 1).'_'.$sModule.'_'.$sFile;
+				}
+			}
+			else
+			{
+				if ('\\' === substr($sFromModule, -1))
+				{
+					$sClassName = substr($sFromModule, 0, $pos + 1).'M'.$sFile;
+				}
+				else
+				{
+					$sClassName = substr($sFromModule, 0, $pos + 1).'M'.substr($sFromModule, $pos + 1).'_'.$sFile;
+				}
+			}
 		}
 		else
 		{
-			$sClassName = 'K'.$sFromModule.'_'.$sFile;
+			if($sModule !== '')
+			{
+				$sModule = Ko_Tool_Module::SGetRegularModuleName($sModule);
+				$sClassName = 'K'.$sFromModule.'_'.$sModule.'_'.$sFile;
+			}
+			else
+			{
+				$sClassName = 'K'.$sFromModule.'_'.$sFile;
+			}
 		}
 
 		// 创建对象
 		return Ko_Tool_Singleton::OInstance($sClassName);
 	}
 }
-
-/*
-
-class KA_C1
-{
-}
-
-class KA_C2
-{
-}
-
-class KA_B_C1
-{
-}
-
-class KA_B_C2
-{
-}
-
-$a1 = new KA_C1;
-$a2 = new KA_C2;
-$b1 = new KA_B_C1;
-$b2 = new KA_B_C2;
-
-$o = Ko_Tool_Object::OCreate($a1, 'C2');
-var_dump($o);
-$o = Ko_Tool_Object::OCreate($a1, 'b_C1');
-var_dump($o);
-$o = Ko_Tool_Object::OCreateFromRoot($a1, 'b_C1');
-var_dump($o);
-$o = Ko_Tool_Object::OCreateFromRoot($b1, 'C1');
-var_dump($o);
-$o = Ko_Tool_Object::OCreateInThisModule($a1, 'C2');
-var_dump($o);
-$o = Ko_Tool_Object::OCreateInThisModule($b1, 'C2');
-var_dump($o);
-$o = Ko_Tool_Object::OCreateInThisModule($a1, 'b_C2');
-var_dump($o);
-
-*/
-?>
