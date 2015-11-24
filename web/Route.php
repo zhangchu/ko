@@ -17,6 +17,8 @@
  *    /path/abc/xyz => /path/abc/xyz/
  * 4. 其他
  *    /path/abc/xyz => /path/abc.php 并执行注册为 xyz 的函数
+ *    如果 abc.php 不存在，或者里面的 xyz 函数不存在
+ *    /path/abc/xyz => /path/abc/index.php 并执行注册为 xyz 的函数
  */
 class Ko_Web_Route
 {
@@ -80,20 +82,11 @@ class Ko_Web_Route
 			$pathinfo = pathinfo(self::$s_sFile);
 			self::$s_sFunc = $pathinfo['basename'];
 			self::$s_sFile = $pathinfo['dirname'].'.php';
-			if (!is_file(self::$s_sFile))
+			if (self::_IWebRoute())
 			{
-				return self::$s_iErrno = self::ERR_FILE;
+				self::$s_sFile = $pathinfo['dirname'].'/index.php';
+				return self::_IWebRoute();
 			}
-			self::_VRequireFile(self::$s_sFile);
-			if (!isset(self::$s_aRoute[self::$s_sFunc]))
-			{
-				return self::$s_iErrno = self::ERR_FUNC;
-			}
-			if (!isset(self::$s_aRoute[self::$s_sFunc][self::$s_sMethod]))
-			{
-				return self::$s_iErrno = self::ERR_METHOD;
-			}
-			call_user_func(self::$s_aRoute[self::$s_sFunc][self::$s_sMethod]);
 		}
 		return self::$s_iErrno = 0;
 	}
@@ -148,5 +141,24 @@ class Ko_Web_Route
 		chdir(dirname($sFilename));
 		require_once($sFilename);
 		chdir($cwd);
+	}
+
+	private static function _IWebRoute()
+	{
+		if (!is_file(self::$s_sFile))
+		{
+			return self::$s_iErrno = self::ERR_FILE;
+		}
+		self::_VRequireFile(self::$s_sFile);
+		if (!isset(self::$s_aRoute[self::$s_sFunc]))
+		{
+			return self::$s_iErrno = self::ERR_FUNC;
+		}
+		if (!isset(self::$s_aRoute[self::$s_sFunc][self::$s_sMethod]))
+		{
+			return self::$s_iErrno = self::ERR_METHOD;
+		}
+		call_user_func(self::$s_aRoute[self::$s_sFunc][self::$s_sMethod]);
+		return self::$s_iErrno = 0;
 	}
 }
