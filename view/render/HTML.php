@@ -15,7 +15,7 @@ class Ko_View_Render_HTML extends Ko_View_Render_Base
 	 * oSetData($aid, $ids);
 	 * oSetData($aid, array('ids' => [, 'maxlength' => ]);
 	 */
-	public function __construct(Ko_Mode_Content $api)
+	public function __construct($api)
 	{
 		$this->_oContentApi = $api;
 	}
