@@ -49,9 +49,9 @@ class Ko_Web_Rewrite
 
 	private static function _VLoadHostRules($sHost, &$sUri)
 	{
-		$confFile = Ko_Web_Config::SGetRewriteConf($sHost, $sUri);
+		$confFile = Ko_Web_Config::SGetValue('rewriteconf', $sHost, $sUri);
 		if (is_file($confFile)) {
-			$cacheFile = Ko_Web_Config::SGetRewriteCache($sHost, $sUri);
+			$cacheFile = Ko_Web_Config::SGetValue('rewritecache', $sHost, $sUri);
 			if ('' === $cacheFile) {
 				self::$s_aRules = Ko_Web_RewriteParser::AProcess(file_get_contents($confFile));
 			} else {

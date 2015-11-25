@@ -194,7 +194,7 @@ class Ko_Web_Request
 	
 	public static function SDocumentRoot()
 	{
-		$dr = Ko_Web_Config::SGetDocumentRoot();
+		$dr = Ko_Web_Config::SGetValue('documentroot');
 		if ('' === $dr)
 		{
 			$dr = self::_VServer('DOCUMENT_ROOT');

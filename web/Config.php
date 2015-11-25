@@ -26,9 +26,7 @@ class Ko_Web_Config
 	private static $s_aConfigCache = array();
 
 	private $_sAppName = '';
-	private $_sDocumentRoot = '';
-	private $_sRewriteConf = '';
-	private $_sRewriteCache = '';
+	private $_aConfig = array();
 	private $_sRewriteUri = '';
 
 	public static function VSetConf($sConfFile, $sCacheFile = '')
@@ -74,19 +72,14 @@ class Ko_Web_Config
 		return self::_OGetConfig($host, $uri)->_sAppName;
 	}
 
-	public static function SGetDocumentRoot($host = null, &$uri = null)
+	public static function SGetValue($key, $host = null, &$uri = null)
 	{
-		return self::_OGetConfig($host, $uri)->_sDocumentRoot;
-	}
-
-	public static function SGetRewriteConf($host = null, &$uri = null)
-	{
-		return self::_OGetConfig($host, $uri)->_sRewriteConf;
-	}
-
-	public static function SGetRewriteCache($host = null, &$uri = null)
-	{
-		return self::_OGetConfig($host, $uri)->_sRewriteCache;
+		$config = self::_OGetConfig($host, $uri);
+		if (isset($config->_aConfig[$key]))
+		{
+			return strval($config->_aConfig[$key]);
+		}
+		return '';
 	}
 
 	/**
@@ -140,9 +133,7 @@ class Ko_Web_Config
 			$appname = self::$s_aConfig['global'][$path];
 			self::$s_aConfigCache[$key]->_sAppName = $appname;
 			if (isset(self::$s_aConfig['app_' . $appname])) {
-				self::$s_aConfigCache[$key]->_sDocumentRoot = strval(self::$s_aConfig['app_' . $appname]['documentroot']);
-				self::$s_aConfigCache[$key]->_sRewriteConf = strval(self::$s_aConfig['app_' . $appname]['rewriteconf']);
-				self::$s_aConfigCache[$key]->_sRewriteCache = strval(self::$s_aConfig['app_' . $appname]['rewritecache']);
+				self::$s_aConfigCache[$key]->_aConfig = self::$s_aConfig['app_' . $appname];
 			}
 		}
 		return true;
