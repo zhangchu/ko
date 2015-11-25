@@ -40,4 +40,32 @@ class Ko_Apps_Rest extends Ko_Mode_Rest
 		}
 		return $classname::$s_aConf;
 	}
+
+	public function run($ns = '')
+	{
+		$uri = Ko_Web_Request::SGet('uri');
+		$req_method = Ko_Web_Request::SRequestMethod(true);
+		if ('POST' === $req_method)
+		{
+			$method = Ko_Web_Request::SPost('method');
+			if ('PUT' === $method || 'DELETE' === $method)
+			{
+				$req_method = $method;
+			}
+		}
+		$input = ('GET' === $req_method) ? $_GET : $_POST;
+		unset($input['uri']);
+		unset($input['method']);
+		if (isset($input['jsondata']))
+		{
+			$input = json_decode($input['jsondata'], true);
+		}
+
+		$uri = substr($ns, strlen(KO_APPS_NS) + 1).'/'.$uri;
+		$rest = new self;
+		$data = $rest->aCall($req_method, $uri, $input);
+
+		$render = new KRender_json();
+		$render->oSetData($data)->oSend();
+	}
 }
