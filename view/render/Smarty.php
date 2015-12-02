@@ -33,6 +33,12 @@ class Ko_View_Render_Smarty extends Ko_View_Render_List
 		return $this;
 	}
 
+	public function oSend()
+	{
+		Ko_Web_Response::VSend($this);
+		return $this;
+	}
+
 	protected function _sRender()
 	{
 		$this->_vEscapeData($this->_aData);
