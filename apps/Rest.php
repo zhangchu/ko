@@ -65,7 +65,7 @@ class Ko_Apps_Rest extends Ko_Mode_Rest
 		$rest = new self;
 		$data = $rest->aCall($req_method, $uri, $input);
 
-		$render = new KRender_json();
+		$render = new Ko_View_Render_JSON;
 		$render->oSetData($data)->oSend();
 	}
 }
