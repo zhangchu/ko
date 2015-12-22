@@ -117,9 +117,10 @@ class Ko_Web_Config
 			if (0 === strlen($rewriteuri)) {
 				$rewriteuri = '/';
 			}
-			self::$s_aConfigCache[$key]->_sRewriteUri = $rewriteuri.$query;
+			self::$s_aConfigCache[$key]->_sRewriteUri = $rewriteuri;
 		}
 		$uri = self::$s_aConfigCache[$key]->_sRewriteUri;
+		$uri .= $query;
 		return self::$s_aConfigCache[$key];
 	}
 
