@@ -71,7 +71,7 @@ class Ko_Web_Rewrite
 						. ");\n";
 					file_put_contents($cacheFile, $script);
 				} else {
-					require_once($cacheFile);
+					require($cacheFile);
 				}
 			}
 		}
