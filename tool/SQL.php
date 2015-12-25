@@ -51,9 +51,9 @@ class Ko_Tool_SQL
 	/**
 	 * @return Ko_Tool_SQL 返回 $this
 	 */
-	public function oSelect($sFields)
+	public function oSelect()
 	{
-		$this->_sFields = $sFields;
+		$this->_sFields = Ko_Tool_Option::SEscapeWhere(func_get_args());
 		return $this;
 	}
 
