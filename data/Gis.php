@@ -19,19 +19,27 @@ class Ko_Data_Gis extends Ko_Data_KProxy
 
 	private static $s_aInstances = array();
 
-	protected function __construct ($sTag)
+	protected function __construct ($sTag, $iPort = 0)
 	{
 		KO_DEBUG >= 6 && Ko_Tool_Debug::VAddTmpLog('data/Gis', '__construct:'.$sTag);
-		parent::__construct('Gis', $sTag);
+		if ($iPort)
+		{
+			parent::__construct('Gis', '', 'tcp::'.intval($iPort).' timeout=70000');
+		}
+		else
+		{
+			parent::__construct('Gis', $sTag);
+		}
 	}
 
-	public static function OInstance($sTag = '')
+	public static function OInstance($sTag = '', $iPort = 0)
 	{
-		if (empty(self::$s_aInstances[$sTag]))
+		$key = $sTag.':'.$iPort;
+		if (empty(self::$s_aInstances[$key]))
 		{
-			self::$s_aInstances[$sTag] = new self($sTag);
+			self::$s_aInstances[$key] = new self($sTag, $iPort);
 		}
-		return self::$s_aInstances[$sTag];
+		return self::$s_aInstances[$key];
 	}
 	
 	public function vReload($iHow = self::REGION)
