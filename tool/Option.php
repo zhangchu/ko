@@ -47,8 +47,7 @@ class Ko_Tool_Option
 			$where = array();
 			foreach ($aArgs[0] as $k => $v)
 			{
-				$field = ('`' === $k[0]) ? $k : '`'.$k.'`';
-				$where[] = '('.$field.' = "'.Ko_Data_Mysql::SEscape($v).'")';
+				self::_vQuerySelector($k, $v, $where);
 			}
 			$where = implode(' AND ', $where);
 		}
@@ -79,5 +78,59 @@ class Ko_Tool_Option
 			}
 		}
 		return $where;
+	}
+
+	private static function _vQuerySelector($k, $v, &$where)
+	{
+		$field = ('`' === $k[0]) ? $k : '`'.$k.'`';
+		if (is_array($v))
+		{
+			$valid = false;
+			foreach ($v as $k2 => $v2)
+			{
+				switch ($k2)
+				{
+					case '$in':
+						$escapeV = array_map(array('Ko_Data_Mysql', 'SEscape'), $v2);
+						$where[] = '('.$field.' IN ("'.implode('", "', $escapeV).'"))';
+						$valid = true;
+						break;
+					case '$nin':
+						$escapeV = array_map(array('Ko_Data_Mysql', 'SEscape'), $v2);
+						$where[] = '('.$field.' NOT IN ("'.implode('", "', $escapeV).'"))';
+						$valid = true;
+						break;
+					case '$lt':
+						$where[] = '('.$field.' < "'.Ko_Data_Mysql::SEscape($v2).'")';
+						$valid = true;
+						break;
+					case '$gt':
+						$where[] = '('.$field.' > "'.Ko_Data_Mysql::SEscape($v2).'")';
+						$valid = true;
+						break;
+					case '$lte':
+						$where[] = '('.$field.' <= "'.Ko_Data_Mysql::SEscape($v2).'")';
+						$valid = true;
+						break;
+					case '$gte':
+						$where[] = '('.$field.' >= "'.Ko_Data_Mysql::SEscape($v2).'")';
+						$valid = true;
+						break;
+					case '$ne':
+						$where[] = '('.$field.' <> "'.Ko_Data_Mysql::SEscape($v2).'")';
+						$valid = true;
+						break;
+					case '$eq':
+						$where[] = '('.$field.' = "'.Ko_Data_Mysql::SEscape($v2).'")';
+						$valid = true;
+						break;
+				}
+			}
+			assert($valid);
+		}
+		else
+		{
+			$where[] = '('.$field.' = "'.Ko_Data_Mysql::SEscape($v).'")';
+		}
 	}
 }
