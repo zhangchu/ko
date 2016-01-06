@@ -58,6 +58,7 @@ class Ko_Data_Storage extends Ko_Busi_Api
 	 *     `dest` varchar(128) NOT NULL DEFAULT '',
 	 *     width int unsigned not null default 0,
 	 *     height int unsigned not null default 0,
+	 *     orientation tinyint unsigned not null default 1,
 	 *     UNIQUE KEY (`dest`)
 	 *   ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 	 *   CREATE TABLE `s_file_fileinfo` (
@@ -169,11 +170,11 @@ class Ko_Data_Storage extends Ko_Busi_Api
 			{
 				if (5 <= $imginfo['orientation'] && $imginfo['orientation'] <= 8)
 				{
-					$this->_vSetSize($sDest, $imginfo['height'], $imginfo['width']);
+					$this->_vSetSize($sDest, $imginfo['height'], $imginfo['width'], $imginfo['orientation']);
 				}
 				else
 				{
-					$this->_vSetSize($sDest, $imginfo['width'], $imginfo['height']);
+					$this->_vSetSize($sDest, $imginfo['width'], $imginfo['height'], $imginfo['orientation']);
 				}
 
 				if (strlen($this->_aConf['exif'])
@@ -268,7 +269,7 @@ class Ko_Data_Storage extends Ko_Busi_Api
 		}
 	}
 	
-	private function _vSetSize($sDest, $width, $height)
+	private function _vSetSize($sDest, $width, $height, $orientation)
 	{
 		if (strlen($this->_aConf['size']))
 		{
@@ -277,10 +278,12 @@ class Ko_Data_Storage extends Ko_Busi_Api
 				'dest' => $sDest,
 				'width' => $width,
 				'height' => $height,
+				'orientation' => $orientation,
 			);
 			$update = array(
 				'width' => $width,
 				'height' => $height,
+				'orientation' => $orientation,
 			);
 			$this->$sizeDao->aInsert($data, $update);
 		}
