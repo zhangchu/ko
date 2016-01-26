@@ -39,7 +39,14 @@ if (!defined('KO_TEMPLATE_C_DIR'))
 	/**
 	 * 模板编译路径
 	 */
-	define('KO_TEMPLATE_C_DIR', dirname(KO_INCLUDE_DIR).DS.'templates_c'.DS);
+	if (defined('KO_RUNTIME_DIR'))
+	{
+		define('KO_TEMPLATE_C_DIR', KO_RUNTIME_DIR.DS.'templates_c'.DS);
+	}
+	else
+	{
+		define('KO_TEMPLATE_C_DIR', dirname(KO_INCLUDE_DIR).DS.'templates_c'.DS);
+	}
 }
 
 include_once(KO_SMARTY_INC);

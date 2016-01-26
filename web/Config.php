@@ -12,7 +12,14 @@ if (!defined('KO_CONFIG_SITE_INI'))
 }
 if (!defined('KO_CONFIG_SITE_CACHE'))
 {
-	define('KO_CONFIG_SITE_CACHE', '');
+	if (defined('KO_RUNTIME_DIR'))
+	{
+		define('KO_CONFIG_SITE_CACHE', KO_RUNTIME_DIR.DS.'site.php');
+	}
+	else
+	{
+		define('KO_CONFIG_SITE_CACHE', '');
+	}
 }
 
 /**
