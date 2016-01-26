@@ -25,7 +25,14 @@ if (!defined('KO_TEMPLATE_DIR'))
 	/**
 	 * 模板路径
 	 */
-	define('KO_TEMPLATE_DIR', dirname(KO_INCLUDE_DIR).DS.'templates'.DS);
+	if ('' === Ko_Web_Config::SGetValue('templateroot'))
+	{
+		define('KO_TEMPLATE_DIR', dirname(KO_INCLUDE_DIR).DS.'templates'.DS);
+	}
+	else
+	{
+		define('KO_TEMPLATE_DIR', Ko_Web_Config::SGetValue('templateroot'));
+	}
 }
 if (!defined('KO_TEMPLATE_C_DIR'))
 {
