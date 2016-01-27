@@ -6,12 +6,12 @@
  * @author zhangchu
  */
 
-class Ko_Apps_Rest extends Ko_Mode_Rest
+class Ko_App_Rest extends Ko_Mode_Rest
 {
 	public static function VInvoke($sApp, $sMethod, $sUri, $vInput = null, &$iErrno = 0, &$sError = '')
 	{
 		$uri = $sApp.'/'.$sUri;
-		$rest = Ko_Tool_Singleton::OInstance('Ko_Apps_Rest');
+		$rest = Ko_Tool_Singleton::OInstance('Ko_App_Rest');
 		$ret = $rest->aCall($sMethod, $uri, $vInput);
 		$iErrno = $ret['errno'];
 		$sError = $ret['error'];
