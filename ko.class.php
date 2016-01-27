@@ -4,6 +4,8 @@
  * @author zhangchu
  */
 
+define('KO_VERSION', '0.9.0');
+
 if (!defined('DS'))
 {
 	/**
@@ -59,7 +61,7 @@ if (!defined('KO_APPS_DIR'))
 	/**
 	 * 组件根路径
 	 */
-	define('KO_APPS_DIR', dirname(KO_DIR).DS.'apps'.DS);
+	define('KO_APPS_DIR', KO_DIR.DS.'apps'.DS);
 }
 
 if (!defined('KO_APPS_NS'))
