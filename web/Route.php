@@ -17,7 +17,9 @@
  *    /path/abc/xyz => /path/abc/xyz/
  * 4. 其他
  *    /path/abc/xyz => /path/abc.php 并执行注册为 xyz 的函数
- *    如果 abc.php 不存在，或者里面的 xyz 函数不存在
+ *    如果 /path/abc.php 不存在，或者里面的 xyz 函数不存在
+ *    /path/abc/xyz => /path/abc/xyz.php 并执行注册为 index 的函数
+ *    如果 /path/abc/xyz.php 不存在
  *    /path/abc/xyz => /path/abc/index.php 并执行注册为 xyz 的函数
  */
 class Ko_Web_Route
@@ -45,6 +47,20 @@ class Ko_Web_Route
 		$requestMethod = Ko_Web_Request::SRequestMethod(true);
 		return self::_IDispatch($scriptFilename, $requestMethod, $phpFilename);
 	}
+
+	public static function VCallIndex()
+	{
+		if (!isset(self::$s_aRoute['index']))
+		{
+			return;
+		}
+		$requestMethod = Ko_Web_Request::SRequestMethod(true);
+		if (!isset(self::$s_aRoute['index'][$requestMethod]))
+		{
+			return;
+		}
+		call_user_func(self::$s_aRoute['index'][$requestMethod]);
+	}
 	
 	private static function _IDispatch($scriptFilename, $requestMethod, &$phpFilename)
 	{
@@ -68,7 +84,7 @@ class Ko_Web_Route
 		}
 		else if (is_dir(self::$s_sFile))
 		{
-			list($rewrite, $httpcode) = Ko_Web_Rewrite::AGet();
+			list($rewrite, ) = Ko_Web_Rewrite::AGet();
 			list($path, $query) = explode('?', $rewrite, 2);
 			if (isset($query))
 			{
@@ -84,8 +100,14 @@ class Ko_Web_Route
 			self::$s_sFile = $pathinfo['dirname'].'.php';
 			if (self::_IWebRoute())
 			{
-				self::$s_sFile = $pathinfo['dirname'].'/index.php';
-				return self::_IWebRoute();
+				self::$s_sFile = $pathinfo['dirname'].'/'.$pathinfo['basename'].'.php';
+				self::$s_sFunc = 'index';
+				if (self::_IWebRoute())
+				{
+					self::$s_sFunc = $pathinfo['basename'];
+					self::$s_sFile = $pathinfo['dirname'].'/index.php';
+					return self::_IWebRoute();
+				}
 			}
 		}
 		return self::$s_iErrno = 0;

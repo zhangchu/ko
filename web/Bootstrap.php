@@ -30,5 +30,6 @@ if (!defined('KO_WEB_BOOTSTRAP'))
 		chdir(dirname($phpFilename));
 		require_once($phpFilename);
 		chdir($cwd);
+		Ko_Web_Route::VCallIndex();
 	}
 }
