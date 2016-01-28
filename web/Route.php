@@ -19,8 +19,6 @@
  *    /path/abc/xyz => /path/abc.php 并执行注册为 xyz 的函数
  *    如果 /path/abc.php 不存在，或者里面的 xyz 函数不存在
  *    /path/abc/xyz => /path/abc/xyz.php 并执行注册为 index 的函数
- *    如果 /path/abc/xyz.php 不存在
- *    /path/abc/xyz => /path/abc/index.php 并执行注册为 xyz 的函数
  */
 class Ko_Web_Route
 {
@@ -102,12 +100,7 @@ class Ko_Web_Route
 			{
 				self::$s_sFile = $pathinfo['dirname'].'/'.$pathinfo['basename'].'.php';
 				self::$s_sFunc = 'index';
-				if (self::_IWebRoute())
-				{
-					self::$s_sFunc = $pathinfo['basename'];
-					self::$s_sFile = $pathinfo['dirname'].'/index.php';
-					return self::_IWebRoute();
-				}
+				return self::_IWebRoute();
 			}
 		}
 		return self::$s_iErrno = 0;
