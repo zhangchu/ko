@@ -96,20 +96,44 @@ class Ko_Data_Storage extends Ko_Busi_Api
 		return $this->$fileinfoDao->aGetListByKeys($aDest);
 	}
 	
-	public function aGetImageSize($sDest)
+	public function aGetImageSize($sDest, $bAdjustOrientation = true)
 	{
 		assert(strlen($this->_aConf['size']));
 		
 		$sizeDao = $this->_aConf['size'].'Dao';
-		return $this->$sizeDao->aGet($sDest);
+		$ret = $this->$sizeDao->aGet($sDest);
+		if ($bAdjustOrientation)
+		{
+			if (5 <= $ret['orientation'] && $ret['orientation'] <= 8)
+			{
+				$tmp = $ret['width'];
+				$ret['width'] = $ret['height'];
+				$ret['height'] = $tmp;
+			}
+		}
+		return $ret;
 	}
 	
-	public function aGetImagesSize($aDest)
+	public function aGetImagesSize($aDest, $bAdjustOrientation = true)
 	{
 		assert(strlen($this->_aConf['size']));
 		
 		$sizeDao = $this->_aConf['size'].'Dao';
-		return $this->$sizeDao->aGetListByKeys($aDest);
+		$list = $this->$sizeDao->aGetListByKeys($aDest);
+		if ($bAdjustOrientation)
+		{
+			foreach ($list as &$v)
+			{
+				if (5 <= $v['orientation'] && $v['orientation'] <= 8)
+				{
+					$tmp = $v['width'];
+					$v['width'] = $v['height'];
+					$v['height'] = $tmp;
+				}
+			}
+			unset($v);
+		}
+		return $list;
 	}
 
 	public function aGetImageExif($sDest)
@@ -168,14 +192,7 @@ class Ko_Data_Storage extends Ko_Busi_Api
 			$ret = $this->bWrite($sContent, $imginfo['type'], $sDest);
 			if ($ret)
 			{
-				if (5 <= $imginfo['orientation'] && $imginfo['orientation'] <= 8)
-				{
-					$this->_vSetSize($sDest, $imginfo['height'], $imginfo['width'], $imginfo['orientation']);
-				}
-				else
-				{
-					$this->_vSetSize($sDest, $imginfo['width'], $imginfo['height'], $imginfo['orientation']);
-				}
+				$this->_vSetSize($sDest, $imginfo['width'], $imginfo['height'], $imginfo['orientation']);
 
 				if (strlen($this->_aConf['exif'])
 					&& (false !== ($exif = Ko_Tool_Image::VExif($sContent, Ko_Tool_Image::FLAG_SRC_BLOB))))
@@ -193,6 +210,18 @@ class Ko_Data_Storage extends Ko_Busi_Api
 			$ret = false;
 		}
 		return $ret;
+	}
+
+	public function bAsync2Storage($sDest, $aInfo)
+	{
+		$this->_vSetSize($sDest, $aInfo['width'], $aInfo['height'], $aInfo['orientation']);
+		$this->_vSetFileinfo($sDest, $aInfo['mime'], $aInfo['name']);
+		$this->_vSetFilesize($sDest, $aInfo['fsize']);
+		if (strlen($this->_aConf['exif']))
+		{
+			$exif = $this->aGetExif($sDest);
+			$this->_vSetExif($sDest, $exif);
+		}
 	}
 	
 	public function bWrite($sContent, $sExt, &$sDest)
@@ -231,6 +260,39 @@ class Ko_Data_Storage extends Ko_Busi_Api
 			$this->_vSetFilesize($sDest, filesize($sFilename));
 		}
 		return $ret;
+	}
+
+	private function _iGetOrientation($str)
+	{
+		$str = strtolower($str);
+		switch ($str)
+		{
+			case '1':
+			case 'top-left':
+				return 1;
+			case '2':
+			case 'top-right':
+				return 2;
+			case '3';
+			case 'bottom-right':
+				return 3;
+			case '4':
+			case 'bottom-left':
+				return 4;
+			case '5':
+			case 'left-top':
+				return 5;
+			case '6':
+			case 'right-top':
+				return 6;
+			case '7':
+			case 'right-bottom':
+				return 7;
+			case '8':
+			case 'left-bottom':
+				return 8;
+		}
+		return 0;
 	}
 	
 	private function _vSetFileinfo($sDest, $mimetype, $filename)
@@ -273,6 +335,7 @@ class Ko_Data_Storage extends Ko_Busi_Api
 	{
 		if (strlen($this->_aConf['size']))
 		{
+			$orientation = $this->_iGetOrientation($orientation);
 			$sizeDao = $this->_aConf['size'].'Dao';
 			$data = array(
 				'dest' => $sDest,
@@ -395,6 +458,11 @@ class Ko_Data_Storage extends Ko_Busi_Api
 	}
 	
 	public function bGenBrief($sDest, $sBriefTag)
+	{
+		assert(0);
+	}
+
+	public function aGetExif($sDest)
 	{
 		assert(0);
 	}

@@ -232,6 +232,11 @@ class Ko_Web_Request
 		return self::_VServer('HTTP_VIA');
 	}
 
+	public static function SHttpAuthorization()
+	{
+		return self::_VServer('HTTP_AUTHORIZATION');
+	}
+
 	public static function SHttpXForwardedFor()
 	{
 		return self::_VServer('HTTP_X_FORWARDED_FOR');
@@ -256,7 +261,7 @@ class Ko_Web_Request
 	{
 		return self::_VServer('PHP_AUTH_PW');
 	}
-	
+
 	private static function _VServer($sName)
 	{
 		return isset($_SERVER[$sName]) ? $_SERVER[$sName] : null;
