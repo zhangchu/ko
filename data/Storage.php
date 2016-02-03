@@ -222,6 +222,7 @@ class Ko_Data_Storage extends Ko_Busi_Api
 			$exif = $this->aGetExif($sDest);
 			$this->_vSetExif($sDest, $exif);
 		}
+		return true;
 	}
 	
 	public function bWrite($sContent, $sExt, &$sDest)
