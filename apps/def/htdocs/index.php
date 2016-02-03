@@ -1,6 +1,6 @@
 <?php
 
-namespace apps\def;
+namespace koApps\def;
 
 \Ko_Web_Route::VGet('index', function() {
 	$render = new \Ko_View_Render_Smarty();
