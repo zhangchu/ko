@@ -53,6 +53,10 @@ class Ko_Web_Rewrite
 		$confFile = Ko_Web_Config::SGetValue('rewriteconf', $sHost, $sUri);
 		if (is_file($confFile)) {
 			$cacheFile = Ko_Web_Config::SGetValue('rewritecache', $sHost, $srcUri);
+			if ('' === $cacheFile && defined('KO_RUNTIME_DIR')) {
+				$basename = basename($confFile);
+				$cacheFile = KO_RUNTIME_DIR . '/' . $basename . '_rewritecache_' . md5($confFile) . '.php';
+			}
 			if ('' === $cacheFile) {
 				self::$s_aRules = Ko_Web_RewriteParser::AProcess(file_get_contents($confFile));
 			} else {
