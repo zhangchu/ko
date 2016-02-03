@@ -141,7 +141,7 @@ class Ko_Data_Qiniu extends Ko_Data_Storage
 			return false;
 		}
 		$auth = explode(':', substr($authstr,5));
-		if(sizeof($auth) != 2 || $auth[0] != $this->_sAccessKey)
+		if(count($auth) != 2 || $auth[0] != $this->_sAccessKey)
 		{
 			return false;
 		}
