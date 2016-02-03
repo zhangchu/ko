@@ -1,0 +1,5 @@
+
+/hello2 hello
+/hello3 hello 301
+
+/hello4/(.*) /hello?p4=$1

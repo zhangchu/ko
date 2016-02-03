@@ -6,18 +6,13 @@
  * @author zhangchu
  */
 
-if (!defined('KO_CONFIG_SITE_INI'))
-{
+if (!defined('KO_CONFIG_SITE_INI')) {
 	define('KO_CONFIG_SITE_INI', '');
 }
-if (!defined('KO_CONFIG_SITE_CACHE'))
-{
-	if (defined('KO_RUNTIME_DIR'))
-	{
-		define('KO_CONFIG_SITE_CACHE', KO_RUNTIME_DIR.DS.'site.php');
-	}
-	else
-	{
+if (!defined('KO_CONFIG_SITE_CACHE')) {
+	if (defined('KO_RUNTIME_DIR')) {
+		define('KO_CONFIG_SITE_CACHE', KO_RUNTIME_DIR . DS . 'site.php');
+	} else {
 		define('KO_CONFIG_SITE_CACHE', '');
 	}
 }
@@ -34,6 +29,7 @@ class Ko_Web_Config
 
 	private $_sAppName = '';
 	private $_aConfig = array();
+	private $_sAppRoot = '';
 	private $_sRewriteUri = '';
 
 	public static function VSetConf($sConfFile, $sCacheFile = '')
@@ -79,11 +75,15 @@ class Ko_Web_Config
 		return self::_OGetConfig($host, $uri)->_sAppName;
 	}
 
+	public static function SGetAppRoot($host = null, &$uri = null)
+	{
+		return self::_OGetConfig($host, $uri)->_sAppRoot;
+	}
+
 	public static function SGetValue($key, $host = null, &$uri = null)
 	{
 		$config = self::_OGetConfig($host, $uri);
-		if (isset($config->_aConfig[$key]))
-		{
+		if (isset($config->_aConfig[$key])) {
 			return strval($config->_aConfig[$key]);
 		}
 		return '';
@@ -105,25 +105,26 @@ class Ko_Web_Config
 			$query = '';
 		} else {
 			list($path, $query) = explode('?', $uri, 2);
-			$query = '?'.$query;
+			$query = '?' . $query;
 		}
-		$key = $host.$path;
+		$key = $host . $path;
 		if (!isset(self::$s_aConfigCache[$key])) {
-			$path = rtrim($key, '/');
+			$approot = rtrim($key, '/');
 			$succ = false;
-			while (false !== ($pos = strrpos($path, '/'))) {
-				if ($succ = self::_BLoadConfig($key, $path, false)) {
+			while (false !== ($pos = strrpos($approot, '/'))) {
+				if ($succ = self::_BLoadConfig($key, $approot, false)) {
 					break;
 				}
-				$path = rtrim(substr($path, 0, $pos), '/');
+				$approot = rtrim(substr($approot, 0, $pos), '/');
 			}
 			if (!$succ) {
-				self::_BLoadConfig($key, $path, true);
+				self::_BLoadConfig($key, $approot, true);
 			}
-			$rewriteuri = substr($key, strlen($path));
+			$rewriteuri = substr($key, strlen($approot));
 			if (0 === strlen($rewriteuri)) {
 				$rewriteuri = '/';
 			}
+			self::$s_aConfigCache[$key]->_sAppRoot = $approot;
 			self::$s_aConfigCache[$key]->_sRewriteUri = $rewriteuri;
 		}
 		$uri = self::$s_aConfigCache[$key]->_sRewriteUri;
@@ -131,14 +132,14 @@ class Ko_Web_Config
 		return self::$s_aConfigCache[$key];
 	}
 
-	private static function _BLoadConfig($key, $path, $force)
+	private static function _BLoadConfig($key, $approot, $force)
 	{
-		if (!isset(self::$s_aConfig['global'][$path]) && !$force) {
+		if (!isset(self::$s_aConfig['global'][$approot]) && !$force) {
 			return false;
 		}
 		self::$s_aConfigCache[$key] = new self;
-		if (isset(self::$s_aConfig['global'][$path])) {
-			$appname = self::$s_aConfig['global'][$path];
+		if (isset(self::$s_aConfig['global'][$approot])) {
+			$appname = self::$s_aConfig['global'][$approot];
 			self::$s_aConfigCache[$key]->_sAppName = $appname;
 			if (isset(self::$s_aConfig['app_' . $appname])) {
 				self::$s_aConfigCache[$key]->_aConfig = self::$s_aConfig['app_' . $appname];

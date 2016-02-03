@@ -18,7 +18,12 @@ class Ko_Web_Rewrite
 	{
 		list($rewrited, $httpcode) = self::AGet();
 		if ($httpcode) {
-			Ko_Web_Response::VSetRedirect($rewrited);
+			$approot = Ko_Web_Config::SGetAppRoot();
+			if (false === ($pos = strpos($approot, '/'))) {
+				Ko_Web_Response::VSetRedirect($rewrited);
+			} else {
+				Ko_Web_Response::VSetRedirect(substr($approot, $pos) . $rewrited);
+			}
 			Ko_Web_Response::VSetHttpCode($httpcode);
 			Ko_Web_Response::VSend();
 			exit;
