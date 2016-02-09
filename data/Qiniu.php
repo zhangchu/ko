@@ -29,7 +29,7 @@ class Ko_Data_Qiniu extends Ko_Data_Storage
 		if (false !== ($cl = curl_init('http://upload.qiniu.com/')))
 		{
 			$postdata = array(
-				'token' => $this->sGetUploadToken(),
+				'token' => $this->sGetUploadImageToken(),
 			);
 			if (class_exists('CURLFile'))
 			{
@@ -98,7 +98,7 @@ class Ko_Data_Qiniu extends Ko_Data_Storage
 		return json_decode($ret, true);
 	}
 
-	public function sGetUploadToken($sCallbackUrl = '', $aCallbackInfo = array())
+	public function sGetUploadImageToken($sCallbackUrl = '', $aCallbackInfo = array())
 	{
 		$returnBody = array(
 			'key' => '$(key)',
@@ -127,6 +127,45 @@ class Ko_Data_Qiniu extends Ko_Data_Storage
 				$policy['callbackBody'][] = $k.'='.$v;
 			}
 			$policy['callbackBody'] = implode('&', $policy['callbackBody']);
+		}
+		$encodedPutPolicy = self::urlsafe_base64_encode(json_encode($policy));
+		$encodedSign = self::urlsafe_base64_encode(hash_hmac('sha1', $encodedPutPolicy, $this->_sSecretKey, true));
+		return $this->_sAccessKey.':'.$encodedSign.':'.$encodedPutPolicy;
+	}
+
+	public function sGetUploadVideoToken($sCallbackUrl = '', $aCallbackInfo = array(), $sNotifyUrl = '')
+	{
+		$returnBody = array(
+			'key' => '$(key)',
+			'name' => '$(fname)',
+			'mime' => '${mimeType}',
+			'fsize' => '${fsize}',
+			'avinfo' => '${avinfo}',
+			'persistentId' => '${persistentId}',
+		);
+		$policy = array(
+			'scope' => $this->_sScope,
+			'deadline' => time() + 604800,
+			'returnBody' => json_encode($returnBody),
+			'persistentOps' => 'avthumb/mp4,avthumb/m3u8/segtime/15/vb/440k',
+		);
+		if (strlen($sCallbackUrl))
+		{
+			$policy['callbackUrl'] = $sCallbackUrl;
+			$policy['callbackBody'] = array();
+			foreach ($returnBody as $k => $v)
+			{
+				$policy['callbackBody'][] = $k.'='.$v;
+			}
+			foreach ($aCallbackInfo as $k => $v)
+			{
+				$policy['callbackBody'][] = $k.'='.$v;
+			}
+			$policy['callbackBody'] = implode('&', $policy['callbackBody']);
+		}
+		if (strlen($sNotifyUrl))
+		{
+			$policy['persistentNotifyUrl'] = $sNotifyUrl;
 		}
 		$encodedPutPolicy = self::urlsafe_base64_encode(json_encode($policy));
 		$encodedSign = self::urlsafe_base64_encode(hash_hmac('sha1', $encodedPutPolicy, $this->_sSecretKey, true));

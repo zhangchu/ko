@@ -212,7 +212,7 @@ class Ko_Data_Storage extends Ko_Busi_Api
 		return $ret;
 	}
 
-	public function bAsync2Storage($sDest, $aInfo)
+	public function bAsyncImage2Storage($sDest, $aInfo)
 	{
 		$this->_vSetSize($sDest, $aInfo['width'], $aInfo['height'], $aInfo['orientation']);
 		$this->_vSetFileinfo($sDest, $aInfo['mime'], $aInfo['name']);
@@ -224,7 +224,14 @@ class Ko_Data_Storage extends Ko_Busi_Api
 		}
 		return true;
 	}
-	
+
+	public function bAsynsFile2Storage($sDest, $aInfo)
+	{
+		$this->_vSetFileinfo($sDest, $aInfo['mime'], $aInfo['name']);
+		$this->_vSetFilesize($sDest, $aInfo['fsize']);
+		return true;
+	}
+
 	public function bWrite($sContent, $sExt, &$sDest)
 	{
 		if (strlen($this->_aConf['uni']))
