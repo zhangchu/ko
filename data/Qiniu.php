@@ -147,7 +147,7 @@ class Ko_Data_Qiniu extends Ko_Data_Storage
 			'scope' => $this->_sScope,
 			'deadline' => time() + 604800,
 			'returnBody' => json_encode($returnBody),
-			'persistentOps' => 'avthumb/mp4;avthumb/m3u8/segtime/15/vb/440k',
+			'persistentOps' => 'avthumb/mp4;avthumb/m3u8/segtime/15/vb/440k;vframe/jpg/offset/0/w/480/h/360',
 		);
 		if (strlen($sCallbackUrl))
 		{
