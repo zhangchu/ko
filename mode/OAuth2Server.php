@@ -188,7 +188,16 @@ class Ko_Mode_OAuth2Server extends Ko_Mode_OAuthServerBase
 	{
 		if (!isset($this->_aReq['access_token']))
 		{
-			$this->_vTokenError('empty_accesstoken');
+			$auth = Ko_Web_Request::SHttpAuthorization();
+			list($bearer, $access_token) = explode(' ', $auth);
+			if ('Bearer' === $bearer && strlen($access_token))
+			{
+				$this->_aReq['access_token'] = $access_token;
+			}
+			else
+			{
+				$this->_vTokenError('empty_accesstoken');
+			}
 		}
 		$tokenApi = $this->_aConf['tokenApi'];
 		$info = $this->$tokenApi->aGet($this->_aReq['access_token']);
