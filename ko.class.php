@@ -72,6 +72,14 @@ if (!defined('KO_APPS_NS'))
 	define('KO_APPS_NS', 'koApps');
 }
 
+if (!defined('KO_ENC'))
+{
+	/**
+	 * 使用的序列化编码算法，Vbs/Serialize/IgBinary
+	 */
+	define('KO_ENC', 'Serialize');
+}
+
 if (!defined('KO_CHARSET'))
 {
 	/**
@@ -137,6 +145,13 @@ if (!defined('KO_DB_SPLIT_CONF'))
 	 */
 	define('KO_DB_SPLIT_CONF', '');
 }
+if (!defined('KO_DB_CACHE_ENC'))
+{
+	/**
+	 * 数据库缓存使用的编码方式
+	 */
+	define('KO_DB_CACHE_ENC', KO_ENC);
+}
 
 if (!defined('KO_MONGO_HOST'))
 {
@@ -179,14 +194,6 @@ if (!defined('KO_MONGO_SAFE'))
 	 * 配置 MongoDB 缺省的安全模式
 	 */
 	define('KO_MONGO_SAFE', 1);
-}
-
-if (!defined('KO_ENC'))
-{
-	/**
-	 * 使用的序列化编码算法，Vbs/Serialize/IgBinary
-	 */
-	define('KO_ENC', 'Serialize');
 }
 
 if (!defined('KO_IMAGE'))

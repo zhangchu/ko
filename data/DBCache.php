@@ -37,7 +37,8 @@ class Ko_Data_DBCache
 		$sKey = $this->_sGetCacheKey($sId);
 		if ($this->_iMCacheTime)
 		{
-			$vbp = Ko_Tool_Enc::SEncode($aItem);
+			$encClass = 'Ko_Tool_Enc_'.KO_DB_CACHE_ENC;
+			$vbp = $encClass::SEncode($aItem);
 			$this->_oGetMCache()->bSet($sKey, $vbp, $this->_iMCacheTime);
 		}
 		if ($bCheckMemSize)
@@ -79,7 +80,8 @@ class Ko_Data_DBCache
 		if ($this->_iMCacheTime && $bCheckMemcache)
 		{
 			$vbp = $this->_oGetMCache()->vGet($sKey);
-			$o = Ko_Tool_Enc::ADecode($vbp);
+			$encClass = 'Ko_Tool_Enc_'.KO_DB_CACHE_ENC;
+			$o = $encClass::ADecode($vbp);
 			if (false !== $o)
 			{
 				KO_DEBUG >= 1 && Ko_Tool_Debug::VAddTmpLog('stat/InProc', 'miss');
@@ -111,7 +113,8 @@ class Ko_Data_DBCache
 			$vals = $this->_oGetMCache()->vGet($aFilterKey);
 			foreach ($vals as $k => $v)
 			{
-				$o = Ko_Tool_Enc::ADecode($v);
+				$encClass = 'Ko_Tool_Enc_'.KO_DB_CACHE_ENC;
+				$o = $encClass::ADecode($v);
 				if (false !== $o)
 				{
 					self::$s_aCache[$k] = $o;
