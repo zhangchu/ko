@@ -246,7 +246,76 @@ class Ko_Tool_SQL
 				$this->_bCalcFoundRows ? max(1, $this->_iLimit) : $this->_iLimit);
 		return $this->_bCalcFoundRows ? array($sql, 'SELECT FOUND_ROWS()') : $sql;
 	}
-	
+
+	public function sInsertMultiSql($sKind, $aData)
+	{
+		assert(!empty($aData));
+		$keys = array_keys($aData[0]);
+		assert(!empty($keys));
+
+		$fields = $keys;
+		foreach ($fields as &$field)
+		{
+			$field = ('`' === $field[0]) ? $field : '`'.$field.'`';
+		}
+		unset($field);
+
+		if ($this->bIgnore())
+		{
+			$sql = 'INSERT IGNORE ';
+		}
+		else
+		{
+			$sql = 'INSERT ';
+		}
+		$sql .= 'INTO '.$sKind.' ('.implode(', ', $fields).') VALUES ';
+		$values = array();
+		foreach ($aData as $data)
+		{
+			$vs = array();
+			foreach ($keys as $key)
+			{
+				$vs[] = Ko_Data_Mysql::SEscape($data[$key]);
+			}
+			$values[] = '("'.implode('", "', $vs).'")';
+		}
+		$sql .= implode(', ', $values);
+		return $sql;
+	}
+
+	public function sInsertSql($sKind, $aData, $aUpdate, $aChange)
+	{
+		if ($this->bIgnore())
+		{
+			$sql = 'INSERT IGNORE ';
+		}
+		else
+		{
+			$sql = 'INSERT ';
+		}
+		$sql .= 'INTO '.$sKind.' SET '.self::_sGetSetSql($aData, array());
+		if (!empty($aUpdate) || !empty($aChange))
+		{
+			$sql .= ' ON DUPLICATE KEY UPDATE '.self::_sGetSetSql($aUpdate, $aChange);
+		}
+		return $sql;
+	}
+
+	public function sUpdateSql($sKind, $aUpdate, $aChange)
+	{
+		$sql = 'UPDATE '.$sKind
+			.' SET '.self::_sGetSetSql($aUpdate, $aChange)
+			.' '.$this->sWhereOrderLimit();
+		return $sql;
+	}
+
+	public function sDeleteSql($sKind)
+	{
+		$sql = 'DELETE FROM '.$sKind
+			.' '.$this->sWhereOrderLimit();
+		return $sql;
+	}
+
 	/**
 	 * @return string
 	 */
@@ -409,6 +478,26 @@ class Ko_Tool_SQL
 			$this->_sIndex = '';
 		}
 		return $this;
+	}
+
+	private static function _sGetSetSql($aUpdate, $aChange)
+	{
+		assert(is_array($aUpdate));
+		assert(is_array($aChange));
+
+		$set = array();
+		foreach($aUpdate as $k => $v)
+		{
+			$k = ('`' === $k[0]) ? $k : '`'.$k.'`';
+			$set[] = $k.' = "'.Ko_Data_Mysql::SEscape($v).'"';
+		}
+		foreach($aChange as $k => $v)
+		{
+			$k = ('`' === $k[0]) ? $k : '`'.$k.'`';
+			$abs = abs($v);
+			$set[] = $k.' = '.$k.' '.($v >= 0 ? '+' : '-').' '.$abs;
+		}
+		return implode(', ', $set);
 	}
 }
 

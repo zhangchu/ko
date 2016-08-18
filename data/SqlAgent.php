@@ -33,26 +33,26 @@ class Ko_Data_SqlAgent
 
 	public function aInsertMulti($sKind, $iHintId, $aData, $oOption)
 	{
-		$sql = $this->_sInsertMultiSql($sKind, $aData, $oOption);
+		$sql = $oOption->sInsertMultiSql($sKind, $aData);
 		return $this->_aQuery($sKind, $iHintId, $sql);
 	}
 
 	public function aInsert($sKind, $iHintId, $aData, $aUpdate, $aChange, $oOption)
 	{
-		$sql = $this->_sInsertSql($sKind, $aData, $aUpdate, $aChange, $oOption);
+		$sql = $oOption->sInsertSql($sKind, $aData, $aUpdate, $aChange);
 		return $this->_aQuery($sKind, $iHintId, $sql);
 	}
 
 	public function iUpdate($sKind, $iHintId, $aUpdate, $aChange, $oOption)
 	{
-		$sql = $this->_sUpdateSql($sKind, $aUpdate, $aChange, $oOption);
+		$sql = $oOption->sUpdateSql($sKind, $aUpdate, $aChange);
 		$info = $this->_aQuery($sKind, $iHintId, $sql);
 		return $info['affectedrows'];
 	}
 
 	public function iDelete($sKind, $iHintId, $oOption)
 	{
-		$sql = $this->_sDeleteSql($sKind, $oOption);
+		$sql = $oOption->sDeleteSql($sKind);
 		$info = $this->_aQuery($sKind, $iHintId, $sql);
 		return $info['affectedrows'];
 	}
@@ -109,95 +109,6 @@ class Ko_Data_SqlAgent
 			$ret = $this->_oGetEngine()->aSingleQuery($sKind, $iHintId, $vSql, $iCacheTime, $bMaster);
 		}
 		return $ret;
-	}
-	
-	private function _sGetSetSql($aUpdate, $aChange)
-	{
-		assert(is_array($aUpdate));
-		assert(is_array($aChange));
-
-		$set = array();
-		foreach($aUpdate as $k => $v)
-		{
-			$k = ('`' === $k[0]) ? $k : '`'.$k.'`';
-			$set[] = $k.' = "'.Ko_Data_Mysql::SEscape($v).'"';
-		}
-		foreach($aChange as $k => $v)
-		{
-			$k = ('`' === $k[0]) ? $k : '`'.$k.'`';
-			$abs = abs($v);
-			$set[] = $k.' = '.$k.' '.($v >= 0 ? '+' : '-').' '.$abs;
-		}
-		return implode(', ', $set);
-	}
-
-	private function _sInsertMultiSql($sKind, $aData, $oOption)
-	{
-		assert(!empty($aData));
-		$keys = array_keys($aData[0]);
-		assert(!empty($keys));
-
-		$fields = $keys;
-		foreach ($fields as &$field)
-		{
-			$field = ('`' === $field[0]) ? $field : '`'.$field.'`';
-		}
-		unset($field);
-
-		if ($oOption->bIgnore())
-		{
-			$sql = 'INSERT IGNORE ';
-		}
-		else
-		{
-			$sql = 'INSERT ';
-		}
-		$sql .= 'INTO '.$sKind.' ('.implode(', ', $fields).') VALUES ';
-		$values = array();
-		foreach ($aData as $data)
-		{
-			$vs = array();
-			foreach ($keys as $key)
-			{
-				$vs[] = Ko_Data_Mysql::SEscape($data[$key]);
-			}
-			$values[] = '("'.implode('", "', $vs).'")';
-		}
-		$sql .= implode(', ', $values);
-		return $sql;
-	}
-
-	private function _sInsertSql($sKind, $aData, $aUpdate, $aChange, $oOption)
-	{
-		if ($oOption->bIgnore())
-		{
-			$sql = 'INSERT IGNORE ';
-		}
-		else
-		{
-			$sql = 'INSERT ';
-		}
-		$sql .= 'INTO '.$sKind.' SET '.$this->_sGetSetSql($aData, array());
-		if (!empty($aUpdate) || !empty($aChange))
-		{
-			$sql .= ' ON DUPLICATE KEY UPDATE '.$this->_sGetSetSql($aUpdate, $aChange);
-		}
-		return $sql;
-	}
-
-	private function _sUpdateSql($sKind, $aUpdate, $aChange, $oOption)
-	{
-		$sql = 'UPDATE '.$sKind
-			.' SET '.$this->_sGetSetSql($aUpdate, $aChange)
-			.' '.$oOption->sWhereOrderLimit();
-		return $sql;
-	}
-
-	private function _sDeleteSql($sKind, $oOption)
-	{
-		$sql = 'DELETE FROM '.$sKind
-			.' '.$oOption->sWhereOrderLimit();
-		return $sql;
 	}
 }
 
