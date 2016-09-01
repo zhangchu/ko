@@ -1,7 +1,7 @@
 <?php
 use PHPUnit\Framework\TestCase;
 
-include_once('../ko.class.php');
+include_once('ko.class.php');
 
 class Ko_Test_demo extends TestCase
 {
