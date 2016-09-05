@@ -34,6 +34,35 @@ class Ko_Data_DBPDO
 	public function aSingleQuery($sKind, $iHintId, $sSql, $iCacheTime, $bMaster)
 	{
 		$pdo = $this->_oGetPDO();
+		return $this->_aSingleQuery($pdo, $sSql);
+	}
+
+	/**
+	 * 多条sql查询
+	 */
+	public function aMultiQuery($sKind, $iHintId, $aSqls, $iCacheTime, $bMaster)
+	{
+		$ret = array();
+		$pdo = $this->_oGetPDO();
+		$pdo->beginTransaction();
+		try
+		{
+			foreach ($aSqls as $k => $sSql)
+			{
+				$ret[$k] = $this->_aSingleQuery($pdo, $sSql);
+			}
+			$pdo->commit();
+		}
+		catch (Exception $e)
+		{
+			$pdo->rollBack();
+			throw $e;
+		}
+		return $ret;
+	}
+
+	private function _aSingleQuery($pdo, $sSql)
+	{
 		if (false === ($pdos = $pdo->query($sSql)))
 		{
 			$einfo = $pdo->errorInfo();
@@ -44,20 +73,7 @@ class Ko_Data_DBPDO
 			'rownum' => count($data),
 			'insertid' => intval($pdo->lastInsertId()),
 			'affectedrows' => $pdos->rowCount(),
-			);
-	}
-
-	/**
-	 * 多条sql查询
-	 */
-	public function aMultiQuery($sKind, $iHintId, $aSqls, $iCacheTime, $bMaster)
-	{
-		$ret = array();
-		foreach ($aSqls as $k => $sSql)
-		{
-			$ret[$k] = $this->aSingleQuery($sKind, $iHintId, $sSql, $iCacheTime, $bMaster);
-		}
-		return $ret;
+		);
 	}
 
 	private function _oGetPDO()
