@@ -80,7 +80,12 @@ class Ko_Data_DBPDO
 	{
 		if (is_null($this->_oPDO))
 		{
-			$dsn = 'mysql:dbname='.KO_DB_NAME.';host='.KO_DB_HOST;
+			list($host, $port) = explode(':', KO_DB_HOST);
+			$dsn = 'mysql:dbname='.KO_DB_NAME.';host='.$host;
+			if (!empty($port))
+			{
+				$dsn .= ';port='.$port;
+			}
 			$this->_oPDO = new PDO($dsn, KO_DB_USER, KO_DB_PASS);
 		}
 		return $this->_oPDO;
