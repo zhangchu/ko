@@ -9,7 +9,7 @@
 /**
  * 对数据库分库分表的性质操作进行封装
  */
-class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
+class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table, IKo_Dao_Transaction
 {
 	const SPLIT_COUNT = 500;		//数据量太大的情况下，切分为多个小块数据进行获取，防止返回数据超过ICE定义的最大尺寸
 
@@ -43,6 +43,8 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 	private $_oUObject;
 	private $_oDirectMysql;			//直连数据库对象
 
+	private $_bInTransaction = false;
+
 	public function __construct($sTable, $vKeyField, $sIdKey='', $sDBAgentName='', $sMCacheName = '', $iMCacheTime = 3600, $bUseUO = false, $aUoFields = array(), $sUoName = '')
 	{
 		$this->_sTable = $sTable;
@@ -55,6 +57,41 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 		$this->_bUseUO = $bUseUO;
 		$this->_aUoFields = $aUoFields;
 		$this->_sUoName = $sUoName;
+	}
+
+	public function bBeginTransaction($vHintId = 1)
+	{
+		assert(!$this->_bInTransaction);
+		$this->_bInTransaction = true;
+		$vHintId = $this->_vNormalizedSplit($vHintId);
+		$ret = $this->_oGetSqlAgent()->bBeginTransaction($this->_sTable, $this->_iGetHintId($vHintId));
+		if (!$ret)
+		{
+			$this->_bInTransaction = false;
+		}
+		return $ret;
+	}
+
+	public function bCommit()
+	{
+		assert($this->_bInTransaction);
+		$ret = $this->_oGetSqlAgent()->bCommit();
+		if ($ret)
+		{
+			$this->_bInTransaction = false;
+		}
+		return $ret;
+	}
+
+	public function bRollBack()
+	{
+		assert($this->_bInTransaction);
+		$ret = $this->_oGetSqlAgent()->bRollBack();
+		if ($ret)
+		{
+			$this->_bInTransaction = false;
+		}
+		return $ret;
 	}
 
 	/**
@@ -834,6 +871,9 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table
 		return $oOption;
 	}
 
+	/**
+	 * @return Ko_Data_MongoDB|Ko_Data_SqlAgent
+	 */
 	private function _oGetSqlAgent()
 	{
 		if (is_null($this->_oSqlAgent))

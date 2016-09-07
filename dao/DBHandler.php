@@ -9,12 +9,27 @@
 /**
  * Ko_Dao_DB 适配器基类
  */
-class Ko_Dao_DBHandler implements IKo_Dao_DBHelp, IKo_Dao_Table
+class Ko_Dao_DBHandler implements IKo_Dao_DBHelp, IKo_Dao_Table, IKo_Dao_Transaction
 {
 	/**
 	 * @var Ko_Dao_DB
 	 */
 	protected $_oDB;
+
+	public function bBeginTransaction($vHintId = 1)
+	{
+		return $this->_oDB->bBeginTransaction($vHintId);
+	}
+
+	public function bCommit()
+	{
+		return $this->_oDB->bCommit();
+	}
+
+	public function bRollBack()
+	{
+		return $this->_oDB->bRollBack();
+	}
 
 	/**
 	 * @return string
