@@ -156,7 +156,9 @@ class Ko_Data_DBPDO
 				$connKey = $sid . '_' . ($bMaster ? 1 : 0);
 				if (!isset($this->_aConns[$connKey])) {
 					$dsn = 'mysql:dbname=' . $db_name . ';host=' . $host . ';port=' . $port;
-					$this->_aConns[$connKey] = new \PDO($dsn, $user, $passwd);
+					$this->_aConns[$connKey] = new \PDO($dsn, $user, $passwd, array(
+						\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES binary',
+					));
 				}
 				return $this->_aConns[$connKey];
 			}
