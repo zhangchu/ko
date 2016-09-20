@@ -14,4 +14,5 @@ interface IKo_Dao_Transaction
 	public function bBeginTransaction($vHintId = 1);
 	public function bCommit();
 	public function bRollBack();
+	public function vForcePDO($bEnable);
 }

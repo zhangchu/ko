@@ -15,9 +15,10 @@ class Ko_Data_SqlAgent
 
 	private $_sTag;
 	private $_bInTransaction = false;
+	private $_bForcePDO = false;
 
 	private $_oEngine;
-	private $_oTransactionEngine;
+	private $_oPDOEngine;
 
 	protected function __construct($sTag)
 	{
@@ -61,6 +62,12 @@ class Ko_Data_SqlAgent
 			$this->_bInTransaction = false;
 		}
 		return $ret;
+	}
+
+	public function vForcePDO($bEnable)
+	{
+		assert($this->_bForcePDO === (!$bEnable));
+		$this->_bForcePDO = $bEnable;
 	}
 
 	/**
@@ -123,11 +130,11 @@ class Ko_Data_SqlAgent
 	 */
 	private function _oGetEngine()
 	{
-		if ($this->_bInTransaction) {
-			if (is_null($this->_oTransactionEngine)) {
-				$this->_oTransactionEngine = Ko_Data_DBPDO::OInstance($this->_sTag);
+		if ($this->_bInTransaction || $this->_bForcePDO) {
+			if (is_null($this->_oPDOEngine)) {
+				$this->_oPDOEngine = Ko_Data_DBPDO::OInstance($this->_sTag);
 			}
-			return $this->_oTransactionEngine;
+			return $this->_oPDOEngine;
 		} else {
 			if (is_null($this->_oEngine)) {
 				switch (KO_DB_ENGINE) {

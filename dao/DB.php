@@ -43,8 +43,6 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table, IKo_Dao_Transaction
 	private $_oUObject;
 	private $_oDirectMysql;			//直连数据库对象
 
-	private $_bInTransaction = false;
-
 	public function __construct($sTable, $vKeyField, $sIdKey='', $sDBAgentName='', $sMCacheName = '', $iMCacheTime = 3600, $bUseUO = false, $aUoFields = array(), $sUoName = '')
 	{
 		$this->_sTable = $sTable;
@@ -61,37 +59,23 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table, IKo_Dao_Transaction
 
 	public function bBeginTransaction($vHintId = 1)
 	{
-		assert(!$this->_bInTransaction);
-		$this->_bInTransaction = true;
 		$vHintId = $this->_vNormalizedSplit($vHintId);
-		$ret = $this->_oGetSqlAgent()->bBeginTransaction($this->_sTable, $this->_iGetHintId($vHintId));
-		if (!$ret)
-		{
-			$this->_bInTransaction = false;
-		}
-		return $ret;
+		return $this->_oGetSqlAgent()->bBeginTransaction($this->_sTable, $this->_iGetHintId($vHintId));
 	}
 
 	public function bCommit()
 	{
-		assert($this->_bInTransaction);
-		$ret = $this->_oGetSqlAgent()->bCommit();
-		if ($ret)
-		{
-			$this->_bInTransaction = false;
-		}
-		return $ret;
+		return $this->_oGetSqlAgent()->bCommit();
 	}
 
 	public function bRollBack()
 	{
-		assert($this->_bInTransaction);
-		$ret = $this->_oGetSqlAgent()->bRollBack();
-		if ($ret)
-		{
-			$this->_bInTransaction = false;
-		}
-		return $ret;
+		return $this->_oGetSqlAgent()->bRollBack();
+	}
+
+	public function vForcePDO($bEnable)
+	{
+		$this->_oGetSqlAgent()->vForcePDO($bEnable);
 	}
 
 	/**

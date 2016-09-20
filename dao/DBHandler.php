@@ -31,6 +31,11 @@ class Ko_Dao_DBHandler implements IKo_Dao_DBHelp, IKo_Dao_Table, IKo_Dao_Transac
 		return $this->_oDB->bRollBack();
 	}
 
+	public function vForcePDO($bEnable)
+	{
+		return $this->_oDB->vForcePDO($bEnable);
+	}
+
 	/**
 	 * @return string
 	 */
