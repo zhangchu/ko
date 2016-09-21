@@ -22,7 +22,7 @@ class Ko_Tool_Module
 		if ('/' != $sScript[0] && ':/' != substr($sScript, 1, 2))
 		{
 			$sPath = realpath(dirname($sScript));
-			$sScript = $sPath.'/'.$sScript;
+			$sScript = $sPath.'/'.basename($sScript);
 		}
 		return $sScript;
 	}
