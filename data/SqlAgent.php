@@ -25,7 +25,7 @@ class Ko_Data_SqlAgent
 		$this->_sTag = $sTag;
 	}
 
-	public static function OInstance($sTag)
+	public static function OInstance($sTag = '')
 	{
 		if (empty(self::$s_aInstance[$sTag])) {
 			self::$s_aInstance[$sTag] = new self($sTag);
@@ -76,7 +76,7 @@ class Ko_Data_SqlAgent
 	public function aInsertMulti($sKind, $iHintId, $aData, $oOption)
 	{
 		$sql = $oOption->sInsertMultiSql($sKind, $aData);
-		return $this->_aQuery($sKind, $iHintId, $sql);
+		return $this->_aQuery($sKind, $iHintId, $sql, 0, true);
 	}
 
 	/**
@@ -85,7 +85,7 @@ class Ko_Data_SqlAgent
 	public function aInsert($sKind, $iHintId, $aData, $aUpdate, $aChange, $oOption)
 	{
 		$sql = $oOption->sInsertSql($sKind, $aData, $aUpdate, $aChange);
-		return $this->_aQuery($sKind, $iHintId, $sql);
+		return $this->_aQuery($sKind, $iHintId, $sql, 0, true);
 	}
 
 	/**
@@ -94,7 +94,7 @@ class Ko_Data_SqlAgent
 	public function iUpdate($sKind, $iHintId, $aUpdate, $aChange, $oOption)
 	{
 		$sql = $oOption->sUpdateSql($sKind, $aUpdate, $aChange);
-		$info = $this->_aQuery($sKind, $iHintId, $sql);
+		$info = $this->_aQuery($sKind, $iHintId, $sql, 0, true);
 		return $info['affectedrows'];
 	}
 
@@ -104,7 +104,7 @@ class Ko_Data_SqlAgent
 	public function iDelete($sKind, $iHintId, $oOption)
 	{
 		$sql = $oOption->sDeleteSql($sKind);
-		$info = $this->_aQuery($sKind, $iHintId, $sql);
+		$info = $this->_aQuery($sKind, $iHintId, $sql, 0, true);
 		return $info['affectedrows'];
 	}
 
