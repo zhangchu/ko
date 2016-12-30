@@ -6,6 +6,14 @@
  * @author zhangchu
  */
 
+if (!defined('KO_DB_MYSQL_GET_FORCEMASTER'))
+{
+	/**
+	 * MYSQL aGet操作是否强制走主库
+	 */
+	define('KO_DB_MYSQL_GET_FORCEMASTER', true);
+}
+
 /**
  * 对数据库分库分表的性质操作进行封装
  */
@@ -554,7 +562,8 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table, IKo_Dao_Transaction
 		$oOption = $this->_oCreateOption();
 		$oOption = $this->_vBuildOption($oOption, $vHintId, $aKey);
 		$oOption->oLimit(1);
-		$aRet = $this->_oGetSqlAgent()->aSelect($this->_sTable, $this->_iGetHintId($vHintId), $oOption, 0, true);
+		$bMaster = KO_DB_MYSQL_GET_FORCEMASTER || $this->_bIsMongoDB;
+		$aRet = $this->_oGetSqlAgent()->aSelect($this->_sTable, $this->_iGetHintId($vHintId), $oOption, 0, $bMaster);
 		$aRet = empty($aRet) ? array() : $aRet[0];
 		$this->_oGetDBCache()->vSet($sCacheKey, $aRet, true);
 		return $aRet;
