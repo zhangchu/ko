@@ -36,7 +36,7 @@ class Ko_App_Rest extends Ko_Mode_Rest
 		$classname = $this->_sGetClassname($sModule, $sResource);
 		if (!class_exists($classname) || !isset($classname::$s_aConf))
 		{
-			throw new Exception('资源不存在', self::ERROR_RESOURCE_INVALID);
+			throw new Exception('', Ko_Mode_Rest::ERROR_RESOURCE_INVALID);
 		}
 		return $classname::$s_aConf;
 	}

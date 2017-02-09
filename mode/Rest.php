@@ -8,6 +8,7 @@
 
 class Ko_Mode_Rest
 {
+	const ERROR_MAX                        = -10000000;
 	const ERROR_UNKNOWN                    = -10000000;
 	const ERROR_MODULE_INVALID             = -10000001;
 	const ERROR_RESOURCE_INVALID           = -10000002;
@@ -23,6 +24,7 @@ class Ko_Mode_Rest
 	const ERROR_POSTSTYLE_INVALID          = -10000012;
 	const ERROR_PUTSTYLE_INVALID           = -10000013;
 	const ERROR_AUTH_INVALID               = -10000014;
+	const ERROR_MIN                        = -10000099;
 
 	public static $s_aPageInput = array('hash', array(
 		'mode' => 'string',
@@ -39,6 +41,23 @@ class Ko_Mode_Rest
 		'next' => 'bool',
 		'next_boundary' => 'any',
 	));
+
+	private static $s_aErrorList = array(
+		self::ERROR_MODULE_INVALID => array('message' => '模块不存在'),
+		self::ERROR_RESOURCE_INVALID => array('message' => '资源不存在'),
+		self::ERROR_RESOURCE_NOT_IMPLEMENTED => array('message' => '资源还没有实现'),
+		self::ERROR_UNIQUE_NOT_DEFINED => array('message' => '唯一键类型未定义'),
+		self::ERROR_METHOD_INVALID => array('message' => '方法不允许'),
+		self::ERROR_METHOD_NOT_SUPPORTED => array('message' => '资源不支持该方法'),
+		self::ERROR_POST_INVALID => array('message' => '指定资源不能进行POST操作'),
+		self::ERROR_DELETE_INVALID => array('message' => '指定资源不能进行DELETE操作'),
+		self::ERROR_STYLE_INVALID => array('message' => '数据样式不存在'),
+		self::ERROR_EXSTYLE_INVALID => array('message' => '扩展数据样式不存在'),
+		self::ERROR_FILTERSTYLE_INVALID => array('message' => 'FILTER数据样式不存在'),
+		self::ERROR_POSTSTYLE_INVALID => array('message' => 'POST数据样式不存在'),
+		self::ERROR_PUTSTYLE_INVALID => array('message' => 'PUT数据样式不存在'),
+		self::ERROR_AUTH_INVALID => array('message' => '身份验证失败'),
+	);
 
 	private $_sModule = '';
 	private $_sResource = '';
@@ -77,38 +96,71 @@ class Ko_Mode_Rest
 
 	public function aCall($sMethod, $sUri, $aInput)
 	{
+		$resConf = array();
 		try
 		{
-			$data = $this->_aCall($sMethod, $sUri, $aInput);
+			$items = explode('/', $sUri);
+			$this->_vKey = $this->_sId = array_pop($items);
+			$this->_sResource = array_pop($items);
+			$this->_sModule = implode('/', $items);
+
+			$resConf = $this->_aLoadConf($this->_sModule, $this->_sResource);
+
+			$data = $this->_aCall($sMethod, $aInput, $resConf);
 		}
 		catch (Exception $e)
 		{
-			if ($e INSTANCEOF Ko_Exception)
-			{
-				return array('errno' => $e->getCode(), 'error' => $e->getMessage(), 'data' => $e->getData());
-			}
-			return array('errno' => $e->getCode(), 'error' => $e->getMessage());
+			return $this->_aAdjustError($e, $resConf);
 		}
 		return array('errno' => 0, 'error' => '', 'data' => $data);
 	}
 
-	private function _aCall($sMethod, $sUri, $aInput)
+	private function _aBuildError($errorlist, $errno, $error, $data)
 	{
-		$items = explode('/', $sUri);
-		$this->_vKey = $this->_sId = array_pop($items);
-		$this->_sResource = array_pop($items);
-		$this->_sModule = implode('/', $items);
+		if (isset($errorlist[$errno]))
+		{
+			if (isset($errorlist[$errno]['message']))
+			{
+				$error = $errorlist[$errno]['message'];
+			}
+			if (isset($errorlist[$errno]['datastyle']))
+			{
+				$data = Ko_Tool_Adapter::VConv($data, $errorlist[$errno]['datastyle']);
+			}
+		}
+		return array('errno' => $errno, 'error' => $error, 'data' => $data);
+	}
 
-		$resConf = $this->_aLoadConf($this->_sModule, $this->_sResource);
+	private function _aAdjustError(Exception $e, $resConf)
+	{
+		$errno = $e->getCode();
+		$error = $e->getMessage();
+		$data = ($e INSTANCEOF Ko_Exception) ? $e->getData() : null;
+		if ($errno < self::ERROR_MIN || self::ERROR_MAX < $errno)
+		{
+			if (isset($resConf['errorlist']))
+			{
+				return $this->_aBuildError($resConf['errorlist'], $errno, $error, $data);
+			}
+		}
+		else
+		{
+			return $this->_aBuildError(self::$s_aErrorList, $errno, $error, $data);
+		}
+		return array('errno' => $errno, 'error' => $error, 'data' => $data);
+	}
+
+	private function _aCall($sMethod, $aInput, $resConf)
+	{
 		if ('' !== $this->_sId && !isset($resConf['unique']))
 		{
-			throw new Exception('唯一键类型未定义', self::ERROR_UNIQUE_NOT_DEFINED);
+			throw new Exception('', self::ERROR_UNIQUE_NOT_DEFINED);
 		}
 
 		$classname = $this->_sGetClassname($this->_sModule, $this->_sResource);
 		if (!class_exists($classname))
 		{
-			throw new Exception('资源还没有实现', self::ERROR_RESOURCE_NOT_IMPLEMENTED);
+			throw new Exception('', self::ERROR_RESOURCE_NOT_IMPLEMENTED);
 		}
 		$api = Ko_Tool_Singleton::OInstance($classname);
 		if ('' !== $this->_sId && method_exists($api, 'str2key'))
@@ -200,7 +252,7 @@ class Ko_Mode_Rest
 					$this->_vDeleteMulti2Delete($api, $aInput);
 					break;
 				default:
-					throw new Exception('资源不支持该方法', self::ERROR_METHOD_NOT_SUPPORTED);
+					throw new Exception('', self::ERROR_METHOD_NOT_SUPPORTED);
 			}
 			return null;
 		}
@@ -226,7 +278,7 @@ class Ko_Mode_Rest
 	{
 		if (!method_exists($api, $funcname))
 		{
-			throw new Exception('资源不支持该方法', self::ERROR_METHOD_NOT_SUPPORTED);
+			throw new Exception('', self::ERROR_METHOD_NOT_SUPPORTED);
 		}
 		else
 		{
@@ -257,9 +309,10 @@ class Ko_Mode_Rest
 		}
 		catch (Exception $e)
 		{
-			if ($e->getCode() <= self::ERROR_UNKNOWN || 0 == $e->getCode())
+			$errno = $e->getCode();
+			if ((self::ERROR_MIN <= $errno && $errno <= self::ERROR_MAX) || 0 == $errno)
 			{
-				throw new Exception($e->getCode().': '.$e->getMessage(), self::ERROR_UNKNOWN);
+				throw new Exception($errno.': '.$e->getMessage(), self::ERROR_UNKNOWN);
 			}
 			else
 			{
@@ -282,7 +335,7 @@ class Ko_Mode_Rest
 			case 'DELETE':
 				return $this->_sGetDeleteFuncInfo($resConf, $aInput, $para);
 		}
-		throw new Exception('方法不允许', self::ERROR_METHOD_INVALID);
+		throw new Exception('', self::ERROR_METHOD_INVALID);
 	}
 
 	private function _sGetGetFuncInfo($resConf, &$aInput, &$para)
@@ -318,7 +371,7 @@ class Ko_Mode_Rest
 	{
 		if ('' !== $this->_sId || !isset($resConf['unique']))
 		{
-			throw new Exception('指定资源不能进行POST操作', self::ERROR_POST_INVALID);
+			throw new Exception('', self::ERROR_POST_INVALID);
 		}
 		$postRule = $this->_vGetPostStyle($resConf, $aInput);
 		if (!isset($aInput['list']))
@@ -379,7 +432,7 @@ class Ko_Mode_Rest
 	{
 		if (!isset($resConf['unique']))
 		{
-			throw new Exception('指定资源不能进行DELETE操作', self::ERROR_DELETE_INVALID);
+			throw new Exception('', self::ERROR_DELETE_INVALID);
 		}
 		if (!isset($aInput['list']))
 		{
@@ -410,7 +463,7 @@ class Ko_Mode_Rest
 		}
 		if (!isset($resConf['filterstylelist'][$aInput['filter_style']]))
 		{
-			throw new Exception('FILTER数据样式不存在', self::ERROR_FILTERSTYLE_INVALID);
+			throw new Exception('', self::ERROR_FILTERSTYLE_INVALID);
 		}
 		return $resConf['filterstylelist'][$aInput['filter_style']];
 	}
@@ -423,7 +476,7 @@ class Ko_Mode_Rest
 		}
 		if (!isset($resConf['poststylelist'][$aInput['post_style']]))
 		{
-			throw new Exception('POST数据样式不存在', self::ERROR_POSTSTYLE_INVALID);
+			throw new Exception('', self::ERROR_POSTSTYLE_INVALID);
 		}
 		return $resConf['poststylelist'][$aInput['post_style']];
 	}
@@ -436,7 +489,7 @@ class Ko_Mode_Rest
 		}
 		if (!isset($resConf['putstylelist'][$aInput['put_style']]))
 		{
-			throw new Exception('PUT数据样式不存在', self::ERROR_PUTSTYLE_INVALID);
+			throw new Exception('', self::ERROR_PUTSTYLE_INVALID);
 		}
 		return $resConf['putstylelist'][$aInput['put_style']];
 	}
@@ -451,7 +504,7 @@ class Ko_Mode_Rest
 			}
 			if (!isset($resConf['stylelist'][$aInput[$key]]))
 			{
-				throw new Exception('数据样式不存在', self::ERROR_STYLE_INVALID);
+				throw new Exception('', self::ERROR_STYLE_INVALID);
 			}
 		}
 	}
@@ -462,7 +515,7 @@ class Ko_Mode_Rest
 		{
 			if (!isset($resConf['stylelist'][$aInput[$key]]))
 			{
-				throw new Exception('扩展数据样式不存在', self::ERROR_EXSTYLE_INVALID);
+				throw new Exception('', self::ERROR_EXSTYLE_INVALID);
 			}
 		}
 	}
