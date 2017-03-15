@@ -8,7 +8,7 @@
 
 class Ko_Tool_UA
 {
-	private static $s_aSpiderKeys = array('spider', 'bot', 'slurp');
+	private static $s_aSpiderKeys = array('spider', 'bot', 'slurp', 'bingpreview');
 	private static $s_aPhone = array('phone', 'android', 'symbian', 'smartphone', 'midp', 'wap', 'ipod');
 	private static $s_aPad = array('ipad', 'xoom');
 
