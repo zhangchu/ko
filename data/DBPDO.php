@@ -134,7 +134,7 @@ class Ko_Data_DBPDO
 					if (!empty($port)) {
 						$dsn .= ';port=' . $port;
 					}
-					$this->_oPDO = new \PDO($dsn, KO_DB_USER, KO_DB_PASS);
+					$this->_oPDO = $this->_oCreatePDO($dsn, KO_DB_USER, KO_DB_PASS);
 				}
 				return $this->_oPDO;
 		}
@@ -172,13 +172,20 @@ class Ko_Data_DBPDO
 				}
 				if (!isset($this->_aConns[$connKey])) {
 					$dsn = 'mysql:dbname=' . $db_name . ';host=' . $host . ';port=' . $port;
-					$this->_aConns[$connKey] = new \PDO($dsn, $user, $passwd, array(
-						\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES binary',
-					));
+					$this->_aConns[$connKey] = $this->_oCreatePDO($dsn, $user, $passwd);
 				}
 				return $this->_aConns[$connKey];
 			}
 		}
 		assert(0);
+	}
+
+	private function _oCreatePDO($dsn, $user, $passwd)
+	{
+		return new \PDO($dsn, $user, $passwd, array(
+			\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES binary',
+			\PDO::ATTR_STRINGIFY_FETCHES => false,
+			\PDO::ATTR_EMULATE_PREPARES => false,
+		));
 	}
 }
