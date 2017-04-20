@@ -20,14 +20,14 @@ class Ko_Mode_LimitBase extends Ko_Busi_Api
 		}
 		return strtotime($sCtime);
 	}
-	
+
 	/**
 	 * @return bool
 	 */
 	public function bPreCheck($vObj, $sAction, $iSecond, $iMaxTimes, $iTimes = 1, $bAlign = false, $iOffset = 0)
 	{
-		assert($iTimes > 0 && $iMaxTimes >= $iTimes);
-		return $iTimes <= $this->iPreCheck($vObj, $sAction, $iSecond, $iMaxTimes, $bAlign, $iOffset);
+		return $iTimes > 0 && $iMaxTimes >= $iTimes
+			&& $iTimes <= $this->iPreCheck($vObj, $sAction, $iSecond, $iMaxTimes, $bAlign, $iOffset);
 	}
 
 	/**
@@ -58,8 +58,8 @@ class Ko_Mode_LimitBase extends Ko_Busi_Api
 	 */
 	public function bCheck($vObj, $sAction, $iSecond, $iMaxTimes, $iTimes = 1, $bAlign = false, $iOffset = 0)
 	{
-		assert($iSecond >= 0 && $iTimes > 0 && $iMaxTimes >= $iTimes);
-		return $this->_bCheck($vObj, $sAction, $iSecond, $iMaxTimes, $iTimes, $bAlign, $iOffset);
+		return $iSecond >= 0 && $iTimes > 0 && $iMaxTimes >= $iTimes
+			&& $this->_bCheck($vObj, $sAction, $iSecond, $iMaxTimes, $iTimes, $bAlign, $iOffset);
 	}
 
 	public function vFree($vObj, $sAction)
@@ -171,12 +171,12 @@ class Ko_Mode_LimitBase extends Ko_Busi_Api
 	{
 		assert(0);
 	}
-	
+
 	protected function _aGet($vObj, $sAction)
 	{
 		assert(0);
 	}
-	
+
 	protected function _iDelete($vObj, $sAction)
 	{
 		assert(0);
