@@ -1,11 +1,11 @@
 <?php
+
 /**
  * Crontab
  *
  * @package ko\mode
  * @author zhangchu
  */
-
 class Ko_Mode_Crontab
 {
 	/**
@@ -36,11 +36,27 @@ class Ko_Mode_Crontab
 	 * @var array
 	 */
 	protected $_aConf = array();
-	
+
 	/**
 	 * 应用程序的入口函数
 	 */
 	public function vRun()
+	{
+		$sequences = $parallels = array();
+		foreach ($this->_aConf['crontab'] as $v) {
+			$v['cmd'] = trim($v['cmd'], '&');
+			if (!$v['fg']) {
+				$v['cmd'] .= ' &';
+				$parallels[] = $v;
+			} else {
+				$sequences[] = $v;
+			}
+		}
+
+		self::_VExecMulti(array_merge($parallels, $sequences));
+	}
+
+	private static function _VExecMulti($aMultiCmds)
 	{
 		$now = time();
 		$ymd = date('Y-m-d', $now);
@@ -52,30 +68,21 @@ class Ko_Mode_Crontab
 		$minute = intval($minute);
 
 		$curdir = getcwd();
-		foreach ($this->_aConf['crontab'] as $v)
-		{
-			if (!Ko_Tool_Time::BCheckTime($v, $minute, $hour, $week, $day))
-			{
+		foreach ($aMultiCmds as $v) {
+			if (!Ko_Tool_Time::BCheckTime($v, $minute, $hour, $week, $day)) {
 				continue;
 			}
-			if (isset($v['path']) && '.' !== $v['path'])
-			{
-				if (!chdir($v["path"]))
-				{
+
+			if (isset($v['path']) && '.' !== $v['path']) {
+				if (!chdir($v["path"])) {
 					continue;
 				}
 			}
 
-			$cmd = trim($v['cmd'], '&');
-			if (!$v['fg'])
-			{
-				$cmd .= ' &';
-			}
-			echo '[',$ymd,' ',$time,'] ',$cmd,"\n";
+			echo '[', $ymd, ' ', $time, '] ', $cmd, "\n";
 			system($cmd);
 
-			if (isset($v['path']) && '.' !== $v['path'])
-			{
+			if (isset($v['path']) && '.' !== $v['path']) {
 				chdir($curdir);
 			}
 		}
