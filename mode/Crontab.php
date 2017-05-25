@@ -42,6 +42,10 @@ class Ko_Mode_Crontab
 	 */
 	public function vRun()
 	{
+		if (!isset($this->_aConf['crontab'])) {
+			return;
+		}
+
 		$sequences = $parallels = array();
 		foreach ($this->_aConf['crontab'] as $v) {
 			$v['cmd'] = trim($v['cmd'], '&');
