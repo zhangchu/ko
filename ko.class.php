@@ -377,7 +377,7 @@ function koAppsAutoload($sClassName)
 			{
 				$lastname = strtolower(implode('/', $cnames)).'/'.$lastname;
 			}
-			$classfile = KO_APPS_DIR.implode('/', $items).'/'.substr($lastname, 1).'.php';
+			$classfile = KO_APPS_DIR.implode('/', $items).'/'.substr($lastname, 2).'.php';
 			if (is_file($classfile))
 			{
 				require_once($classfile);
