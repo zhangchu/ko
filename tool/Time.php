@@ -50,6 +50,17 @@ class Ko_Tool_Time
 				{
 					$arr = explode(',', $aCron[$sUnit]);
 				}
+				else if (false !== strpos($aCron[$sUnit], '-'))
+				{
+					list($start, $end) = explode('-', $aCron[$sUnit], 2);
+					$start = intval($start);
+					$end = intval($end);
+					$arr = array();
+					for ($i=$start; $i<=$end; ++$i)
+					{
+						$arr[] = $i;
+					}
+				}
 				else if (('hour' === $sUnit || 'minute' === $sUnit) && '*/' === substr($aCron[$sUnit], 0, 2))
 				{
 					$mod = substr($aCron[$sUnit], 2);
