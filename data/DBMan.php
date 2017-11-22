@@ -90,6 +90,7 @@ class Ko_Data_DBMan extends Ko_Data_KProxy
 				$row = $array;
 			}
 			unset($row);
+			reset($oSqlRes['rows']);
 		}
 		else
 		{
