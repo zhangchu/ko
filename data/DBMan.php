@@ -73,42 +73,43 @@ class Ko_Data_DBMan extends Ko_Data_KProxy
 		return $this->_aFormatMResult($oReturn);
 	}
 
-	private function _aFormatResult($oSqlRes)
+	private function _aFormatResult(&$oSqlRes)
 	{
-		$data = array();
 		$insertId = isset($oSqlRes['insertId']) ? intval($oSqlRes['insertId']) : 0;
 		$affectedRowNumber = isset($oSqlRes['affectedRowNumber']) ? intval($oSqlRes['affectedRowNumber']) : 0;
 		if (isset($oSqlRes['rows']))
 		{
 			$rownum = count($oSqlRes['rows']);
-			foreach($oSqlRes['rows'] as $i=>$row)
+			foreach($oSqlRes['rows'] as $i=>&$row)
 			{
 				$array = array();
 				foreach($oSqlRes['fields'] as $id=>$field)
 				{
 					$array[$field] = is_object($row[$id]) ? strval($row[$id]) : $row[$id];
 				}
-				$data[$i] = $array;
+				$row = $array;
 			}
+			unset($row);
 		}
 		else
 		{
 			$rownum = 0;
 		}
 		KO_DEBUG >= 7 && Ko_Tool_Debug::VAddTmpLog('data/DBMan', '_aFormatResult:insertid_'.$insertId.':affectedrows_'.$affectedRowNumber.':rownum_'.$rownum);
-		return array('data' => $data,
+		return array('data' => $oSqlRes['rows'],
 					'rownum' => $rownum,
 					'insertid' => $insertId,
 					'affectedrows' => $affectedRowNumber);
 	}
 
-	private function _aFormatMResult($oMsqlRes)
+	private function _aFormatMResult(&$oMsqlRes)
 	{
 		$aResult = array();
-		foreach ($oMsqlRes['results'] as $sqlres)
+		foreach ($oMsqlRes['results'] as &$sqlres)
 		{
 			$aResult[] = $this->_aFormatResult($sqlres);
 		}
+		unset($sqlres);
 		return $aResult;
 	}
 }
