@@ -1,8 +1,14 @@
 <?php
 
+$root = \Ko_Tool_CodeCoverage::root();
+if ('' == $root) {
+	exit;
+}
+
 \Ko_Web_Route::VGet('index', function() {
+	global $root;
+
 	$dir = \Ko_Web_Request::SGet('dir');
-	$root = \Ko_Tool_CodeCoverage::root();
 	if (strncmp($root, $dir, strlen($root))) {
 		$dir = $root;
 	}
@@ -38,8 +44,9 @@
 });
 
 \Ko_Web_Route::VGet('file', function() {
+	global $root;
+
 	$file = \Ko_Web_Request::SGet('file');
-	$root = \Ko_Tool_CodeCoverage::root();
 	if (strncmp($root, $file, strlen($root))) {
 		\Ko_Web_Response::VSetRedirect('../');
 		\Ko_Web_Response::VSend();
