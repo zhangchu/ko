@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CC-Ko-{$file}</title>
+    <style>
+        .row {
+            display: flex;
+            flex-flow: row wrap;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .row-reverse {
+            display: flex;
+            flex-flow: row-reverse wrap;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .column {
+            display: flex;
+            flex-flow: column wrap;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .column-reverse {
+            display: flex;
+            flex-flow: column-reverse wrap;
+            justify-content: space-around;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+<view class="column" style="width: 100%;">
+    <view class="column" style="width:1000px;">
+        <view class="row" style="height:50px;width:100%;">
+            <view class="row" style="width:20%;">
+                <text><a href="../?dir={$parent}">返回</a></text>
+            </view>
+            <view class="row" style="width:60%;">
+                <text>{$file}</text>
+            </view>
+            <view class="row" style="width:20%;">
+                <text>{$filemtime}</text>
+            </view>
+        </view>
+        <view class="column">
+            {foreach $lines as $index => $line}
+            <view class="row" style="width:100%;height:24px;justify-content:flex-start;background-color: {if isset($exec_lines[$index+1])}lightyellow{else}lightblue{/if};">
+                <text style="width:50px;text-align: right;padding-right: 10px;">{$index+1}</text>
+                <text style="width:100px;text-align: right;padding-right: 10px;">
+                    {if isset($exec_lines[$index+1])}
+                        {$exec_lines[$index+1]}
+                    {else}
+                        -
+                    {/if}
+                </text>
+                <text><pre>{$line}</pre></text>
+            </view>
+            {/foreach}
+        </view>
+    </view>
+</view>
+</body>
+</html>

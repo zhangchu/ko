@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CC-Ko-{$dir}</title>
+    <style>
+        .row {
+            display: flex;
+            flex-flow: row wrap;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .row-reverse {
+            display: flex;
+            flex-flow: row-reverse wrap;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .column {
+            display: flex;
+            flex-flow: column wrap;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .column-reverse {
+            display: flex;
+            flex-flow: column-reverse wrap;
+            justify-content: space-around;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+<view class="column" style="width: 100%;">
+    <view class="column" style="width:1000px;">
+        <view class="row" style="height:50px;width:100%;">
+            <view class="row" style="width:20%;">
+                <text><a href="?dir={$parent}">返回</a></text>
+            </view>
+            <view class="row" style="width:60%;">
+                <text>{$dir}</text>
+            </view>
+            <view class="row" style="width:20%;">
+            </view>
+        </view>
+        <view class="column" style="width: 100%;">
+            {foreach $dirlist as $v}
+            <view class="row" style="width:80%;height:30px;justify-content:flex-start;">
+                <text><a href="?dir={$dir}{$v}">{$v}</a></text>
+            </view>
+            {/foreach}
+        </view>
+        <view class="column" style="width: 100%;">
+            {foreach $filelist as $v}
+            <view class="row" style="width:80%;height:30px;justify-content:flex-start;">
+                <text><a href="index/file?file={$dir}{$v}">{$v}</a></text>
+            </view>
+            {/foreach}
+        </view>
+    </view>
+</view>
+</body>
+</html>
