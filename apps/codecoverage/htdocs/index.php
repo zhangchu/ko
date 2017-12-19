@@ -29,7 +29,7 @@ if ('' == $root) {
 				$filename = $dir . $file;
 				if (is_dir($filename)) {
 					if (false !== \Ko_Tool_CodeCoverage::ccname($filename . '/')) {
-						$dirlist[$file] = $file;
+						$dirlist[] = $file;
 					}
 				} else if (is_file($filename) && 'php' === pathinfo($filename, PATHINFO_EXTENSION)) {
 					if (false !== \Ko_Tool_CodeCoverage::ccname($filename)) {
@@ -40,6 +40,8 @@ if ('' == $root) {
 			closedir($dh);
 		}
 	}
+	sort($dirlist);
+	sort($filelist);
 
 	$smarty->oSetData('dirlist', $dirlist)
 		->oSetData('filelist', $filelist)
