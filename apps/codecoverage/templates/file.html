@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>CC-Ko-{$file}</title>
+    <title>{$basename}-CC-Ko</title>
     <style>
         .row {
             display: flex;
@@ -33,20 +33,22 @@
 <body>
 <view class="column" style="width: 100%;">
     <view class="column" style="width:1000px;">
-        <view class="row" style="height:50px;width:100%;">
+        <view class="row" style="height:10px;"></view>
+        <view class="row" style="width:100%;">
             <view class="row" style="width:20%;">
                 <text><a href="../?dir={$parent}">返回</a></text>
             </view>
             <view class="row" style="width:60%;">
-                <text>{$file}</text>
+                <text style="word-break: break-all;">{$file}</text>
             </view>
             <view class="row" style="width:20%;">
                 <text>{$filemtime}</text>
             </view>
         </view>
-        <view class="column">
+        <view class="row" style="height:10px;"></view>
+        <view class="column" style="width:100%;">
             {foreach $lines as $index => $line}
-            <view class="row" style="width:100%;height:24px;justify-content:flex-start;background-color: {if isset($exec_lines[$index+1])}lightyellow{else}lightblue{/if};">
+            <view class="row" style="width:100%;justify-content:flex-start;background-color: {if isset($exec_lines[$index+1])}lightyellow{else}lightblue{/if};padding-top: 5px;padding-bottom: 5px;">
                 <text style="width:50px;text-align: right;padding-right: 10px;">{$index+1}</text>
                 <text style="width:100px;text-align: right;padding-right: 10px;">
                     {if isset($exec_lines[$index+1])}
@@ -55,7 +57,7 @@
                         -
                     {/if}
                 </text>
-                <text><pre>{$line}</pre></text>
+                <text style="width:830px;word-break: break-all;white-space: pre-wrap;">{$line}</text>
             </view>
             {/foreach}
         </view>

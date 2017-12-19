@@ -14,7 +14,10 @@ if ('' == $root) {
 	}
 	$dir = rtrim($dir, '/') . '/';
 	$smarty = new \Ko_View_Render_Smarty();
-	$smarty->oSetTemplate('index.html')->oSetData('dir', $dir)->oSetData('parent', dirname($dir));
+	$smarty->oSetTemplate('index.html')
+		->oSetData('dir', $dir)
+		->oSetData('basename', basename($dir))
+		->oSetData('parent', dirname($dir));
 
 	$dirlist = $filelist = array();
 	if (is_dir($dir)) {
@@ -53,7 +56,10 @@ if ('' == $root) {
 		exit;
 	}
 	$smarty = new \Ko_View_Render_Smarty();
-	$smarty->oSetTemplate('file.html')->oSetData('file', $file)->oSetData('parent', dirname($file));
+	$smarty->oSetTemplate('file.html')
+		->oSetData('file', $file)
+		->oSetData('basename', basename($file))
+		->oSetData('parent', dirname($file));
 
 	if (is_file($file)) {
 		$lines = file($file);

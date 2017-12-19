@@ -60,7 +60,11 @@ class Ko_Tool_CodeCoverage
 		if (false === $tag) {
 			return false;
 		}
-		return self::$s_aWhiteList[$tag] . '-' . str_replace('/', '_', substr($filename, strlen($tag)));
+		$name = str_replace('/', '_', substr($filename, strlen($tag)));
+		if (strlen($name) > 100) {
+			$name = md5($name) . '-' . substr($name, -100);
+		}
+		return self::$s_aWhiteList[$tag] . '-' . $name;
 	}
 
 	public static function ccpath($filename)
