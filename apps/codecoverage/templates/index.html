@@ -33,27 +33,29 @@
 <body>
 <view class="column" style="width: 100%;">
     <view class="column" style="width:1000px;">
-        <view class="row" style="height:50px;width:100%;">
+        <view class="row" style="height:10px;"></view>
+        <view class="row" style="width:100%;">
             <view class="row" style="width:20%;">
                 <text><a href="?dir={$parent}">返回</a></text>
             </view>
             <view class="row" style="width:60%;">
-                <text>{$dir}</text>
+                <text style="word-break: break-all;">{$dir}</text>
             </view>
             <view class="row" style="width:20%;">
             </view>
         </view>
+        <view class="row" style="height:10px;"></view>
         <view class="column" style="width: 100%;">
             {foreach $dirlist as $v}
-            <view class="row" style="width:80%;height:30px;justify-content:flex-start;">
-                <text><a href="?dir={$dir}{$v}">{$v}</a></text>
+            <view class="row" style="width:80%;justify-content:flex-start;padding-top: 5px;padding-bottom: 5px;">
+                <text style="800px;word-break: break-all;white-space: pre-wrap;"><a href="?dir={$dir}{$v}">{$v}</a></text>
             </view>
             {/foreach}
         </view>
         <view class="column" style="width: 100%;">
             {foreach $filelist as $v}
-            <view class="row" style="width:80%;height:30px;justify-content:flex-start;">
-                <text><a href="index/file?file={$dir}{$v}">{$v}</a></text>
+            <view class="row" style="width:80%;justify-content:flex-start;padding-top: 5px;padding-bottom: 5px;">
+                <text style="800px;word-break: break-all;white-space: pre-wrap;"><a href="index/file?file={$dir}{$v}">{$v}</a></text>
             </view>
             {/foreach}
         </view>
