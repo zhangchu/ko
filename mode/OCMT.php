@@ -572,9 +572,12 @@ class Ko_Mode_OCMT extends Ko_Busi_Api
 
 	private function _iDeleteIndexEx($iOid, $iCid, $sIndex)
 	{
-		$dao = $this->_aConf[$sIndex].'Dao';
-		$key = array('oid' => $iOid, 'cid' => $iCid);
-		return $this->$dao->iDelete($key);
+		if (isset($this->_aConf[$sIndex])) {
+			$dao = $this->_aConf[$sIndex].'Dao';
+			$key = array('oid' => $iOid, 'cid' => $iCid);
+			return $this->$dao->iDelete($key);
+		}
+		return 0;
 	}
 
 	private function _vTouchOid($iOid)
