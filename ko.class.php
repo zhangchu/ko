@@ -152,6 +152,13 @@ if (!defined('KO_DB_CACHE_ENC'))
 	 */
 	define('KO_DB_CACHE_ENC', KO_ENC);
 }
+if (!defined('KO_DB_ENABLE_MC'))
+{
+	/**
+	 * 数据库默认mc缓存时间，设为0关闭
+	 */
+	define('KO_DB_MCACHETIME', 3600);
+}
 
 if (!defined('KO_MONGO_HOST'))
 {

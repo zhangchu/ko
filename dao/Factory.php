@@ -13,7 +13,7 @@ class Ko_Dao_Factory
 {
 	private static $s_aInstance = array();
 	private static $s_aDefaultValue = array(
-		'mcachetime' => 3600,
+		'mcachetime' => KO_DB_MCACHETIME,
 		'mode' => 'r',
 		);
 	private static $s_aTypeAlias = array(
