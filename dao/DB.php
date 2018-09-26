@@ -516,13 +516,20 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table, IKo_Dao_Transaction
 
 	private function _sGetSplitField()
 	{
-		if (('' !== KO_DB_SPLIT_CONF) && (false !== ($db = dba_open(KO_DB_SPLIT_CONF, 'r', 'qdbm'))))
+		if ('' !== KO_DB_SPLIT_CONF)
 		{
-			$value = dba_fetch($this->_sTable, $db);
-			dba_close($db);
-			if (false !== $value)
+			if (false !== ($db = dba_open(KO_DB_SPLIT_CONF, 'r', 'qdbm')))
 			{
-				return $value;
+				$value = dba_fetch($this->_sTable, $db);
+				dba_close($db);
+				if (false !== $value)
+				{
+					return $value;
+				}
+			}
+			else
+			{
+				assert(0);
 			}
 		}
 		return '';
