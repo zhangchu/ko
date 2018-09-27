@@ -52,9 +52,13 @@ class Ko_Tool_Ip
 			{
 				continue;
 			}
-			$sIp = $ip;
-			if (!self::BIsInnerIP($ip))
+			if ($sIp === 'unknown')
 			{
+				$sIp = $ip;
+			}
+			else if (!self::BIsInnerIP($ip))
+			{
+				$sIp = $ip;
 				break;
 			}
 		}
