@@ -1,0 +1,27 @@
+{
+  "name": "mfw/ko",
+  "description": "Awesome library for accessing data, supports mysql, redis, memcache...",
+  "type": "library",
+  "keywords": [
+    "ko"
+  ],
+  "license": "MIT",
+  "require": {
+    "php": ">=5.4.0"
+  },
+  "autoload": {
+    "classmap": [
+      "/"
+    ],
+    "files": [
+      "ko.class.php"
+    ]
+  },
+  "authors": [
+    {
+      "name": "trueman",
+      "homepage": "zhangchu@mafengwo.com"
+    }
+  ]
+}
+

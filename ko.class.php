@@ -4,8 +4,6 @@
  * @author zhangchu
  */
 
-define('KO_VERSION', '0.9.0');
-
 if (!defined('DS'))
 {
 	/**
@@ -77,7 +75,7 @@ if (!defined('KO_ENC'))
 	/**
 	 * 使用的序列化编码算法，Vbs/Serialize/IgBinary
 	 */
-	define('KO_ENC', 'Serialize');
+	define('KO_ENC', 'IgBinary');
 }
 
 if (!defined('KO_CHARSET'))
@@ -101,14 +99,14 @@ if (!defined('KO_PROXY'))
 	/**
 	 * KProxy 位置的服务器
 	 */
-	define('KO_PROXY', '');
+	define('KO_PROXY', getenv('KPROXY_IP') ? getenv('KPROXY_IP') : '');
 }
 if (!defined('KO_DB_ENGINE'))
 {
 	/**
 	 * 配置数据库连接使用哪种引擎，如：kproxy/mysql/mysql-pdo
 	 */
-	define('KO_DB_ENGINE', 'mysql-pdo');
+	define('KO_DB_ENGINE', 'kproxy');
 }
 if (!defined('KO_DB_HOST'))
 {
@@ -151,13 +149,6 @@ if (!defined('KO_DB_CACHE_ENC'))
 	 * 数据库缓存使用的编码方式
 	 */
 	define('KO_DB_CACHE_ENC', KO_ENC);
-}
-if (!defined('KO_DB_ENABLE_MC'))
-{
-	/**
-	 * 数据库默认mc缓存时间，设为0关闭
-	 */
-	define('KO_DB_MCACHETIME', 3600);
 }
 
 if (!defined('KO_MONGO_HOST'))
@@ -216,7 +207,7 @@ if (!defined('KO_MC_ENGINE'))
 	/**
 	 * 配置使用的 memcache 的连接方式，kproxy/memcache/saemc
 	 */
-	define('KO_MC_ENGINE', 'memcache');
+	define('KO_MC_ENGINE', 'kproxy');
 }
 if (!defined('KO_MC_HOST'))
 {
@@ -237,7 +228,7 @@ if (!defined('KO_REDIS_ENGINE'))
 	/**
 	 * 配置使用的 redis 的连接方式，kproxy/redis
 	 */
-	define('KO_REDIS_ENGINE', 'redis');
+	define('KO_REDIS_ENGINE', 'kproxy');
 }
 if (!defined('KO_REDIS_HOST'))
 {
