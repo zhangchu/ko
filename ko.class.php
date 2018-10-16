@@ -101,7 +101,7 @@ if (!defined('KO_PROXY'))
 	/**
 	 * KProxy 位置的服务器
 	 */
-	define('KO_PROXY', getenv('KPROXY_IP') ? getenv('KPROXY_IP') : '');
+	define('KO_PROXY', '');
 }
 if (!defined('KO_DB_ENGINE'))
 {
@@ -159,6 +159,7 @@ if (!defined('KO_DB_ENABLE_MC'))
 	 */
 	define('KO_DB_MCACHETIME', 3600);
 }
+
 if (!defined('KO_MONGO_HOST'))
 {
 	/**
