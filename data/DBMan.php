@@ -97,7 +97,7 @@ class Ko_Data_DBMan extends Ko_Data_KProxy
 			$rownum = 0;
 		}
 		KO_DEBUG >= 7 && Ko_Tool_Debug::VAddTmpLog('data/DBMan', '_aFormatResult:insertid_'.$insertId.':affectedrows_'.$affectedRowNumber.':rownum_'.$rownum);
-		return array('data' => $oSqlRes['rows'],
+		return array('data' => isset($oSqlRes['rows']) ? $oSqlRes['rows'] : array(),
 					'rownum' => $rownum,
 					'insertid' => $insertId,
 					'affectedrows' => $affectedRowNumber);
