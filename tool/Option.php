@@ -101,27 +101,27 @@ class Ko_Tool_Option
 						$valid = true;
 						break;
 					case '$lt':
-						$where[] = '('.$field.' < "'.Ko_Data_Mysql::SEscape($v2).'")';
+						$where[] = '('.$field.' < '.(is_float($v2) ? $v2 : '"'.Ko_Data_Mysql::SEscape($v2).'"').')';
 						$valid = true;
 						break;
 					case '$gt':
-						$where[] = '('.$field.' > "'.Ko_Data_Mysql::SEscape($v2).'")';
+						$where[] = '('.$field.' > '.(is_float($v2) ? $v2 : '"'.Ko_Data_Mysql::SEscape($v2).'"').')';
 						$valid = true;
 						break;
 					case '$lte':
-						$where[] = '('.$field.' <= "'.Ko_Data_Mysql::SEscape($v2).'")';
+						$where[] = '('.$field.' <= '.(is_float($v2) ? $v2 : '"'.Ko_Data_Mysql::SEscape($v2).'"').')';
 						$valid = true;
 						break;
 					case '$gte':
-						$where[] = '('.$field.' >= "'.Ko_Data_Mysql::SEscape($v2).'")';
+						$where[] = '('.$field.' >= '.(is_float($v2) ? $v2 : '"'.Ko_Data_Mysql::SEscape($v2).'"').')';
 						$valid = true;
 						break;
 					case '$ne':
-						$where[] = '('.$field.' <> "'.Ko_Data_Mysql::SEscape($v2).'")';
+						$where[] = '('.$field.' <> '.(is_float($v2) ? $v2 : '"'.Ko_Data_Mysql::SEscape($v2).'"').')';
 						$valid = true;
 						break;
 					case '$eq':
-						$where[] = '('.$field.' = "'.Ko_Data_Mysql::SEscape($v2).'")';
+						$where[] = '('.$field.' = '.(is_float($v2) ? $v2 : '"'.Ko_Data_Mysql::SEscape($v2).'"').')';
 						$valid = true;
 						break;
 				}
@@ -130,7 +130,7 @@ class Ko_Tool_Option
 		}
 		else
 		{
-			$where[] = '('.$field.' = "'.Ko_Data_Mysql::SEscape($v).'")';
+			$where[] = '('.$field.' = '.(is_float($v) ? $v : '"'.Ko_Data_Mysql::SEscape($v).'"').')';
 		}
 	}
 }
