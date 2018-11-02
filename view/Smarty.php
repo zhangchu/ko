@@ -49,7 +49,9 @@ if (!defined('KO_TEMPLATE_C_DIR'))
 	}
 }
 
-include_once(KO_SMARTY_INC);
+if (!class_exists('Smarty') && file_exists(KO_SMARTY_INC)) {
+    include_once(KO_SMARTY_INC);
+}
 
 /**
  * Smarty操作封装
