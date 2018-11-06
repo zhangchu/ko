@@ -12,9 +12,6 @@
   "autoload": {
     "classmap": [
       "/"
-    ],
-    "files": [
-      "ko.class.php"
     ]
   },
   "authors": [
