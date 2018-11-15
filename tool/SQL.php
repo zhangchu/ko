@@ -489,7 +489,7 @@ class Ko_Tool_SQL
 		foreach($aUpdate as $k => $v)
 		{
 			$k = ('`' === $k[0]) ? $k : '`'.$k.'`';
-			$set[] = $k.' = "'.Ko_Data_Mysql::SEscape($v).'"';
+			$set[] = $k.' = '.(is_null($v) ? 'NULL' : '"'.Ko_Data_Mysql::SEscape($v).'"');
 		}
 		foreach($aChange as $k => $v)
 		{
