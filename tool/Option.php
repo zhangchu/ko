@@ -71,7 +71,9 @@ class Ko_Tool_Option
 				}
 				else
 				{
-					$sReplace = is_float($aArgs[$i]) ? $aArgs[$i] : '"'.Ko_Data_Mysql::SEscape($aArgs[$i]).'"';
+					$sReplace = is_float($aArgs[$i])
+						? $aArgs[$i]
+						: (is_null($aArgs[$i]) ? 'NULL' : '"'.Ko_Data_Mysql::SEscape($aArgs[$i]).'"');
 				}
 				$where = substr($where, 0, $pos).$sReplace.substr($where, $pos + 1);
 				$pos += strlen($sReplace);
@@ -117,11 +119,15 @@ class Ko_Tool_Option
 						$valid = true;
 						break;
 					case '$ne':
-						$where[] = '('.$field.' <> '.(is_float($v2) ? $v2 : '"'.Ko_Data_Mysql::SEscape($v2).'"').')';
+						$where[] = '('.$field.' <> '.(is_float($v2)
+								? $v2
+								: (is_null($v2) ? 'NULL' : '"'.Ko_Data_Mysql::SEscape($v2).'"').')');
 						$valid = true;
 						break;
 					case '$eq':
-						$where[] = '('.$field.' = '.(is_float($v2) ? $v2 : '"'.Ko_Data_Mysql::SEscape($v2).'"').')';
+						$where[] = '('.$field.' = '.(is_float($v2)
+								? $v2
+								: (is_null($v2) ? 'NULL' : '"'.Ko_Data_Mysql::SEscape($v2).'"').')');
 						$valid = true;
 						break;
 				}
@@ -130,7 +136,9 @@ class Ko_Tool_Option
 		}
 		else
 		{
-			$where[] = '('.$field.' = '.(is_float($v) ? $v : '"'.Ko_Data_Mysql::SEscape($v).'"').')';
+			$where[] = '('.$field.' = '.(is_float($v)
+					? $v
+					: (is_null($v) ? 'NULL' : '"'.Ko_Data_Mysql::SEscape($v).'"').')');
 		}
 	}
 }
