@@ -61,7 +61,7 @@ class Ko_Data_Mysql
 	 */
 	public static function SEscape($sIn)
 	{
-		return @mysql_escape_string($sIn);
+		return addslashes($sIn);
 	}
 
 	/**
@@ -69,7 +69,7 @@ class Ko_Data_Mysql
 	 */
 	public function iAffectedRows()
 	{
-		return mysql_affected_rows($this->_hLink);
+		return mysqli_affected_rows($this->_hLink);
 	}
 
 	/**
@@ -77,7 +77,7 @@ class Ko_Data_Mysql
 	 */
 	public function iErrno()
 	{
-		return mysql_errno($this->_hLink);
+		return mysqli_errno($this->_hLink);
 	}
 
 	/**
@@ -85,19 +85,19 @@ class Ko_Data_Mysql
 	 */
 	public function sError()
 	{
-		return mysql_error($this->_hLink);
+		return mysqli_error($this->_hLink);
 	}
 
 	/**
 	 * @return array
 	 */
-	public function aFetchArray($iType = MYSQL_BOTH)
+	public function aFetchArray($iType = MYSQLI_BOTH)
 	{
 		if (is_null($this->_hResult) || is_bool($this->_hResult))
 		{
 			return false;
 		}
-		return mysql_fetch_array($this->_hResult, $iType);
+		return mysqli_fetch_array($this->_hResult, $iType);
 	}
 
 	/**
@@ -109,7 +109,7 @@ class Ko_Data_Mysql
 		{
 			return false;
 		}
-		return mysql_fetch_assoc($this->_hResult);
+		return mysqli_fetch_assoc($this->_hResult);
 	}
 
 	/**
@@ -121,7 +121,7 @@ class Ko_Data_Mysql
 		{
 			return false;
 		}
-		return mysql_fetch_row($this->_hResult);
+		return mysqli_fetch_row($this->_hResult);
 	}
 
 	/**
@@ -129,7 +129,7 @@ class Ko_Data_Mysql
 	 */
 	public function iInsertId()
 	{
-		return mysql_insert_id($this->_hLink);
+		return mysqli_insert_id($this->_hLink);
 	}
 
 	/**
@@ -141,7 +141,7 @@ class Ko_Data_Mysql
 		{
 			return 0;
 		}
-		return mysql_num_rows($this->_hResult);
+		return mysqli_num_rows($this->_hResult);
 	}
 
 	/**
@@ -157,13 +157,13 @@ class Ko_Data_Mysql
 	 */
 	public function bSelectDb($sDbName)
 	{
-		return mysql_select_db($sDbName, $this->_hLink);
+		return mysqli_select_db($this->_hLink, $sDbName);
 	}
 	
 	private function _bQuery($sSql, $iReconnect)
 	{
 		$this->_bFreeResult();
-		$this->_hResult = mysql_query($sSql, $this->_hLink);
+		$this->_hResult = mysqli_query($this->_hLink, $sSql);
 		if (false === $this->_hResult && self::MAX_RECONN > $iReconnect)
 		{
 			$errno = $this->iErrno();
@@ -183,22 +183,19 @@ class Ko_Data_Mysql
 		{
 			return true;
 		}
-		return mysql_free_result($this->_hResult);
+		return mysqli_free_result($this->_hResult);
 	}
 	
 	private function _vConnect()
 	{
-		$this->_hLink = mysql_connect($this->_sHost, $this->_sUser, $this->_sPasswd, true);
+		$this->_hLink = mysqli_connect($this->_sHost, $this->_sUser, $this->_sPasswd, $this->_sDbName);
 		assert($this->_hLink!==false);
 
-		mysql_set_charset('binary', $this->_hLink);
-
-		$bRet = $this->bSelectDb($this->_sDbName);
-		assert($bRet);
+		mysqli_set_charset($this->_hLink, 'binary');
 	}
 	
 	private function _vClose()
 	{
-		mysql_close($this->_hLink);
+		mysqli_close($this->_hLink);
 	}
 }
