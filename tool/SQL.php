@@ -11,6 +11,8 @@
  */
 class Ko_Tool_SQL
 {
+	const FUNC_GEOMFROMTEXT = 1;
+
 	private $_sFields = '*';
 	private $_sIndex = '';
 	private $_sWhere = '';
@@ -489,7 +491,7 @@ class Ko_Tool_SQL
 		foreach($aUpdate as $k => $v)
 		{
 			$k = ('`' === $k[0]) ? $k : '`'.$k.'`';
-			$set[] = $k.' = '.(is_null($v) ? 'NULL' : '"'.Ko_Data_Mysql::SEscape($v).'"');
+			$set[] = $k.' = '.self::_sGetSetValue($v);
 		}
 		foreach($aChange as $k => $v)
 		{
@@ -498,6 +500,31 @@ class Ko_Tool_SQL
 			$set[] = $k.' = '.$k.' '.($v >= 0 ? '+' : '-').' '.$abs;
 		}
 		return implode(', ', $set);
+	}
+
+	private static function _sGetSetValue($value)
+	{
+		if (is_null($value))
+		{
+			$ret = 'NULL';
+		}
+		else if (is_array($value) && isset($value['function']))
+		{
+			switch ($value['function'])
+			{
+			case self::FUNC_GEOMFROMTEXT:
+				$ret = 'GeomFromText("'.Ko_Data_Mysql::SEscape($value['value']).'")';
+				break;
+			default:
+				assert(false);
+				break;
+			}
+		}
+		else
+		{
+			$ret = '"'.Ko_Data_Mysql::SEscape($value).'"';
+		}
+		return $ret;
 	}
 }
 
