@@ -243,7 +243,7 @@ class Ko_Mode_OAuth2Server extends Ko_Mode_OAuthServerBase
 	 *
 	 * @return string
 	 */
-	public static function SGetAccessTokenUri($sMethod, $sUri, $sKey, $sSecret, $sCallback, $sCode)
+	public static function SGetAccessTokenUri($sMethod, $sUri, $sKey, $sSecret, $sCallback, $sCode, $sScope = '')
 	{
 		//http://tools.ietf.org/html/rfc6749#section-4.1.3
 		$uri = ('GET' === $sMethod) ? $sUri.'?' : '';
@@ -259,6 +259,10 @@ class Ko_Mode_OAuth2Server extends Ko_Mode_OAuthServerBase
 			{
 				$uri .= '&client_secret='.urlencode($sSecret);
 			}
+		}
+		if (0 != strlen($sScope))
+		{
+			$uri .= '&scope='.urlencode($sScope);
 		}
 		return $uri;
 	}
