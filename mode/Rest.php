@@ -513,7 +513,7 @@ class Ko_Mode_Rest
 	{
 		if (isset($aInput[$key]))
 		{
-			if (!isset($resConf['stylelist'][$aInput[$key]]))
+			if (!isset($resConf['exstylelist'][$aInput[$key]]))
 			{
 				throw new Exception('', self::ERROR_EXSTYLE_INVALID);
 			}
