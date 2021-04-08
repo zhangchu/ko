@@ -132,12 +132,23 @@ class Ko_Mode_OCMT extends Ko_Busi_Api
 	protected $_aConf = array();
 
 	/**
+	 * 通过 Aid 和 Bid 获取 Oid
+	 * @return int
+	 */
+	public static function IGetOid($iAid, $iBid)
+	{
+		assert($iAid < 128);
+		assert(0 != $iBid);
+		return ($iAid << 56) + $iBid;
+	}
+
+	/**
 	 * 查询单条评论信息
 	 * @return array
 	 */
 	public function aGet($iAid, $iBid, $iCid, $bReply=false)
 	{
-		$oid = $this->_iGetOid($iAid, $iBid);
+		$oid = self::IGetOid($iAid, $iBid);
 		$contentDao = $this->_aConf['content'].'Dao';
 		$key = array('oid' => $oid, 'cid' => $iCid);
 		$aContent = $this->$contentDao->aGet($key);
@@ -176,7 +187,7 @@ class Ko_Mode_OCMT extends Ko_Busi_Api
 	 */
 	public function aGetListByCid($iAid, $iBid, $aCid, $bReply=false)
 	{
-		$oid = $this->_iGetOid($iAid, $iBid);
+		$oid = self::IGetOid($iAid, $iBid);
 		return $this->_aGetContentByIndex($oid, $aCid, $bReply);
 	}
 
@@ -186,7 +197,7 @@ class Ko_Mode_OCMT extends Ko_Busi_Api
 	 */
 	public function aGetList($iAid, $iBid, $oOption, $bAsc=false, $bReply=false)
 	{
-		$oid = $this->_iGetOid($iAid, $iBid);
+		$oid = self::IGetOid($iAid, $iBid);
 		if (0 == $oOption->iOffset())
 		{
 			$info = $this->_aLoadCache($oid);
@@ -230,7 +241,7 @@ class Ko_Mode_OCMT extends Ko_Busi_Api
 	 */
 	public function aGetQueueList($iAid, $iBid, $oOption, $bAsc=false)
 	{
-		$oid = $this->_iGetOid($iAid, $iBid);
+		$oid = self::IGetOid($iAid, $iBid);
 
 		$queueDao = $this->_aConf['queue'].'Dao';
 		$oOption->oCalcFoundRows(true)->oOrderBy('cid '.($bAsc ? 'asc' : 'desc'));
@@ -271,7 +282,7 @@ class Ko_Mode_OCMT extends Ko_Busi_Api
 	 */
 	public function vDeleteComment($iAid, $iBid, $iCid, $vAdmin='')
 	{
-		$oid = $this->_iGetOid($iAid, $iBid);
+		$oid = self::IGetOid($iAid, $iBid);
 		$this->vDenyComment($oid, $iCid, $vAdmin);
 	}
 
@@ -280,7 +291,7 @@ class Ko_Mode_OCMT extends Ko_Busi_Api
 	 */
 	public function vDeleteReply($iAid, $iBid, $iCid, $vAdmin='')
 	{
-		$oid = $this->_iGetOid($iAid, $iBid);
+		$oid = self::IGetOid($iAid, $iBid);
 		$this->vDenyReply($oid, $iCid, $vAdmin);
 	}
 
@@ -318,15 +329,6 @@ class Ko_Mode_OCMT extends Ko_Busi_Api
 	{
 		$this->_vDeleteReply($iOid, $iCid, $vAdmin);
 		$this->_iDeleteIndexEx($iOid, $iCid, 'queue');
-	}
-
-	/**
-	 * 通过 Aid 和 Bid 获取 Oid
-	 * @return int
-	 */
-	public function iGetOid($iAid, $iBid)
-	{
-		return $this->_iGetOid($iAid, $iBid);
 	}
 
 	private function _aGetList($iOid, $oOption, $bAsc, $bReply)
@@ -431,7 +433,7 @@ class Ko_Mode_OCMT extends Ko_Busi_Api
 
 	private function _iInsertContentEx($iAid, $iBid, $iThread, $iUid, $sContent, $vAdmin, $iForceFlag)
 	{
-		$oid = $this->_iGetOid($iAid, $iBid);
+		$oid = self::IGetOid($iAid, $iBid);
 
 		$cid = $this->_iInsertContent($oid, $iUid, $iThread, $sContent);
 		if ($cid)
@@ -655,13 +657,6 @@ class Ko_Mode_OCMT extends Ko_Busi_Api
 	{
 		$contentDao = $this->_aConf['content'].'Dao';
 		return 'koocmt:'.$this->$contentDao->sGetTableName().':'.$iOid;
-	}
-
-	private function _iGetOid($iAid, $iBid)
-	{
-		assert($iAid < 128);
-		assert(0 != $iBid);
-		return ($iAid << 56) + $iBid;
 	}
 }
 
