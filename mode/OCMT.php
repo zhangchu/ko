@@ -333,6 +333,42 @@ class Ko_Mode_OCMT extends Ko_Busi_Api
         return $ret;
     }
 
+    /**
+     * 获取消息内容
+     */
+    public function aGetContents($iOid, $aCids)
+    {
+        if (empty($aCids))
+        {
+            return array();
+        }
+        $contentDao = $this->_aConf['content'].'Dao';
+        $splitField = $this->$contentDao->sGetSplitField();
+        if (strlen($splitField))
+        {
+            return $this->$contentDao->aGetListByKeys($iOid, $aCids);
+        }
+        else
+        {
+            foreach ($aCids as &$cid)
+            {
+                if (is_array($cid))
+                {
+                    $cid['oid'] = $iOid;
+                }
+                else
+                {
+                    $cid = array(
+                        'oid' => $iOid,
+                        'cid' => $cid,
+                    );
+                }
+            }
+            unset($cid);
+            return $this->$contentDao->aGetDetails($aCids);
+        }
+    }
+
     private function _aGetList($iOid, $oOption, $bAsc, $bReply)
     {
         $indexDao = $this->_aConf['index'].'Dao';
@@ -360,7 +396,7 @@ class Ko_Mode_OCMT extends Ko_Busi_Api
     {
         $aReplyCid = $bReply ? $this->_aGetReplyCids($iOid, $aCid) : array();
         $aAllCid = array_merge($aCid, $aReplyCid);
-        $aContent = $this->_aGetContents($iOid, $aAllCid);
+        $aContent = $this->aGetContents($iOid, $aAllCid);
 
         $aRet = $aIndexMap = array();
         foreach ($aCid as $k => $cid)
@@ -398,39 +434,6 @@ class Ko_Mode_OCMT extends Ko_Busi_Api
         $oOption->oWhere('thread_cid in (?)', $aIndexCid)->oOrderBy('cid desc')->oLimit(self::MAX_REPLY);
         $aReply = $this->$replyDao->aGetList($iOid, $oOption);
         return Ko_Tool_Utils::AObjs2ids($aReply, 'cid');
-    }
-
-    private function _aGetContents($iOid, $aCids)
-    {
-        if (empty($aCids))
-        {
-            return array();
-        }
-        $contentDao = $this->_aConf['content'].'Dao';
-        $splitField = $this->$contentDao->sGetSplitField();
-        if (strlen($splitField))
-        {
-            return $this->$contentDao->aGetListByKeys($iOid, $aCids);
-        }
-        else
-        {
-            foreach ($aCids as &$cid)
-            {
-                if (is_array($cid))
-                {
-                    $cid['oid'] = $iOid;
-                }
-                else
-                {
-                    $cid = array(
-                        'oid' => $iOid,
-                        'cid' => $cid,
-                    );
-                }
-            }
-            unset($cid);
-            return $this->$contentDao->aGetDetails($aCids);
-        }
     }
 
     private function _iInsertContentEx($iAid, $iBid, $iThread, $iUid, $sContent, $vAdmin, $iForceFlag)
