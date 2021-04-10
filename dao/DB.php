@@ -35,11 +35,6 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table, IKo_Dao_Transaction
 	private $_sMCacheName = '';
 	private $_iMCacheTime = 0;
 
-	//UObject 配置
-	private $_bUseUO = false;
-	private $_aUoFields = array();
-	private $_sUoName = '';
-
 	//其他属性 配置
 	private $_bIsSplitString = false;
 	private $_bIsMongoDB = false;
@@ -48,10 +43,9 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table, IKo_Dao_Transaction
 	private $_oSqlAgent;
 	private $_oIdGenerator;
 	private $_oDBCache;
-	private $_oUObject;
 	private $_oDirectMysql;			//直连数据库对象
 
-	public function __construct($sTable, $vKeyField, $sIdKey='', $sDBAgentName='', $sMCacheName = '', $iMCacheTime = 3600, $bUseUO = false, $aUoFields = array(), $sUoName = '')
+	public function __construct($sTable, $vKeyField, $sIdKey='', $sDBAgentName='', $sMCacheName = '', $iMCacheTime = 3600)
 	{
 		$this->_sTable = $sTable;
 		$this->_sSplitField = $this->_sGetSplitField();
@@ -60,9 +54,6 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table, IKo_Dao_Transaction
 		$this->_sDBAgentName = $sDBAgentName;
 		$this->_sMCacheName = $sMCacheName;
 		$this->_iMCacheTime = $iMCacheTime;
-		$this->_bUseUO = $bUseUO;
-		$this->_aUoFields = $aUoFields;
-		$this->_sUoName = $sUoName;
 	}
 
 	public function bBeginTransaction($vHintId = 1)
@@ -282,7 +273,7 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table, IKo_Dao_Transaction
 	{
 		$vHintId = $this->_vNormalizedSplit($vHintId);
 		assert(!Ko_Tool_Option::BIsWhereEmpty($oOption, $this->_bIsMongoDB));
-		if (($this->_bUseUO || $this->_iMCacheTime) && count($this->_aKeyField))
+		if ($this->_iMCacheTime && count($this->_aKeyField))
 		{
 			$oOption = $this->_vBuildOption($oOption, $vHintId, array());
 			$oOption = $this->_oWriteOption2ReadOption($oOption);
@@ -318,7 +309,7 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table, IKo_Dao_Transaction
 	{
 		$vHintId = $this->_vNormalizedSplit($vHintId);
 		assert(!Ko_Tool_Option::BIsWhereEmpty($oOption, $this->_bIsMongoDB));
-		if (($this->_bUseUO || $this->_iMCacheTime) && count($this->_aKeyField))
+		if ($this->_iMCacheTime && count($this->_aKeyField))
 		{
 			$oOption = $this->_vBuildOption($oOption, $vHintId, array());
 			$oOption = $this->_oWriteOption2ReadOption($oOption);
@@ -389,20 +380,13 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table, IKo_Dao_Transaction
 	{
 		$isSplit = strlen($this->_sSplitField);
 		$keyCount = count($this->_aKeyField);
-		if ($isSplit)
-		{
-			assert($this->_bUseUO && 1 >= $keyCount);
-			$isSingleKey = 0 >= $keyCount;
-			$field0 = strlen($sSplitField) ? $sSplitField : $this->_sSplitField;
-			$field1 = $isSingleKey ? $field0 : (strlen($sKeyField) ? $sKeyField : $this->_aKeyField[0]);
-		}
-		else
-		{
-			assert(2 >= $keyCount && $keyCount >= 1);
-			$isSingleKey = 1 >= $keyCount;
-			$field0 = strlen($sSplitField) ? $sSplitField : ($isSingleKey ? $this->_aKeyField[0] : $this->_aKeyField[1]);
-			$field1 = $isSingleKey ? $field0 : (strlen($sKeyField) ? $sKeyField : $this->_aKeyField[0]);
-		}
+
+		assert(!$isSplit);
+
+		assert(2 >= $keyCount && $keyCount >= 1);
+		$isSingleKey = 1 >= $keyCount;
+		$field0 = strlen($sSplitField) ? $sSplitField : ($isSingleKey ? $this->_aKeyField[0] : $this->_aKeyField[1]);
+		$field1 = $isSingleKey ? $field0 : (strlen($sKeyField) ? $sKeyField : $this->_aKeyField[0]);
 
 		//获取 id 列表
 		list($uids, $ids) = $this->_aObjs2KeyIds($oObjs, $field0, $field1);
@@ -415,7 +399,7 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table, IKo_Dao_Transaction
 		$keys = $this->_oGetDBCache()->aFilterInCache($allkeys);
 		KO_DEBUG >= 1 && Ko_Tool_Debug::VAddTmpLog('stat/aGetDetails', count($allkeys).':'.count($keys));
 
-		//从 UObject / LCache 获取剩下的
+		//从 LCache 获取剩下的
 		$this->_vGetDetailsEx($keys, $keyidmap, $isSplit, $isSingleKey);
 
 		//拼装并返回结果
@@ -653,80 +637,65 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table, IKo_Dao_Transaction
 		$ucount = count($aKeys);
 		for ($c=0; ; $c+=self::SPLIT_COUNT)
 		{
-			if ($bIsSplit)
+			assert(!$bIsSplit);
+			$oOption = $this->_oCreateOption();
+			for ($i=$c; $i<$ucount && $i<$c+self::SPLIT_COUNT; $i++)
 			{
-				$uoids = array();
-				for ($i=$c; $i<$ucount && $i<$c+self::SPLIT_COUNT; $i++)
+				if ($this->_bIsMongoDB)
 				{
-					$uoids[$i-$c] = $this->_oGetUObject()->oCreateLOID($aKeyIdMap[$aKeys[$i]][0], $aKeyIdMap[$aKeys[$i]][1]);
-				}
-				if ($i === $c)
-				{
-					break;
-				}
-				$aRet = $this->_oGetUObject()->aGetUObjectDetailLong($uoids, $this->_aUoFields);
-			}
-			else
-			{
-				$oOption = $this->_oCreateOption();
-				for ($i=$c; $i<$ucount && $i<$c+self::SPLIT_COUNT; $i++)
-				{
-					if ($this->_bIsMongoDB)
+					if ($bIsSingleKey)
 					{
-						if ($bIsSingleKey)
+						$oOption->oOr(array($this->_aKeyField[0] => $aKeyIdMap[$aKeys[$i]][0]));
+					}
+					else
+					{
+						$oOption->oOr(array($this->_aKeyField[1] => $aKeyIdMap[$aKeys[$i]][0], $this->_aKeyField[0] => $aKeyIdMap[$aKeys[$i]][1]));
+					}
+				}
+				else
+				{
+					$field0 = ('`' === $this->_aKeyField[0][0]) ? $this->_aKeyField[0] : '`'.$this->_aKeyField[0].'`';
+					if ($bIsSingleKey)
+					{
+						$oOption->oOr($field0.' = ?', $aKeyIdMap[$aKeys[$i]][0]);
+					}
+					else
+					{
+						$field1 = ('`' === $this->_aKeyField[1][0]) ? $this->_aKeyField[1] : '`'.$this->_aKeyField[1].'`';
+						$oOption->oOr($field1.' = ? AND '.$field0.' = ?', $aKeyIdMap[$aKeys[$i]][0], $aKeyIdMap[$aKeys[$i]][1]);
+					}
+				}
+			}
+			if ($i === $c)
+			{
+				break;
+			}
+			$aItem = $this->_oGetSqlAgent()->aSelect($this->_sTable, 1, $oOption, 0, true);
+			$aRet = array();
+			for ($i=$c; $i<$ucount && $i<$c+self::SPLIT_COUNT; $i++)
+			{
+				$item = array();
+				foreach ($aItem as $v)
+				{
+					if ($bIsSingleKey)
+					{
+						if ($v[$this->_aKeyField[0]] == $aKeyIdMap[$aKeys[$i]][0])
 						{
-							$oOption->oOr(array($this->_aKeyField[0] => $aKeyIdMap[$aKeys[$i]][0]));
-						}
-						else
-						{
-							$oOption->oOr(array($this->_aKeyField[1] => $aKeyIdMap[$aKeys[$i]][0], $this->_aKeyField[0] => $aKeyIdMap[$aKeys[$i]][1]));
+							$item = $v;
+							break;
 						}
 					}
 					else
 					{
-						$field0 = ('`' === $this->_aKeyField[0][0]) ? $this->_aKeyField[0] : '`'.$this->_aKeyField[0].'`';
-						if ($bIsSingleKey)
+						if ($v[$this->_aKeyField[1]] == $aKeyIdMap[$aKeys[$i]][0]
+							&& $v[$this->_aKeyField[0]] == $aKeyIdMap[$aKeys[$i]][1])
 						{
-							$oOption->oOr($field0.' = ?', $aKeyIdMap[$aKeys[$i]][0]);
-						}
-						else
-						{
-							$field1 = ('`' === $this->_aKeyField[1][0]) ? $this->_aKeyField[1] : '`'.$this->_aKeyField[1].'`';
-							$oOption->oOr($field1.' = ? AND '.$field0.' = ?', $aKeyIdMap[$aKeys[$i]][0], $aKeyIdMap[$aKeys[$i]][1]);
+							$item = $v;
+							break;
 						}
 					}
 				}
-				if ($i === $c)
-				{
-					break;
-				}
-				$aItem = $this->_oGetSqlAgent()->aSelect($this->_sTable, 1, $oOption, 0, true);
-				$aRet = array();
-				for ($i=$c; $i<$ucount && $i<$c+self::SPLIT_COUNT; $i++)
-				{
-					$item = array();
-					foreach ($aItem as $v)
-					{
-						if ($bIsSingleKey)
-						{
-							if ($v[$this->_aKeyField[0]] == $aKeyIdMap[$aKeys[$i]][0])
-							{
-								$item = $v;
-								break;
-							}
-						}
-						else
-						{
-							if ($v[$this->_aKeyField[1]] == $aKeyIdMap[$aKeys[$i]][0]
-								&& $v[$this->_aKeyField[0]] == $aKeyIdMap[$aKeys[$i]][1])
-							{
-								$item = $v;
-								break;
-							}
-						}
-					}
-					$aRet[] = $item;
-				}
+				$aRet[] = $item;
 			}
 			foreach ($aRet as $i=>$item)
 			{
@@ -737,11 +706,6 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table, IKo_Dao_Transaction
 
 	private function _vDelCache($vHintId, $aKey)
 	{
-		if ($this->_bUseUO)
-		{
-			$key = count($this->_aKeyField) ? $aKey[$this->_aKeyField[0]] : $vHintId;
-			$this->_oGetUObject()->vInvalidate($vHintId, $key);
-		}
 		$sCacheKey = $this->_sGetCacheKey($vHintId, $aKey);
 		$this->_oGetDBCache()->vDel($sCacheKey);
 	}
@@ -906,16 +870,6 @@ class Ko_Dao_DB implements IKo_Dao_DBHelp, IKo_Dao_Table, IKo_Dao_Transaction
 			$this->_oDBCache = new Ko_Data_DBCache($this->_sTable, $this->_sMCacheName, $this->_iMCacheTime);
 		}
 		return $this->_oDBCache;
-	}
-
-	private function _oGetUObject()
-	{
-		if (is_null($this->_oUObject))
-		{
-			$sKeyField = count($this->_aKeyField) ? $this->_aKeyField[0] : $this->_sSplitField;
-			$this->_oUObject = Ko_Data_UObjectAgent::OInstance($this->_sTable, $this->_sSplitField, $sKeyField, $this->_sUoName);
-		}
-		return $this->_oUObject;
 	}
 
 	private function _oGetDirectMysql()

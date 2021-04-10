@@ -54,10 +54,7 @@ class Ko_Dao_Factory
 			self::_VGetValue($aConfig, 'idkey'),
 			self::_VGetValue($aConfig, 'dbagent'),
 			self::_VGetValue($aConfig, 'mcachename'),
-			$mcachetime,
-			self::_VGetValue($aConfig, 'useuo'),
-			self::_VGetValue($aConfig, 'uofields'),
-			self::_VGetValue($aConfig, 'uobject'));
+			$mcachetime);
 		return self::_OSetAttribute_db($db, $aConfig, $aParam);
 	}
 
@@ -95,10 +92,7 @@ class Ko_Dao_Factory
 			self::_VGetValue($aConfig, 'idkey'),
 			self::_VGetValue($aConfig, 'dbagent'),
 			self::_VGetValue($aConfig, 'mcachename'),
-			self::_VGetValue($aConfig, 'mcachetime'),
-			self::_VGetValue($aConfig, 'useuo'),
-			self::_VGetValue($aConfig, 'uofields'),
-			self::_VGetValue($aConfig, 'uobject'));
+			self::_VGetValue($aConfig, 'mcachetime'));
 		return self::_OSetAttribute_db($db, $aConfig, $aParam);
 	}
 
@@ -110,10 +104,7 @@ class Ko_Dao_Factory
 			self::_VGetValue($aConfig, 'idkey'),
 			self::_VGetValue($aConfig, 'dbagent'),
 			self::_VGetValue($aConfig, 'mcachename'),
-			self::_VGetValue($aConfig, 'mcachetime'),
-			self::_VGetValue($aConfig, 'useuo'),
-			self::_VGetValue($aConfig, 'uofields'),
-			self::_VGetValue($aConfig, 'uobject'));
+			self::_VGetValue($aConfig, 'mcachetime'));
 		return self::_OSetAttribute_db($db, $aConfig, $aParam);
 	}
 
