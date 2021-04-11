@@ -116,10 +116,10 @@ class Ko_Mode_OCMT extends Ko_Busi_Api
      * array(
      *   'audit' => array 不同的 aid 对应的审核模式
      *   'audit_default' => 缺省的审核模式
-     *   'content' => 内容表 Dao 名称，要求db_split类型
-     *   'index' => 主线索引表 Dao 名称，要求db_split类型
-     *   'reply' => 回复索引表 Dao 名称，要求db_split类型
-     *   'queue' => 审核队列表 Dao 名称，要求db_split类型
+     *   'content' => 内容表 Dao 名称
+     *   'index' => 主线索引表 Dao 名称
+     *   'reply' => 回复索引表 Dao 名称
+     *   'queue' => 审核队列表 Dao 名称，建议不是db_split类型，否则一些接口不能使用
      *   'cacheflag' => 缓存标记表 Dao 名称
      *   'cache' => 缓存内容表 Dao 名称
      *   'action' => 操作记录表 Dao 名称
@@ -158,7 +158,13 @@ class Ko_Mode_OCMT extends Ko_Busi_Api
             $replyDao = $this->_aConf['reply'].'Dao';
             $oOption = new Ko_Tool_SQL;
             $oOption->oWhere('thread_cid = ?', $iCid)->oOrderBy('cid desc')->oLimit(self::MAX_REPLY);
-            $aReply = $this->$replyDao->aGetList($oid, $oOption);
+            $splitField = $this->$replyDao->sGetSplitField();
+            if (strlen($splitField)) {
+                $aReply = $this->$replyDao->aGetList($oid, $oOption);
+            } else {
+                $oOption->oAnd('oid = ?', $oid);
+                $aReply = $this->$replyDao->aGetList($oOption);
+            }
             if (!empty($aReply))
             {
                 $aReplyCid = Ko_Tool_Utils::AObjs2ids($aReply, 'cid');
@@ -245,7 +251,13 @@ class Ko_Mode_OCMT extends Ko_Busi_Api
 
         $queueDao = $this->_aConf['queue'].'Dao';
         $oOption->oCalcFoundRows(true)->oOrderBy('cid '.($bAsc ? 'asc' : 'desc'));
-        return $this->$queueDao->aGetList($oid, $oOption);
+        $splitField = $this->$queueDao->sGetSplitField();
+        if (strlen($splitField)) {
+            return $this->$queueDao->aGetList($oid, $oOption);
+        } else {
+            $oOption->oAnd('oid = ?', $oid);
+            return $this->$queueDao->aGetList($oOption);
+        }
     }
 
     /**
@@ -373,7 +385,13 @@ class Ko_Mode_OCMT extends Ko_Busi_Api
     {
         $indexDao = $this->_aConf['index'].'Dao';
         $oOption->oCalcFoundRows(true)->oOrderBy('cid '.($bAsc ? 'asc' : 'desc'));
-        $aIndex = $this->$indexDao->aGetList($iOid, $oOption);
+        $splitField = $this->$indexDao->sGetSplitField();
+        if (strlen($splitField)) {
+            $aIndex = $this->$indexDao->aGetList($iOid, $oOption);
+        } else {
+            $oOption->oAnd('oid = ?', $iOid);
+            $aIndex = $this->$indexDao->aGetList($oOption);
+        }
         $aIndexCid = Ko_Tool_Utils::AObjs2ids($aIndex, 'cid');
         $info = $this->_aGetContentByIndex($iOid, $aIndexCid, $bReply);
         if (0 == $oOption->iOffset())
@@ -432,7 +450,13 @@ class Ko_Mode_OCMT extends Ko_Busi_Api
         $replyDao = $this->_aConf['reply'].'Dao';
         $oOption = new Ko_Tool_SQL;
         $oOption->oWhere('thread_cid in (?)', $aIndexCid)->oOrderBy('cid desc')->oLimit(self::MAX_REPLY);
-        $aReply = $this->$replyDao->aGetList($iOid, $oOption);
+        $splitField = $this->$replyDao->sGetSplitField();
+        if (strlen($splitField)) {
+            $aReply = $this->$replyDao->aGetList($iOid, $oOption);
+        } else {
+            $oOption->oAnd('oid = ?', $iOid);
+            $aReply = $this->$replyDao->aGetList($oOption);
+        }
         return Ko_Tool_Utils::AObjs2ids($aReply, 'cid');
     }
 
@@ -537,7 +561,13 @@ class Ko_Mode_OCMT extends Ko_Busi_Api
             $option = new Ko_Tool_SQL;
             $option->oWhere('thread_cid = ?', $iCid);
             $replyDao = $this->_aConf['reply'].'Dao';
-            $ret += $this->$replyDao->iDeleteByCond($iOid, $option);
+            $splitField = $this->$replyDao->sGetSplitField();
+            if (strlen($splitField)) {
+                $ret += $this->$replyDao->iDeleteByCond($iOid, $option);
+            } else {
+                $option->oAnd('oid = ?', $iOid);
+                $ret += $this->$replyDao->iDeleteByCond($option);
+            }
         }
         return $ret;
     }
