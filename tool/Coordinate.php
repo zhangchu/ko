@@ -7,6 +7,19 @@ class Ko_Tool_Coordinate
     const ee = 0.00669342162296594323;
 
     /**
+     * 计算两个经纬度距离
+     */
+    public static function distance($lng1, $lat1, $lng2, $lat2)
+    {
+        $radLat1 = $lat1 * self::PI / 180.;
+        $radLat2 = $lat2 * self::PI / 180.;
+        $a = $radLat1 - $radLat2;
+        $b = $lng1 * self::PI / 180. - $lng2 * self::PI / 180.;
+        $s = 2 * asin(sqrt(pow(sin($a / 2), 2) + cos($radLat1) * cos($radLat2) * pow(sin($b / 2), 2)));
+        return $s * 6378137;
+    }
+
+    /**
      * WGS84 转 GCj02
      */
     public static function wgs84ToGcj02($w_lon, $w_lat)
