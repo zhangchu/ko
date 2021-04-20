@@ -76,7 +76,7 @@ class Ko_Tool_CodeCoverage
 		$ccdir = KO_RUNTIME_DIR . '/cc/';
 		if (!is_dir($ccdir)) {
 			mkdir($ccdir);
-			chmod($ccdir, 0777);
+			@chmod($ccdir, 0777);
 		}
 		return $ccdir . $ccname;
 	}
@@ -134,7 +134,7 @@ class Ko_Tool_CodeCoverage
 				fwrite($fp, $k . "\t" . $v . "\n");
 			}
 			fclose($fp);
-			chmod($ccname, 0666);
+			@chmod($ccname, 0666);
 		}
 	}
 }
