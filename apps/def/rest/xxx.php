@@ -6,7 +6,7 @@ class MRest_xxx
 {
     const ERR_UNKNOWN           = 1;
 
-	public static $s_aConf = array(
+    public static $s_aConf = array(
         'unique' => 'int',                  // 可以是一个组合键，在uri中用某种方式编码，使用str2key函数进行解码
         'stylelist' => array(               // 返回主要数据样式列表
         ),
@@ -14,14 +14,14 @@ class MRest_xxx
         ),
         'filterstylelist' => array(         // 筛选数据参数样式列表
         ),
-		'poststylelist' => array(           // 添加数据参数样式列表
+        'poststylelist' => array(           // 添加数据参数样式列表
         ),
         'putstylelist' => array(            // 修改数据参数样式列表
         ),
-		'errorlist' => array(               // 错误代码和文案列表
-			self::ERR_UNKNOWN => array(
-				'message' => '未知错误',
-			),
+        'errorlist' => array(               // 错误代码和文案列表
+            self::ERR_UNKNOWN => array(
+                'message' => '未知错误',
+            ),
         ),
     );
 
