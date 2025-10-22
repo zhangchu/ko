@@ -11,7 +11,7 @@
  */
 class Ko_Data_DBCache
 {
-	const CHECK_MEM_COUNT = 10000;					//s_aCache 达到这个数量左右时，清空，防止内存占用太大，导致崩溃
+	const CHECK_MEM_COUNT = 100;					//s_aCache 达到这个数量左右时，清空，防止内存占用太大，导致崩溃
 
 	private static $s_aCache = array();             //(进程内)数据缓存
 
