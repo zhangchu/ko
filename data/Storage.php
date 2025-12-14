@@ -173,8 +173,7 @@ class Ko_Data_Storage extends Ko_Busi_Api
             } else {
                 $otime = strtotime($exif['DateTimeOriginal']);
             }
-            $otime[4] = $otime[7] = '-';
-            return $otime;
+            return date('Y-m-d H:i:s', $otime);
         }
         return false;
     }
