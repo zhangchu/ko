@@ -153,7 +153,34 @@ class Ko_Data_Storage extends Ko_Busi_Api
     public function aGetImageGps($sDest)
     {
         $exif = $this->aGetImageExif($sDest);
+        return $this->_aGetImageGpsExif($exif);
+    }
 
+    public function aGetImageGpsAndOTime($sDest)
+    {
+        $exif = $this->aGetImageExif($sDest);
+        return array(
+            'gps' => $this->_aGetImageGpsExif($exif),
+            'otime' => $this->_aGetImageOTimeExif($exif),
+        );
+    }
+
+    private function _aGetImageOTimeExif($exif)
+    {
+        if (is_array($exif['DateTimeOriginal']) || strlen($exif['DateTimeOriginal'])) {
+            if (is_array($exif['DateTimeOriginal']) && isset($exif['DateTimeOriginal']['val'])) {
+                $otime = strtotime($exif['DateTimeOriginal']['val']);
+            } else {
+                $otime = strtotime($exif['DateTimeOriginal']);
+            }
+            $otime[4] = $otime[7] = '-';
+            return $otime;
+        }
+        return false;
+    }
+
+    private function _aGetImageGpsExif($exif)
+    {
         if ((is_array($exif['GPSLatitude']) || strlen($exif['GPSLatitude']))
             && (is_array($exif['GPSLongitude']) || strlen($exif['GPSLongitude']))
         ) {
