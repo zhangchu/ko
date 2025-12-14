@@ -20,7 +20,7 @@ class Ko_Tool_Coordinate
     }
 
     /**
-     * WGS84 转 GCj02
+     * WGS84 转 GCJ02
      */
     public static function wgs84ToGcj02($w_lon, $w_lat)
     {
