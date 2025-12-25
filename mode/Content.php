@@ -34,7 +34,7 @@ class Ko_Mode_Content extends Ko_Busi_Api
 	 *   'maxlength' =>               最大内容长度, optional
 	 *   'app' => array(
 	 *     aid => array(                        aid决定种类与格式
-	 *       'type' => 'html|text',             内容格式
+	 *       'type' => 'html|text',             内容格式 optional, 默认 text
 	 *       'maxlength' =>                     这个aid里面内容最大的长度，不大于全局的最大长度 optional
 	 *     ),
 	 *   ),
@@ -49,7 +49,7 @@ class Ko_Mode_Content extends Ko_Busi_Api
 
 	public function bSet($iAid, $iId, $sContent)
 	{
-		assert($iId > 0 && isset($this->_aConf['app'][$iAid]));
+		assert($iId > 0);
 		
 		$contentApi = $this->_aConf['contentApi'];
 		$aData = array(
@@ -61,7 +61,7 @@ class Ko_Mode_Content extends Ko_Busi_Api
 			$this->$contentApi->iDelete($aData);
 			return true;
 		}
-		$type = ucfirst($this->_aConf['app'][$iAid]['type']);
+		$type = $this->_sGetAidType($iAid);
 		if ('Html' === $type)
 		{
 			$sContent = $this->_sReplaceDataUrl($sContent, '"');
@@ -78,8 +78,8 @@ class Ko_Mode_Content extends Ko_Busi_Api
 	
 	public function sGetText($iAid, $iId, $iMaxLength = 0, $sExt = '')
 	{
-		assert($iId > 0 && isset($this->_aConf['app'][$iAid]));
-		$type = ucfirst($this->_aConf['app'][$iAid]['type']);
+		assert($iId > 0);
+		$type = $this->_sGetAidType($iAid);
 		$classname = 'Ko_Mode_Content_'.$type;
 		
 		if ('' === ($content = $this->_aGetContent($iAid, $iId)))
@@ -91,8 +91,8 @@ class Ko_Mode_Content extends Ko_Busi_Api
 	
 	public function sGetHtml($iAid, $iId, $iMaxLength = 0)
 	{
-		assert($iId > 0 && isset($this->_aConf['app'][$iAid]));
-		$type = ucfirst($this->_aConf['app'][$iAid]['type']);
+		assert($iId > 0);
+		$type = $this->_sGetAidType($iAid);
 		$classname = 'Ko_Mode_Content_'.$type;
 		
 		if ('' === ($content = $this->_aGetContent($iAid, $iId)))
@@ -223,7 +223,6 @@ class Ko_Mode_Content extends Ko_Busi_Api
 		$objs = array();
 		foreach ($aInfo as $aid => &$info)
 		{
-			assert(isset($this->_aConf['app'][$aid]));
 			if (!isset($info['ids']))
 			{
 				$info = array('ids' => $info);
@@ -235,7 +234,7 @@ class Ko_Mode_Content extends Ko_Busi_Api
 			}
 			$info['maxlength'] = intval($info['maxlength']);
 			$info['ext'] = strval($info['ext']);
-			$type = ucfirst($this->_aConf['app'][$aid]['type']);
+			$type = $this->_sGetAidType($aid);
 			$info['classname'] = 'Ko_Mode_Content_'.$type;
 		}
 		unset($info);
@@ -254,6 +253,15 @@ class Ko_Mode_Content extends Ko_Busi_Api
 			return '';
 		}
 		return strval($info['content']);
+	}
+
+	private function _sGetAidType($aid)
+	{
+		if (isset($this->_aConf['app'][$aid]) && isset($this->_aConf['app'][$aid]['type']))
+		{
+			return ucfirst($this->_aConf['app'][$aid]['type']);
+		}
+		return 'Text';
 	}
 
 	private function _iGetAidMaxLength($aid)
