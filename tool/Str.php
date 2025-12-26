@@ -372,6 +372,17 @@ class Ko_Tool_Str
 	}
 
 	/**
+	 * 获取字符串显示长度，按照单字节字符占1位，多字节占2位计算
+	 *
+	 * @return int
+	 */
+	public static function IShowStrLength($sIn, $sCharset = '')
+	{
+		$fn = 'IShowStrLength_'.self::_SConvertCharset($sCharset);
+		return self::$fn($sIn);
+	}
+
+	/**
 	 * 截取字符串，保证返回数据页面显示长度不超过 $iShowLength，按照单字节字符占1位，多字节占2位计算
 	 *
 	 * @return string
@@ -383,6 +394,16 @@ class Ko_Tool_Str
 	}
 
 	/**
+	 * 获取字符串显示长度，按照单字节字符占1位，多字节占2位计算
+	 *
+	 * @return int
+	 */
+	public static function IShowStrLength_UTF8($sIn)
+	{
+		return self::_IShowStrLength($sIn, 'AStr2Arr_UTF8');
+	}
+
+	/**
 	 * 截取字符串，保证返回数据页面显示长度不超过 $iShowLength，按照单字节字符占1位，多字节占2位计算
 	 *
 	 * @return string
@@ -390,6 +411,16 @@ class Ko_Tool_Str
 	public static function SShowStr_UTF8($sIn, $iShowLength, $sExt = '')
 	{
 		return self::_SShowStr($sIn, $iShowLength, $sExt, 'AStr2Arr_UTF8', 6);
+	}
+
+	/**
+	 * 获取字符串显示长度，按照单字节字符占1位，多字节占2位计算
+	 *
+	 * @return int
+	 */
+	public static function IShowStrLength_GB18030($sIn)
+	{
+		return self::_IShowStrLength($sIn, 'AStr2Arr_GB18030');
 	}
 
 	/**
@@ -785,6 +816,18 @@ class Ko_Tool_Str
 		$sOut = substr($sIn, 0, $iMaxLength - $iExtLen);
 		$sOut = self::$fnFilterFunc($sOut);
 		return $sOut.$sExt;
+	}
+
+	private static function _IShowStrLength($sIn, $fnS2A)
+	{
+		$aStr = self::$fnS2A($sIn);
+		$iCount = count($aStr);
+		$iLen = 0;
+		for ($i=0; $i<$iCount; $i++)
+		{
+			$iLen += (strlen($aStr[$i]) <= 1) ? 1 : 2;
+		}
+		return $iLen;
 	}
 
 	private static function _SShowStr($sIn, $iShowLength, $sExt, $fnS2A, $iMaxLen)
