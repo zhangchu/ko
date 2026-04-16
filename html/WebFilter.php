@@ -45,10 +45,11 @@ class Ko_Html_WebFilter implements IKo_Html_Filter
 		);
 	private static $s_aAllowStyle = array(
 		'display' => array('/^(block|inline|none)$/i'),
-		'color' => array('/^#\\w{3,6}$/i', '/^rgb\(\\d{1,3}, ?\\d{1,3}, ?\\d{1,3}\)$/i'),
-		'background-color' => array('/^#\\w{3,6}$/i', '/^rgb\(\\d{1,3}, ?\\d{1,3}, ?\\d{1,3}\)$/i'),
+		//'color' => array('/^#\\w{3,6}$/i', '/^rgb\(\\d{1,3}, ?\\d{1,3}, ?\\d{1,3}\)$/i'),
+		//'background-color' => array('/^#\\w{3,6}$/i', '/^rgb\(\\d{1,3}, ?\\d{1,3}, ?\\d{1,3}\)$/i'),
 		'text-align' => array('/^(left|center|right)$/i'),
 		'text-decoration' => array('/^\\w*$/i'),
+		'text-indent' => array('/^(-?\d+(\.\d+)?(px|em|rem|%|in|cm|mm|pt|pc|vh|vw)|0|inherit|initial|unset)$/i'),
 		'font-weight' => array('/^\\w*$/i'),
 		'font-style' => array('/^\\w*$/i'),
 		'font-size' => array('/^\\w*$/i'),
