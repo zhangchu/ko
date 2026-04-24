@@ -15,18 +15,20 @@ class Ko_Data_Qiniu extends Ko_Data_Storage
 	private $_sSecretKey;
 	private $_sScope;
 	private $_sDomain;
+	private $_sRegionDomain;
 	
-	public function __construct($sAccessKey, $sSecretKey, $sScope, $sDomain)
+	public function __construct($sAccessKey, $sSecretKey, $sScope, $sDomain, $sRegionDomain)
 	{
 		$this->_sAccessKey = $sAccessKey;
 		$this->_sSecretKey = $sSecretKey;
 		$this->_sScope = $sScope;
 		$this->_sDomain = $sDomain;
+		$this->_sRegionDomain = $sRegionDomain;
 	}
 	
 	protected function _bWriteFile($sFilename, $sExt, &$sDest)
 	{
-		if (false !== ($cl = curl_init('http://upload.qiniu.com/')))
+		if (false !== ($cl = curl_init('https://'.$this->_sRegionDomain.'/')))
 		{
 			$postdata = array(
 				'token' => $this->sGetUploadImageToken(),
