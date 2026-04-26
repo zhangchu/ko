@@ -25,6 +25,11 @@ class Ko_Data_Qiniu extends Ko_Data_Storage
 		$this->_sDomain = $sDomain;
 		$this->_sRegionDomain = $sRegionDomain;
 	}
+
+	public function sGetRegionDomain()
+	{
+		return $this->_sRegionDomain;
+	}
 	
 	protected function _bWriteFile($sFilename, $sExt, &$sDest)
 	{
