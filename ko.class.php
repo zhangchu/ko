@@ -152,7 +152,7 @@ if (!defined('KO_DB_CACHE_ENC'))
 	 */
 	define('KO_DB_CACHE_ENC', KO_ENC);
 }
-if (!defined('KO_DB_ENABLE_MC'))
+if (!defined('KO_DB_MCACHETIME'))
 {
 	/**
 	 * 数据库默认mc缓存时间，设为0关闭
