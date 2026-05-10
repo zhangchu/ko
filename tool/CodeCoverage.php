@@ -99,7 +99,7 @@ class Ko_Tool_CodeCoverage
 			if ($fp) {
 				while (!feof($fp)) {
 					$line = fgets($fp);
-					list($k, $v) = explode("\t", trim($line), 2);
+					list($k, $v) = array_pad(explode("\t", trim($line), 2), 2, null);
 					if ('filemtime' == $k) {
 						$oldfilemtime = intval($v);
 						if ($oldfilemtime != $filemtime) {
@@ -124,7 +124,11 @@ class Ko_Tool_CodeCoverage
 		if (is_file($ccname)) {
 			$oldlines = self::_read($ccname, $filemtime);
 			foreach ($oldlines as $k => $v) {
-				$lines[$k] += $v;
+				if (isset($lines[$k])) {
+					$lines[$k] += $v;
+				} else {
+					$lines[$k] = $v;
+				}
 			}
 		}
 		$fp = fopen($ccname, 'w');

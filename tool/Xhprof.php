@@ -39,7 +39,13 @@ if (!defined('KO_XHPROF_FLAGS'))
 	/**
 	 * xhprof 默认标志
 	 */
-	define('KO_XHPROF_FLAGS', XHPROF_FLAGS_NO_BUILTINS | XHPROF_FLAGS_CPU | XHPROF_FLAGS_MEMORY);
+	if (defined('XHPROF_FLAGS_NO_BUILTINS') && defined('XHPROF_FLAGS_CPU') && defined('XHPROF_FLAGS_MEMORY')) {
+		define('KO_XHPROF_FLAGS', XHPROF_FLAGS_NO_BUILTINS | XHPROF_FLAGS_CPU | XHPROF_FLAGS_MEMORY);
+	} else if (defined('XHPROF_FLAGS_CPU') && defined('XHPROF_FLAGS_MEMORY')) {
+		define('KO_XHPROF_FLAGS', XHPROF_FLAGS_CPU | XHPROF_FLAGS_MEMORY);
+	} else {
+		define('KO_XHPROF_FLAGS', 0);
+	}
 }
 
 class Ko_Tool_Xhprof
