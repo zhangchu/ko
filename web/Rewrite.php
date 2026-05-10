@@ -90,7 +90,7 @@ class Ko_Web_Rewrite
 	{
 		self::_VLoadHostRules($sHost, $sUri);
 
-		list($path, $query) = explode('?', $sUri, 2);
+		list($path, $query) = array_pad(explode('?', $sUri, 2), 2, null);
 
 		$paths = self::_ASplitPath($path);
 		$keys = array();

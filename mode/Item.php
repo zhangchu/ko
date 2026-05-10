@@ -127,10 +127,10 @@ class Ko_Mode_Item extends Ko_Busi_Api
 		{
 			$kindField = $this->_aConf['itemlog_kindfield'];
 			$idField = $this->_sGetIdField();
-			$actionField = strlen($this->_aConf['itemlog_actionfield']) ? $this->_aConf['itemlog_actionfield'] : 'action';
-			$contentField = strlen($this->_aConf['itemlog_contentfield']) ? $this->_aConf['itemlog_contentfield'] : 'content';
-			$adminField = strlen($this->_aConf['itemlog_adminfield']) ? $this->_aConf['itemlog_adminfield'] : 'admin';
-			$ipField = strlen($this->_aConf['itemlog_ipfield']) ? $this->_aConf['itemlog_ipfield'] : 'ip';
+			$actionField = isset($this->_aConf['itemlog_actionfield']) && strlen($this->_aConf['itemlog_actionfield']) ? $this->_aConf['itemlog_actionfield'] : 'action';
+			$contentField = isset($this->_aConf['itemlog_contentfield']) && strlen($this->_aConf['itemlog_contentfield']) ? $this->_aConf['itemlog_contentfield'] : 'content';
+			$adminField = isset($this->_aConf['itemlog_adminfield']) && strlen($this->_aConf['itemlog_adminfield']) ? $this->_aConf['itemlog_adminfield'] : 'admin';
+			$ipField = isset($this->_aConf['itemlog_ipfield']) && strlen($this->_aConf['itemlog_ipfield']) ? $this->_aConf['itemlog_ipfield'] : 'ip';
 
 			$logDao = $this->_aConf['itemlog'].'Dao';
 			$oObs = new Ko_Mode_ItemObserverDB($this->$logDao, $kindField, $idField, $actionField, $contentField, $adminField, $ipField);

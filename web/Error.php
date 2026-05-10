@@ -39,7 +39,7 @@ class Ko_Web_Error
 		return false;
 	}
 
-	public static function VHandleException(Exception $ex)
+	public static function VHandleException($ex)
 	{
 		$errno = E_USER_ERROR;
 		$errstr = 'Caught Exception: '.$ex->getMessage();

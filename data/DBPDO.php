@@ -129,7 +129,7 @@ class Ko_Data_DBPDO
 					$this->_oPDO = null;
 				}
 				if (is_null($this->_oPDO)) {
-					list($host, $port) = explode(':', KO_DB_HOST);
+					list($host, $port) = array_pad(explode(':', KO_DB_HOST), 2, null);
 					$dsn = 'mysql:dbname=' . KO_DB_NAME . ';host=' . $host;
 					if (!empty($port)) {
 						$dsn .= ';port=' . $port;

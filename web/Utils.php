@@ -39,7 +39,7 @@ class Ko_Web_Utils
 	 */
 	public static function AParseUri($sUri)
 	{
-		list($sn, $qs) = explode('?', $sUri, 2);
+		list($sn, $qs) = array_pad(explode('?', $sUri, 2), 2, null);
 		if (false !== ($pos = strpos($sn, '.php/')))
 		{
 			$pi = substr($sn, $pos + 4);
