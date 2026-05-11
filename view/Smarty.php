@@ -63,7 +63,11 @@ class Ko_View_Smarty
 
 	public function __construct($aParam = array())
 	{
-		$this->_oSmarty = new Smarty();
+		if (class_exists('Smarty')) {
+			$this->_oSmarty = new Smarty();
+		} else {
+			$this->_oSmarty = new \Smarty\Smarty();
+		}
 		$this->_oSmarty->setTemplateDir(KO_TEMPLATE_DIR);
 		$this->_oSmarty->setCompileDir(KO_TEMPLATE_C_DIR);
 		$this->_oSmarty->addPluginsDir(KO_SMARTY_PLUGINS);
