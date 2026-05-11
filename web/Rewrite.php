@@ -98,7 +98,7 @@ class Ko_Web_Rewrite
 			return array($sUri, 0);
 		}
 		$keys = array_reverse($keys);
-		list($location, $httpCode) = explode(' ', $matched, 2);
+		list($location, $httpCode) = array_pad(explode(' ', $matched, 2), 2, null);
 
 		$slashmismatch = false;
 		$keylen = count($keys);

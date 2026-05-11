@@ -205,7 +205,7 @@ class Ko_Mode_Rest
 				break;
 			case 'put':
 				$hashrule = array(
-					'key' => $resConf['unique'],
+					'key' => isset($resConf['unique']) ? $resConf['unique'] : null,
 				);
 				if (isset($aInput['before_style']))
 				{
@@ -408,7 +408,7 @@ class Ko_Mode_Rest
 			$aInput['update'] = Ko_Tool_Adapter::VConv($aInput['update'], $putRule);
 			$funcname = 'put';
 			$para = array(
-				Ko_Tool_Adapter::VConv($this->_vKey, $resConf['unique']),
+				Ko_Tool_Adapter::VConv($this->_vKey, isset($resConf['unique']) ? $resConf['unique'] : null),
 				$aInput['update'],
 				$this->_aGetStylePara($aInput, 'before_style', 'before_decorate'),
 				$this->_aGetStylePara($aInput, 'after_style', 'after_decorate'),

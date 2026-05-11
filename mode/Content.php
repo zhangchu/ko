@@ -232,8 +232,8 @@ class Ko_Mode_Content extends Ko_Busi_Api
 				assert($id > 0);
 				$objs[] = compact('aid', 'id');
 			}
-			$info['maxlength'] = intval($info['maxlength']);
-			$info['ext'] = strval($info['ext']);
+			$info['maxlength'] = intval(isset($info['maxlength']) ? $info['maxlength'] : 0);
+			$info['ext'] = strval(isset($info['ext']) ? $info['ext'] : '');
 			$type = $this->_sGetAidType($aid);
 			$info['classname'] = 'Ko_Mode_Content_'.$type;
 		}
