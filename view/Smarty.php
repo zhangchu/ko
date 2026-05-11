@@ -135,24 +135,6 @@ class Ko_View_Smarty
 	}
 	
 	/**
-	 * @return array
-	 */
-	public function aGetPluginsDir()
-	{
-		return $this->_oSmarty->getPluginsDir();
-	}
-
-	public function vAddPluginsDir($vDir)
-	{
-		$this->_oSmarty->addPluginsDir($vDir);
-	}
-	
-	public function vSetPluginsDir($vDir)
-	{
-		$this->_oSmarty->setPluginsDir($vDir);
-	}
-
-	/**
 	 * @return boolean
 	 */
 	public function bIsCached($sFilePath, $sCacheId = null)
