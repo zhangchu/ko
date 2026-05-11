@@ -95,7 +95,11 @@ class Ko_Tool_Input
 			}
 		}
 		$aRet = array();
-		self::_VCleanOneType($aRet, array(), $iVarType, $sVarName, $GLOBALS[self::$s_aSuperGlobal[$sSource]][$sVarName], $sCharset);
+		self::_VCleanOneType(
+			$aRet, array(), $iVarType, $sVarName,
+			isset($GLOBALS[self::$s_aSuperGlobal[$sSource]][$sVarName]) ? $GLOBALS[self::$s_aSuperGlobal[$sSource]][$sVarName] : null,
+			$sCharset
+		);
 		return $aRet[$sVarName];
 	}
 	
