@@ -6,20 +6,6 @@
  * @author zhangchu
  */
 
-if (!defined('KO_SMARTY_INC'))
-{
-	/**
-	 * Smarty 类文件定义
-	 */
-	define('KO_SMARTY_INC', KO_DIR.DS.'vendor'.DS.'Smarty-3.1.21'.DS.'Smarty.class.php');
-}
-if (!defined('KO_SMARTY_PLUGINS'))
-{
-	/**
-	 * Smarty 自定义插件目录定义
-	 */
-	define('KO_SMARTY_PLUGINS', dirname(KO_SMARTY_INC).DS.'plugins'.DS);
-}
 if (!defined('KO_TEMPLATE_DIR'))
 {
 	/**
@@ -49,10 +35,6 @@ if (!defined('KO_TEMPLATE_C_DIR'))
 	}
 }
 
-if (!class_exists('Smarty') && file_exists(KO_SMARTY_INC)) {
-    include_once(KO_SMARTY_INC);
-}
-
 /**
  * Smarty操作封装
  */
@@ -70,7 +52,6 @@ class Ko_View_Smarty
 		}
 		$this->_oSmarty->setTemplateDir(KO_TEMPLATE_DIR);
 		$this->_oSmarty->setCompileDir(KO_TEMPLATE_C_DIR);
-		$this->_oSmarty->addPluginsDir(KO_SMARTY_PLUGINS);
 		foreach ($aParam as $key => $val)
 		{
 			$this->_oSmarty->$key = $val;
