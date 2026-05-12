@@ -351,7 +351,7 @@ class Ko_Mode_Rest
 		}
 		else
 		{
-			$aInput['page'] = Ko_Tool_Adapter::VConv($aInput['page'], self::$s_aPageInput);
+			$aInput['page'] = Ko_Tool_Adapter::VConv(isset($aInput['page']) ? $aInput['page'] : null, self::$s_aPageInput);
 			$this->_vNormalizeExStyle($resConf, $aInput, 'ex_style');
 			$filterRule = $this->_vGetFilterStyle($resConf, $aInput);
 			$aInput['filter'] = Ko_Tool_Adapter::VConv($aInput['filter'], $filterRule);
