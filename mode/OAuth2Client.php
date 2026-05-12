@@ -76,7 +76,7 @@ class Ko_Mode_OAuth2Client extends Ko_Mode_OAuthClientBase
         assert(isset($this->_aConf['srclist'][$sSrc]));
 
         $this->aGetPara();
-        if (0 === strlen($this->_aReq['code']))
+        if (0 === strlen(isset($this->_aReq['code']) ? $this->_aReq['code'] : ''))
         {
             $authorizeUri = Ko_Mode_OAuth2Server::SGetAuthorizeUri($this->_aConf['srclist'][$sSrc]['authorize_uri'],
                 $this->_aConf['srclist'][$sSrc]['client_id'],
