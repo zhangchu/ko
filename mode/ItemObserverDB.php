@@ -63,6 +63,7 @@ class Ko_Mode_ItemObserverDB implements IKo_Mode_ItemObserver
 	{
 		$arr = array();
 		$arr[$this->_sActionField] = self::ACT_DELETE;
+		$arr[$this->_sContentField] = Ko_Tool_Enc::SEncode(array());
 		$this->_vInsertInfo($arr, $oDao, $sHintId, $vAdmin);
 	}
 
